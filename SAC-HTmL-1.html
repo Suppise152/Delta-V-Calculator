@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Suppise Aerospace Delta V Calculator</title>
+  <!-- Add any CSS or external stylesheets here -->
+  <link rel="stylesheet" href="SAC-CSS-1.css">
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" id="display" readonly>
+    <img id="calculator-image" src="BlackSquare.png" alt="Calculator Image">
+    <div class="toggle-boxes">
+      <label>
+        <input type="checkbox" id="toggle1">Toggle 1
+      </label>
+      <label>
+        <input type="checkbox" id="toggle2">Toggle 2
+      </label>
+      <!-- Add more toggle boxes -->
+    <div class="buttons">
+      <button onclick="changeImage('endurance.png')">Image 1</button>
+      <button onclick="changeImage('image2.jpg')">Image 2</button>
+      <button onclick="changeImage('image3.jpg')">Image 3</button>
+      <!-- Add more buttons -->
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+      <!-- Add more buttons for other numbers and operations -->
+    </div>
+    <div class="tree">
+      <div class="branch" id="branchA">
+        <button class="node" onclick="toggleNode('branchA', 0)" data-value="1">Node A1</button>
+        <button class="node" onclick="toggleNode('branchA', 1)" data-value="1">Node A2</button>
+        <button class="node" onclick="toggleNode('branchA', 2)" data-value="1">Node A3</button>
+      </div>
+      <div class="branch" id="branchB">
+        <button class="node" onclick="toggleNode('branchB', 0)" data-value="5">Node B1</button>
+        <button class="node" onclick="toggleNode('branchB', 1)" data-value="5">Node B2</button>
+        <button class="node" onclick="toggleNode('branchB', 2)" data-value="5">Node B3</button>
+      </div>
+    </div>
+    <button class="clear">Clear</button>
+    <button class="equals" onclick="performCalculation()">=</button>
+  </div>
+
+  <!-- Add any JavaScript code or external scripts here -->
+  <script src="SAC-1.js"></script>
+</body>
+</html>
