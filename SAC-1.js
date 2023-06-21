@@ -11,7 +11,7 @@ function calculateSum() {
 
   const branches = document.getElementsByClassName('branch');
 
-  let sum = 0;
+  let sum = 10;
 
   // Calculate sum for each branch
   for (let i = 0; i < branches.length; i++) {
