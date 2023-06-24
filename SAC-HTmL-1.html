@@ -11,11 +11,24 @@
     <img id="calculator-image" src="BlackSquare.png" alt="Calculator Image">
     <div class="toggle-boxes">
       <label>
-        <input type="checkbox" id="toggle1">Toggle 1
+        <input type="checkbox" id="toggle1" onchange="handleToggleChange(this)">Toggle 1
       </label>
       <label>
-        <input type="checkbox" id="toggle2">Toggle 2
+        <input type="checkbox" id="toggle2" onchange="handleToggleChange(this)">Toggle 2
       </label>
+      <label>
+        <input type="checkbox" id="toggle3" onchange="handleToggleChange(this)">Toggle 3
+      </label>
+      <label>
+        <input type="checkbox" id="toggle4" onchange="handleToggleChange(this)">Toggle 4
+      </label>
+      <label>
+        <input type="checkbox" id="toggle5" onchange="handleToggleChange(this)">Toggle 5
+      </label>
+      <label>
+        <input type="checkbox" id="toggle6" onchange="handleToggleChange(this)">Toggle 6
+      </label>
+    </div>       
       <!-- Add more toggle boxes -->
     <div class="buttons">
       <button onclick="changeImage('endurance.png')">Image 1</button>

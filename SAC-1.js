@@ -3,7 +3,70 @@ function changeImage(imagePath) {
     calculatorImage.src = imagePath;
   }
 
-// Toggle the selected state of a node within a branch
+  // Handle toggle checkbox change
+function handleToggleChange(checkbox) {
+  const toggle1 = document.getElementById('toggle1');
+  const toggle2 = document.getElementById('toggle2');
+  const toggle3 = document.getElementById('toggle3');
+  const toggle4 = document.getElementById('toggle4');
+  const toggle5 = document.getElementById('toggle5');
+  const toggle6 = document.getElementById('toggle6');
+
+  switch (checkbox.id) {
+    case 'toggle1':
+      if (checkbox.checked) {
+        toggle4.checked = false;
+        toggle5.checked = false;
+        toggle5.disabled = true;
+        toggle6.checked = false;
+        toggle6.disabled = true;
+        toggle2.disabled = false;
+        toggle3.disabled = false;
+      } else {
+        toggle5.disabled = false;
+        toggle6.disabled = false;
+        break;
+      }
+    case 'toggle2':
+      if (checkbox.checked) {
+        toggle3.checked = false;
+      }
+        break;
+    case 'toggle3':
+      if (checkbox.checked) {
+        toggle2.checked = false;
+      }
+      break;
+    case 'toggle4':
+      if (checkbox.checked) {
+        toggle1.checked = false;
+        toggle2.checked = false;
+        toggle2.disabled = true;
+        toggle3.checked = false;
+        toggle3.disabled = true;
+        toggle5.disabled = false;
+        toggle6.disabled = false;
+      } else {
+        toggle2.disabled = false;
+        toggle3.disabled = false;
+      }
+      break;
+    case 'toggle5':
+      if (checkbox.checked) {
+        toggle6.checked = false;
+      }
+      break;
+    case 'toggle6':
+      if (checkbox.checked) {
+        toggle5.checked = false;
+      }
+      break;
+    default:
+      break;
+    }
+}
+
+// calculates the sum of the nodes in the branch
 function calculateSum(branchId, nodeIndex) {
   const branch = document.getElementById(branchId);
   const nodes = branch.getElementsByClassName('node');
