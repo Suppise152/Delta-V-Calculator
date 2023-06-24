@@ -90,5 +90,5 @@ function calculateSum(branchId, nodeIndex) {
     }
   }
 
-  display.value = sum; // Update the display with the calculated sum
+  dV_display.value = sum; // Update the display with the calculated sum
 }
