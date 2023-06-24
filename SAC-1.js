@@ -1,7 +1,8 @@
-function changeImage(imagePath) {
-    const calculatorImage = document.getElementById('calculator-image');
-    calculatorImage.src = imagePath;
-  }
+function changeImage(imageFileName) {
+  const imagePath = 'images/' + imageFileName;
+  const calculatorImage = document.getElementById('calculator-image');
+  calculatorImage.src = imagePath;
+}
 
   // Handle toggle checkbox change
 function handleToggleChange(checkbox) {
