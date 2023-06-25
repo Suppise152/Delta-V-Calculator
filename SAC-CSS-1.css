@@ -3,6 +3,45 @@
     margin: 0 auto;
     text-align: center;
   }
+
+  .toggle-boxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+  }
+  
+  .row {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Optional: Adjust styling for the checkboxes */
+  .toggle-boxes label {
+    margin-bottom: 5px;
+  }
+
+  /*branch*/
+
+  .node {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: grey;
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    margin-right: 10px;
+    font-size: 12px; /* Adjust the font size as needed */
+  }
+  
+  .node:hover {
+    cursor: pointer;
+  }
+  
+  /* buttons */
   
   .buttons,
   .operations {
@@ -27,4 +66,17 @@
   .equals {
     margin-top: 10px;
   }
+
+  /* footer */
+  footer {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+  }
+  
+  #version-info {
+    font-size: 12px;
+    color: lightgrey;
+  }
+  
   

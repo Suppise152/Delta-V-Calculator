@@ -12,35 +12,34 @@
     <input type="text" id="departure_angle" readonly>
     <img id="calculator-image" src="images/BlackSquare.png" alt="Calculator Image">
     <div class="toggle-boxes">
-      <label>
-        <input type="checkbox" id="toggle1" onchange="handleToggleChange(this)">Toggle 1
-      </label>
-      <label>
-        <input type="checkbox" id="toggle2" onchange="handleToggleChange(this)">Toggle 2
-      </label>
-      <label>
-        <input type="checkbox" id="toggle3" onchange="handleToggleChange(this)">Toggle 3
-      </label>
-      <label>
-        <input type="checkbox" id="toggle4" onchange="handleToggleChange(this)">Toggle 4
-      </label>
-      <label>
-        <input type="checkbox" id="toggle5" onchange="handleToggleChange(this)">Toggle 5
-      </label>
-      <label>
-        <input type="checkbox" id="toggle6" onchange="handleToggleChange(this)">Toggle 6
-      </label>
-    </div>       
+      <div class="row">
+        <label>
+          <input type="checkbox" id="toggle1" onchange="handleToggleChange(this)">Toggle 1
+        </label>
+        <label>
+          <input type="checkbox" id="toggle2" onchange="handleToggleChange(this)">Toggle 2
+        </label>
+        <label>
+          <input type="checkbox" id="toggle3" onchange="handleToggleChange(this)">Toggle 3
+        </label>
+      </div>
+      <div class="row">
+        <label>
+          <input type="checkbox" id="toggle4" onchange="handleToggleChange(this)">Toggle 4
+        </label>
+        <label>
+          <input type="checkbox" id="toggle5" onchange="handleToggleChange(this)">Toggle 5
+        </label>
+        <label>
+          <input type="checkbox" id="toggle6" onchange="handleToggleChange(this)">Toggle 6
+        </label>
+      </div>
+    </div>         
       <!-- Add more toggle boxes -->
     <div class="buttons">
       <button onclick="changeImage('endurance.png')">Image 1</button>
       <button onclick="changeImage('image2.jpg')">Image 2</button>
       <button onclick="changeImage('image3.jpg')">Image 3</button>
-      <!-- Add more buttons -->
-      <button>7</button>
-      <button>8</button>
-      <button>9</button>
-      <!-- Add more buttons for other numbers and operations -->
     </div>
     <div class="tree">
       <div class="branch" id="branchA">
@@ -56,6 +55,10 @@
     </div>
     <button class="clear">Clear</button>
   </div>
+
+  <footer>
+    <span id="version-info">Version 0.1.8</span>
+  </footer>  
 
   <!-- Add any JavaScript code or external scripts here -->
   <script src="SAC-1.js"></script>

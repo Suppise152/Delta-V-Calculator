@@ -17,10 +17,6 @@ function handleToggleChange(checkbox) {
     case 'toggle1':
       if (checkbox.checked) {
         toggle4.checked = false;
-        toggle5.checked = false;
-        toggle5.disabled = true;
-        toggle6.checked = false;
-        toggle6.disabled = true;
         toggle2.disabled = false;
         toggle3.disabled = false;
       } else {
@@ -91,4 +87,35 @@ function calculateSum(branchId, nodeIndex) {
   }
 
   dV_display.value = sum; // Update the display with the calculated sum
+  phaseAngleArrive(branchId);
+  phaseAngleDepart(branchId);
+   
+}
+
+function phaseAngleArrive(branchId) {
+  switch (branchId) {
+    case 'branchA':
+      document.getElementById('arrival_angle').value = 15;
+      break;
+    case 'branchB':
+      document.getElementById('arrival_angle').value = 30;
+      break;
+    default:
+      document.getElementById('arrival_angle') = 'N/A';
+      break;
+  }
+}
+
+function phaseAngleDepart(branchId) {
+  switch (branchId) {
+    case 'branchA':
+      document.getElementById('departure_angle').value = 10;
+      break;
+    case 'branchB':
+      document.getElementById('departure_angle').value = 45;
+      break;
+    default:
+      document.getElementById('departure_angle') = 'N/A';
+      break;
+  }
 }
