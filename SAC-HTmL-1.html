@@ -6,58 +6,58 @@
   <link rel="stylesheet" href="SAC-CSS-1.css">
 </head>
 <body>
-  <div class="calculator">
-    <input type="text" id="dV_display" readonly>
-    <input type="text" id="arrival_angle" readonly>
-    <input type="text" id="departure_angle" readonly>
-    <img id="calculator-image" src="images/BlackSquare.png" alt="Calculator Image">
-    <div class="toggle-boxes">
-      <div class="row">
-        <label>
-          <input type="checkbox" id="toggle1" onchange="handleToggleChange(this)">Toggle 1
-        </label>
-        <label>
-          <input type="checkbox" id="toggle2" onchange="handleToggleChange(this)">Toggle 2
-        </label>
-        <label>
-          <input type="checkbox" id="toggle3" onchange="handleToggleChange(this)">Toggle 3
-        </label>
-      </div>
-      <div class="row">
-        <label>
-          <input type="checkbox" id="toggle4" onchange="handleToggleChange(this)">Toggle 4
-        </label>
-        <label>
-          <input type="checkbox" id="toggle5" onchange="handleToggleChange(this)">Toggle 5
-        </label>
-        <label>
-          <input type="checkbox" id="toggle6" onchange="handleToggleChange(this)">Toggle 6
-        </label>
-      </div>
-    </div>         
-      <!-- Add more toggle boxes -->
-    <div class="buttons">
-      <button onclick="changeImage('endurance.png')">Image 1</button>
-      <button onclick="changeImage('image2.jpg')">Image 2</button>
-      <button onclick="changeImage('image3.jpg')">Image 3</button>
+  <div class="banner"></div>
+  <div class="content">
+    <div class="left-section">
+      <p>Text</p>
     </div>
-    <div class="tree">
-      <div class="branch" id="branchA">
-        <button class="node" onclick="calculateSum('branchA', 0)" data-value="1">Node A1</button>
-        <button class="node" onclick="calculateSum('branchA', 1)" data-value="1">Node A2</button>
-        <button class="node" onclick="calculateSum('branchA', 2)" data-value="1">Node A3</button>
+    <div class="right-section"></div>
+      <input type="text" id="dV_display" readonly>
+      <input type="text" id="arrival_angle" readonly>
+      <input type="text" id="departure_angle" readonly>
+      <img id="calculator-image" src="images/BlackSquare.png" alt="Calculator Image">
+      <div class="toggle-boxes">
+        <div class="row">
+          <label>
+            <input type="checkbox" id="toggle1" onchange="handleToggleChange(this)">Toggle 1
+          </label>
+          <label>
+            <input type="checkbox" id="toggle2" onchange="handleToggleChange(this)">Toggle 2
+          </label>
+          <label>
+            <input type="checkbox" id="toggle3" onchange="handleToggleChange(this)">Toggle 3
+          </label>
+        </div>
+        <div class="row">
+          <label>
+            <input type="checkbox" id="toggle4" onchange="handleToggleChange(this)">Toggle 4
+          </label>
+          <label>
+            <input type="checkbox" id="toggle5" onchange="handleToggleChange(this)">Toggle 5
+          </label>
+          <label>
+            <input type="checkbox" id="toggle6" onchange="handleToggleChange(this)">Toggle 6
+          </label>
+        </div>
       </div>
-      <div class="branch" id="branchB">
-        <button class="node" onclick="calculateSum('branchB', 0)" data-value="5">Node B1</button>
-        <button class="node" onclick="calculateSum('branchB', 1)" data-value="5">Node B2</button>
-        <button class="node" onclick="calculateSum('branchB', 2)" data-value="5">Node B3</button>
+      <div class="tree">
+        <div class="branch" id="branchA">
+          <button class="node" id="nodeA1" onclick="calculateSum('branchA', 0)" data-value="1">Node A1</button>
+          <button class="node" id="nodeA2" onclick="calculateSum('branchA', 1)" data-value="1">Node A2</button>
+          <button class="node" id="nodeA3" onclick="calculateSum('branchA', 2)" data-value="1">Node A3</button>
+        </div>
+        <div class="branch" id="branchB">
+          <button class="node" id="nodeB1" onclick="calculateSum('branchB', 0)" data-value="5">Node B1</button>
+          <button class="node" id="nodeB2" onclick="calculateSum('branchB', 1)" data-value="5">Node B2</button>
+          <button class="node" id="nodeB3" onclick="calculateSum('branchB', 2)" data-value="5">Node B3</button>
+        </div>
       </div>
     </div>
-    <button class="clear">Clear</button>
   </div>
+</div>
 
   <footer>
-    <span id="version-info">Version 0.1.8</span>
+    <span id="version-info">Version 0.2.0</span>
   </footer>  
 
   <!-- Add any JavaScript code or external scripts here -->
