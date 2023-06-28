@@ -122,37 +122,31 @@ footer {
 *  node positions
 ***/
 
-#nodeA1 {
+#kerbinOrbit {
   position: absolute;
   top: 30%;
   left: 70%;
 }
 
-#nodeA2 {
+#kerbinEscape {
   position: absolute;
   top: 30%;
   left: 80%;
 }
 
-#nodeA3 {
-  position: absolute;
-  top: 30%;
-  left: 90%;
-}
-
-#nodeB1 {
+#munIntercept {
   position: absolute;
   top: 40%;
   left: 70%;
 }
 
-#nodeB2 {
+#munOrbit {
   position: absolute;
   top: 40%;
   left: 80%;
 }
 
-#nodeB3 {
+#munLand {
   position: absolute;
   top: 40%;
   left: 90%;

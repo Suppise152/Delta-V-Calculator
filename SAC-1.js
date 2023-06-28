@@ -67,37 +67,109 @@ function handleToggleChange(checkbox) {
 function calculateSum(branchId, nodeIndex) {
   const branch = document.getElementById(branchId);
   const nodes = branch.getElementsByClassName('node');
-  let sum = 10;
+  let sum = getBaseValue(branchId);
 
   // sums all the nodes in the branch
   for (let i = 0; i <= nodeIndex; i++) {
-    if (toggle1.checked && i === nodes.length - 1) {
-      break;
-    }
     const node = nodes[i];
     const nodeValue = parseInt(node.dataset.value);
     sum += nodeValue;
   }
 
-  if (toggle2.checked) {
+  if (toggle1.checked) {
     sum *= 2; // Double the sum if Toggle 2 is checked
-    if (toggle1.checked) {
-      sum -= 10; // Subtract base value if Toggle 2 is checked
-    }
   }
+  sum -= calculateAerobrake(branchId, nodeIndex);
 
-  dV_display.value = sum; // Update the display with the calculated sum
+  document.getElementById('dV_display').value = sum; // Update the display with the calculated sum
   phaseAngleArrive(branchId);
   phaseAngleDepart(branchId);
    
 }
 
+function getBaseValue(branchId) {
+  switch (branchId) {
+    case 'kerbin':
+      return 0;
+    case 'mun':
+      return 3400;
+    default:
+      return 3400;
+  }
+}
+
+function calculateAerobrake(branchId, nodeIndex) {
+  const branch = document.getElementById(branchId);
+  const nodes = branch.getElementsByClassName('node');
+  let aerobrake = 0;
+  if (toggle2.checked && nodeIndex === 2) { //low orbit arrive
+    switch (branchId) {
+        // duna 1450
+        //laythe 2900
+        //eve 8000
+        //aerobrake += 0;
+        //break;
+    }
+  }
+  if (toggle3.checked){ //intercept arrive
+    switch (branchId) {
+      case 'kerbin'://duna
+        for (let i = 0; i <= nodeIndex; i++) {
+          const node = nodes[i];
+          const nodeValue = parseInt(node.dataset.value);
+          aerobrake += nodeValue;
+        }
+        break;
+        // duna 1450
+        //laythe 2900
+        //eve 8000
+    }
+  }
+  if(toggle5.checked){ //low orbit depart
+    aerobrake += 3400;
+  }
+  if(toggle6.checked){ //intercept depart
+    switch (branchId) {
+      case 'kerbin':
+        for (let i = 0; i <= nodeIndex; i++) {
+          const node = nodes[i];
+          const nodeValue = parseInt(node.dataset.value);
+          aerobrake += nodeValue;
+        }
+        break;
+      case 'mun':
+        for (let i = 0; i <= 0; i++) {
+          const node = nodes[i];
+          const nodeValue = parseInt(node.dataset.value);
+          aerobrake += nodeValue;
+        }
+        aerobrake += 3400;
+        break;
+      case 'minmus':
+        for (let i = 0; i <= 0; i++) {
+          const node = nodes[i];
+          const nodeValue = parseInt(node.dataset.value);
+          aerobrake += nodeValue;
+        }
+        aerobrake += 3400;
+        break;
+      default:
+        const node = nodes[0];
+        const nodeValue = parseInt(node.dataset.value);
+        aerobrake += nodeValue;
+        aerobrake += (3400 + 950);
+        break;
+    }
+  }
+  return aerobrake;
+}
+
 function phaseAngleArrive(branchId) {
   switch (branchId) {
-    case 'branchA':
-      document.getElementById('arrival_angle').value = 15;
+    case 'kerbin':
+      document.getElementById('arrival_angle').value;
       break;
-    case 'branchB':
+    case 'mun':
       document.getElementById('arrival_angle').value = 30;
       break;
     default:
@@ -108,10 +180,10 @@ function phaseAngleArrive(branchId) {
 
 function phaseAngleDepart(branchId) {
   switch (branchId) {
-    case 'branchA':
-      document.getElementById('departure_angle').value = 10;
+    case 'kerbin':
+      document.getElementById('departure_angle').value;
       break;
-    case 'branchB':
+    case 'mun':
       document.getElementById('departure_angle').value = 45;
       break;
     default:
