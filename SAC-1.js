@@ -83,7 +83,9 @@ function calculateSum(branchId, nodeIndex) {
 
   document.getElementById('dV_display').value = sum; // Update the display with the calculated sum
   phaseAngleArrive(branchId);
-  phaseAngleDepart(branchId);
+  if (toggle6.checked) {
+    phaseAngleDepart(branchId);
+  }
    
 }
 
@@ -240,55 +242,55 @@ function phaseAngleArrive(branchId) {
 function phaseAngleDepart(branchId) {
   switch (branchId) {
     case 'kerbin':
-      document.getElementById('arrival_angle').value;
+      document.getElementById('departure_angle').value;
       break;
     case 'mun':
-      document.getElementById('arrival_angle').value = 'N/A';
+      document.getElementById('departure_angle').value = 'N/A';
       break;
     case 'minmus':
-      document.getElementById('arrival_angle').value = 'N/A';
+      document.getElementById('departure_angle').value = 'N/A';
       break;
     case 'moho':
-      document.getElementById('arrival_angle').value = '-76.1';
+      document.getElementById('departure_angle').value = '-76.1';
       break;
     case 'eve':
-      document.getElementById('arrival_angle').value = '-36.1';
+      document.getElementById('departure_angle').value = '-36.1';
       break;
     case 'gilly':
-      document.getElementById('arrival_angle').value = '-36.1';
+      document.getElementById('departure_angle').value = '-36.1';
       break;
     case 'duna':
-      document.getElementById('arrival_angle').value = '75.2';
+      document.getElementById('departure_angle').value = '75.2';
       break;
     case 'ike':
-      document.getElementById('arrival_angle').value = '75.2';
+      document.getElementById('departure_angle').value = '75.2';
       break;
     case 'dres':
-      document.getElementById('arrival_angle').value = '-30.3';
+      document.getElementById('departure_angle').value = '-30.3';
       break;
     case 'jool':
-      document.getElementById('arrival_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7';
       break;
     case 'laythe':
-      document.getElementById('arrival_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7';
       break;
     case 'vall':
-      document.getElementById('arrival_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7';
       break;
     case 'tylo':
-      document.getElementById('arrival_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7';
       break;
     case 'bop':
-      document.getElementById('arrival_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7';
       break;
     case 'pol':
-      document.getElementById('arrival_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7';
       break;
     case 'eeloo':
-      document.getElementById('arrival_angle').value = '-80.3';
+      document.getElementById('departure_angle').value = '-80.3';
       break;
     default:
-      document.getElementById('arrival_angle') = 'N/A';
+      document.getElementById('departure_angle') = 'N/A';
       break;
   }
 }
