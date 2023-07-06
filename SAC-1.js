@@ -93,8 +93,10 @@ function getBaseValue(branchId) {
       return 0;
     case 'mun':
       return 3400;
-    default:
+    case 'minmus':
       return 3400;
+    default:
+      return 4350;
   }
 }
 
@@ -104,25 +106,40 @@ function calculateAerobrake(branchId, nodeIndex) {
   let aerobrake = 0;
   if (toggle2.checked && nodeIndex === 2) { //low orbit arrive
     switch (branchId) {
-        // duna 1450
-        //laythe 2900
-        //eve 8000
-        //aerobrake += 0;
-        //break;
+      case 'duna':
+        aerobrake += 1450;
+        break;
+      case 'laythe':
+        aerobrake += 2900;
+        break;
+      case 'eve':
+        aerobrake += 8000;
+        break;
     }
   }
   if (toggle3.checked){ //intercept arrive
     switch (branchId) {
-      case 'kerbin'://duna
+      case 'duna':
         for (let i = 0; i <= nodeIndex; i++) {
           const node = nodes[i];
           const nodeValue = parseInt(node.dataset.value);
           aerobrake += nodeValue;
         }
         break;
-        // duna 1450
-        //laythe 2900
-        //eve 8000
+      case 'laythe':
+        for (let i = 0; i <= nodeIndex; i++) {
+          const node = nodes[i];
+          const nodeValue = parseInt(node.dataset.value);
+          aerobrake += nodeValue;
+        }
+        break;
+      case 'eve':
+        for (let i = 0; i <= nodeIndex; i++) {
+          const node = nodes[i];
+          const nodeValue = parseInt(node.dataset.value);
+          aerobrake += nodeValue;
+        }
+        break;
     }
   }
   if(toggle5.checked){ //low orbit depart
@@ -170,7 +187,49 @@ function phaseAngleArrive(branchId) {
       document.getElementById('arrival_angle').value;
       break;
     case 'mun':
-      document.getElementById('arrival_angle').value = 30;
+      document.getElementById('arrival_angle').value = '90';
+      break;
+    case 'minmus':
+      document.getElementById('arrival_angle').value = '90';
+      break;
+    case 'moho':
+      document.getElementById('arrival_angle').value = '108.2';
+      break;
+    case 'eve':
+      document.getElementById('arrival_angle').value = '-54.1';
+      break;
+    case 'gilly':
+      document.getElementById('arrival_angle').value = '-54.1';
+      break;
+    case 'duna':
+      document.getElementById('arrival_angle').value = '44.4';
+      break;
+    case 'ike':
+      document.getElementById('arrival_angle').value = '44.4';
+      break;
+    case 'dres':
+      document.getElementById('arrival_angle').value = '82.1';
+      break;
+    case 'jool':
+      document.getElementById('arrival_angle').value = '96.6';
+      break;
+    case 'laythe':
+      document.getElementById('arrival_angle').value = '96.6';
+      break;
+    case 'vall':
+      document.getElementById('arrival_angle').value = '96.6';
+      break;
+    case 'tylo':
+      document.getElementById('arrival_angle').value = '96.6';
+      break;
+    case 'bop':
+      document.getElementById('arrival_angle').value = '96.6';
+      break;
+    case 'pol':
+      document.getElementById('arrival_angle').value = '96.6';
+      break;
+    case 'eeloo':
+      document.getElementById('arrival_angle').value = '101.4';
       break;
     default:
       document.getElementById('arrival_angle') = 'N/A';
@@ -181,13 +240,55 @@ function phaseAngleArrive(branchId) {
 function phaseAngleDepart(branchId) {
   switch (branchId) {
     case 'kerbin':
-      document.getElementById('departure_angle').value;
+      document.getElementById('arrival_angle').value;
       break;
     case 'mun':
-      document.getElementById('departure_angle').value = 45;
+      document.getElementById('arrival_angle').value = 'N/A';
+      break;
+    case 'minmus':
+      document.getElementById('arrival_angle').value = 'N/A';
+      break;
+    case 'moho':
+      document.getElementById('arrival_angle').value = '-76.1';
+      break;
+    case 'eve':
+      document.getElementById('arrival_angle').value = '-36.1';
+      break;
+    case 'gilly':
+      document.getElementById('arrival_angle').value = '-36.1';
+      break;
+    case 'duna':
+      document.getElementById('arrival_angle').value = '75.2';
+      break;
+    case 'ike':
+      document.getElementById('arrival_angle').value = '75.2';
+      break;
+    case 'dres':
+      document.getElementById('arrival_angle').value = '-30.3';
+      break;
+    case 'jool':
+      document.getElementById('arrival_angle').value = '48.7';
+      break;
+    case 'laythe':
+      document.getElementById('arrival_angle').value = '48.7';
+      break;
+    case 'vall':
+      document.getElementById('arrival_angle').value = '48.7';
+      break;
+    case 'tylo':
+      document.getElementById('arrival_angle').value = '48.7';
+      break;
+    case 'bop':
+      document.getElementById('arrival_angle').value = '48.7';
+      break;
+    case 'pol':
+      document.getElementById('arrival_angle').value = '48.7';
+      break;
+    case 'eeloo':
+      document.getElementById('arrival_angle').value = '-80.3';
       break;
     default:
-      document.getElementById('departure_angle') = 'N/A';
+      document.getElementById('arrival_angle') = 'N/A';
       break;
   }
 }
