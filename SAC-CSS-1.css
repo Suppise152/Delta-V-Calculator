@@ -81,7 +81,7 @@ footer {
   font-size: 20px;
   text-align: center;
   position: absolute;
-  left: 40%;
+  left: 35%;
   bottom: 10%;
 }
 
@@ -91,7 +91,7 @@ footer {
   font-size: 14px;
   text-align: center;
   position: absolute;
-  left: 55%;
+  left: 50%;
   bottom: 10%;
 }
 
@@ -101,16 +101,15 @@ footer {
   font-size: 14px;
   text-align: center;
   position: absolute;
-  left: 63%;
+  left: 58%;
   bottom: 10%;
 }
 
 #calculator-image {
-  width: 100px;
-  height: 100px;
+  width: 500px;
   position: absolute;
-  top: 50%;
-  left: 66.67%;
+  top: 20%;
+  left: 55%;
 }
 
 .toggle-boxes{

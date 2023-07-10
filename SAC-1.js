@@ -83,7 +83,7 @@ function calculateSum(branchId, nodeIndex) {
 
   document.getElementById('dV_display').value = sum; // Update the display with the calculated sum
   phaseAngleArrive(branchId);
-  if (toggle6.checked) {
+  if (toggle1.checked) {
     phaseAngleDepart(branchId);
   }
    
