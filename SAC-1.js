@@ -4,6 +4,9 @@ function changeImage(imageFileName) {
   calculatorImage.src = imagePath;
 }
 
+let prevBranch;
+let prevNode;
+
   // Handle toggle checkbox change
 function handleToggleChange(checkbox) {
   const toggle1 = document.getElementById('toggle1');
@@ -22,6 +25,7 @@ function handleToggleChange(checkbox) {
       } else {
         toggle5.disabled = false;
         toggle6.disabled = false;
+        document.getElementById('departure_angle').value = '';
         break;
       }
     case 'toggle2':
@@ -46,6 +50,7 @@ function handleToggleChange(checkbox) {
       } else {
         toggle2.disabled = false;
         toggle3.disabled = false;
+        document.getElementById('departure_angle').value = '';
       }
       break;
     case 'toggle5':
@@ -61,6 +66,7 @@ function handleToggleChange(checkbox) {
     default:
       break;
     }
+  calculateSum(prevBranch, prevNode);
 }
 
 // calculates the sum of the nodes in the branch
@@ -69,6 +75,9 @@ function calculateSum(branchId, nodeIndex) {
   const nodes = branch.getElementsByClassName('node');
   let sum = getBaseValue(branchId);
 
+  prevBranch = branchId;
+  prevNode = nodeIndex;
+
   // sums all the nodes in the branch
   for (let i = 0; i <= nodeIndex; i++) {
     const node = nodes[i];
@@ -76,17 +85,30 @@ function calculateSum(branchId, nodeIndex) {
     sum += nodeValue;
   }
 
+  //checkbox checks
   if (toggle1.checked) {
     sum *= 2; // Double the sum if Toggle 2 is checked
   }
   sum -= calculateAerobrake(branchId, nodeIndex);
-
-  document.getElementById('dV_display').value = sum; // Update the display with the calculated sum
-  phaseAngleArrive(branchId);
-  if (toggle1.checked) {
-    phaseAngleDepart(branchId);
+  if (toggle7.checked) {
+    sum *= 1.1; // apply 10% redundancy
+    sum = Math.round(sum);
   }
-   
+
+  // Display the sum
+  document.getElementById('dV_display').value = sum;
+  if (toggle1.checked) {
+    phaseAngleArrive(branchId);
+    phaseAngleDepart(branchId);
+    return;
+  }
+  if (toggle4.checked) {
+    document.getElementById('arrival_angle').value = 'N/A';
+    phaseAngleDepart(branchId);
+    return;
+  }
+  
+  phaseAngleArrive(branchId);
 }
 
 function getBaseValue(branchId) {

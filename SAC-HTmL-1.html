@@ -17,28 +17,27 @@
       <input type="text" id="departure_angle" readonly>
       <img id="calculator-image" src="images/mapV1.png" alt="Calculator Image">
       <div class="toggle-boxes">
-        <div class="row">
-          <label>
-            <input type="checkbox" id="toggle1" onchange="handleToggleChange(this)">Toggle 1
-          </label>
-          <label>
-            <input type="checkbox" id="toggle2" onchange="handleToggleChange(this)">Toggle 2
-          </label>
-          <label>
-            <input type="checkbox" id="toggle3" onchange="handleToggleChange(this)">Toggle 3
-          </label>
-        </div>
-        <div class="row">
-          <label>
-            <input type="checkbox" id="toggle4" onchange="handleToggleChange(this)">Toggle 4
-          </label>
-          <label>
-            <input type="checkbox" id="toggle5" onchange="handleToggleChange(this)">Toggle 5
-          </label>
-          <label>
-            <input type="checkbox" id="toggle6" onchange="handleToggleChange(this)">Toggle 6
-          </label>
-        </div>
+        <label>
+          <input type="checkbox" id="toggle1" onchange="handleToggleChange(this)">Round Trip
+        </label>
+        <label>
+          <input type="checkbox" id="toggle2" onchange="handleToggleChange(this)">Aerobrake from Low Orbit on Arrival
+        </label>
+        <label>
+          <input type="checkbox" id="toggle3" onchange="handleToggleChange(this)">Aerobrake from Intercept on Arrival
+        </label>
+        <label>
+          <input type="checkbox" id="toggle4" onchange="handleToggleChange(this)">Return Only
+        </label>
+        <label>
+          <input type="checkbox" id="toggle5" onchange="handleToggleChange(this)">Aerobrake from Low Kerbin Orbit 
+        </label>
+        <label>
+          <input type="checkbox" id="toggle6" onchange="handleToggleChange(this)">Aerobrake from Kerbin Intercept
+        </label>
+        <label>
+          <input type="checkbox" id="toggle7" onchange="handleToggleChange(this)">+10% Redundency
+        </label>
       </div>
       <div class="tree">
         <div class="branch" id="sun"> <!-- sun -->
@@ -130,7 +129,7 @@
 </div>
 
   <footer>
-    <span id="version-info">Version 0.3.1</span>
+    <span id="version-info">Version 0.3.2</span>
   </footer>  
 
   <!-- Add any JavaScript code or external scripts here -->
