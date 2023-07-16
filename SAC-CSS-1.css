@@ -89,6 +89,14 @@ footer {
   color: lightgrey;
 }
 
+#logo {
+  height: 15%;
+  width: 8%;
+  position: absolute;
+  top: 1%;
+  left: 0.5%;
+}
+
 #dV_display {
   height: 30px;
   width: 200px;

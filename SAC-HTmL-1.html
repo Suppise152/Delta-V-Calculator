@@ -6,7 +6,9 @@
   <link rel="stylesheet" href="SAC-CSS-1.css">
 </head>
 <body>
-  <div class="banner"></div>
+  <div class="banner">
+    <img id="logo" src="images/general/logo.png" alt="logo">
+  </div>
   <div class="content">
     <div class="left-section">
       <p>Text</p>
@@ -42,7 +44,7 @@
       <div class="tree">
         <div class="branch" id="sun"> <!-- sun -->
           <button class="node" id="sunOrbit" onclick="calculateSum('sun', 0)" data-value="19700">orbitSun</button>
-          <button class="node" id="sunLand" onclick="calculateSum('sun', 0)" data-value="670000">landSun</button>
+          <button class="node" id="sunLand" onclick="calculateSum('sun', 1)" data-value="670000">landSun</button>
         </div>
         <div class="branch" id="moho"> <!-- moho -->
           <button class="node" id="mohoIntercept" onclick="calculateSum('moho', 0)" data-value="3280">interceptMoho</button>
@@ -129,7 +131,7 @@
 </div>
 
   <footer>
-    <span id="version-info">Version 0.4.0</span>
+    <span id="version-info">Version 0.4.1</span>
   </footer>  
 
   <!-- Add any JavaScript code or external scripts here -->
