@@ -1,5 +1,5 @@
-function changeImage(imageFileName) {
-  const imagePath = 'images/' + imageFileName;
+function changeImage(branchId, nodeIndex) {
+  const imagePath = 'images/maps/' + branchId + nodeIndex + '.png';
   const calculatorImage = document.getElementById('calculator-image');
   calculatorImage.src = imagePath;
 }
@@ -74,6 +74,7 @@ function calculateSum(branchId, nodeIndex) {
   const branch = document.getElementById(branchId);
   const nodes = branch.getElementsByClassName('node');
   let sum = getBaseValue(branchId);
+  changeImage(branchId, nodeIndex);
 
   prevBranch = branchId;
   prevNode = nodeIndex;
@@ -195,6 +196,7 @@ function calculateAerobrake(branchId, nodeIndex) {
         aerobrake += 3400;
         break;
       default:
+        // TODO: fix moon aerobrake values
         const node = nodes[0];
         const nodeValue = parseInt(node.dataset.value);
         aerobrake += nodeValue;
