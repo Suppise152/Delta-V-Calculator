@@ -96,8 +96,10 @@ function calculateSum(branchId, nodeIndex) {
     sum = Math.round(sum);
   }
 
+  sum = sum.toLocaleString();
+
   // Display the sum
-  document.getElementById('dV_display').value = sum;
+  document.getElementById('dV_display').value = sum + ' m/s';
   if (toggle1.checked) {
     phaseAngleArrive(branchId);
     phaseAngleDepart(branchId);
@@ -173,7 +175,7 @@ function calculateAerobrake(branchId, nodeIndex) {
   if(toggle6.checked){ //intercept depart
     switch (branchId) {
       case 'kerbin':
-        for (let i = 0; i <= nodeIndex; i++) {
+        for (let i = 0; i <= 0; i++) {
           const node = nodes[i];
           const nodeValue = parseInt(node.dataset.value);
           aerobrake += nodeValue;
@@ -195,8 +197,35 @@ function calculateAerobrake(branchId, nodeIndex) {
         }
         aerobrake += 3400;
         break;
+      case 'gilly':
+        aerobrake += 1470;
+        aerobrake += 3400;
+        break;
+      case 'ike':
+        aerobrake += 1090;
+        aerobrake += 3400;
+        break;
+      case 'laythe':
+        aerobrake += 2200;
+        aerobrake += 3400;
+        break;
+      case 'vall':
+        aerobrake += 2200;
+        aerobrake += 3400;
+        break;
+      case 'tylo':
+        aerobrake += 2200;
+        aerobrake += 3400;
+        break;
+      case 'bop':
+        aerobrake += 2200;
+        aerobrake += 3400;
+        break;
+      case 'pol':
+        aerobrake += 2200;
+        aerobrake += 3400;
+        break;
       default:
-        // TODO: fix moon aerobrake values
         const node = nodes[0];
         const nodeValue = parseInt(node.dataset.value);
         aerobrake += nodeValue;
