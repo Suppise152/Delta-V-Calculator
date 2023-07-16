@@ -141,116 +141,116 @@ footer {
 
 #sunOrbit {
   position: absolute;
-  top: 65.4%;
-  left: 65.5%;
+  top: 65.8%;
+  left: 65.8%;
 }
 
 #sunLand {
   position: absolute;
-  top: 65.4%;
-  left: 60.2%;
+  top: 65.8%;
+  left: 60.7%;
 }
 
 #mohoIntercept {
   position: absolute;
-  top: 56.8%;
+  top: 57.1%;
   left: 70.2%;
 }
 
 #mohoOrbit {
   position: absolute;
-  top: 56.8%;
+  top: 57.1%;
   left: 65.4%;
 }
 
 #mohoLand {
   position: absolute;
-  top: 56.8%;
-  left: 60.2%;
+  top: 57.1%;
+  left: 60.7%;
 }
 
 #eveIntercept {
   position: absolute;
-  top: 50%;
-  left: 71.1%;
+  top: 50.3%;
+  left: 71.5%;
 }
 
 #eveOrbit {
   position: absolute;
-  top: 50%;
-  left: 65.2%;
+  top: 50.3%;
+  left: 65.5%;
 }
 
 #eveLand {
   position: absolute;
-  top: 50%;
-  left: 60.2%;
+  top: 50.3%;
+  left: 60.7%;
 }
 
 #gillyIntercept {
   position: absolute;
-  top: 42.2%;
+  top: 42.4%;
   left: 68.6%;
 }
 
 #gillyOrbit {
   position: absolute;
-  top: 42.2%;
-  left: 64.4%;
+  top: 42.4%;
+  left: 64.7%;
 }
 
 #gillyLand {
   position: absolute;
-  top: 42.2%;
-  left: 60.2%;
+  top: 42.4%;
+  left: 60.7%;
 }
 
 #kerbinOrbit {
   position: absolute;
-  top: 80.4%;
-  left: 76%;
+  top: 80.6%;
+  left: 75.9%;
 }
 
 #kerbinEscape {
   position: absolute;
-  top: 65.4%;
-  left: 76%;
+  top: 65.8%;
+  left: 75.9%;
 }
 
 #munIntercept {
   position: absolute;
-  top: 74.1%;
-  left: 71.5%;
+  top: 74.5%;
+  left: 71.7%;
 }
 
 #munOrbit {
   position: absolute;
-  top: 74.1%;
-  left: 65.5%;
+  top: 74.5%;
+  left: 65.8%;
 }
 
 #munLand {
   position: absolute;
-  top: 74.1%;
-  left: 60.2%;
+  top: 74.5%;
+  left: 60.7%;
 }
 
 #minmusIntercept {
   position: absolute;
-  top: 74.1%;
-  left: 80%;
+  top: 74.5%;
+  left: 79.9%;
 }
 
 #minmusOrbit {
   position: absolute;
-  top: 74.1%;
-  left: 85.7%;
+  top: 74.5%;
+  left: 85.4%;
 }
 
 #minmusLand {
   position: absolute;
-  top: 74.1%;
-  left: 92.5%;
+  top: 74.5%;
+  left: 91.8%;
 }
 
 #dunaIntercept {
@@ -262,31 +262,31 @@ footer {
 #dunaOrbit {
   position: absolute;
   top: 34.5%;
-  left: 64.5%;
+  left: 64.7%;
 }
 
 #dunaLand {
   position: absolute;
   top: 34.5%;
-  left: 60.2%;
+  left: 60.7%;
 }
 
 #ikeIntercept {
   position: absolute;
   top: 28%;
-  left: 67%;
+  left: 67.3%;
 }
 
 #ikeOrbit {
   position: absolute;
-  top: 25.7%;
-  left: 63.8%;
+  top: 25.5%;
+  left: 63.9%;
 }
 
 #ikeLand {
   position: absolute;
-  top: 25.7%;
-  left: 60.2%;
+  top: 25.5%;
+  left: 60.7%;
 }
 
 #dresIntercept {
@@ -297,110 +297,110 @@ footer {
 
 #dresOrbit {
   position: absolute;
-  top: 20.2%;
-  left: 67.5%;
+  top: 20.1%;
+  left: 67.8%;
 }
 
 #dresLand {
   position: absolute;
-  top: 20.2%;
-  left: 60.2%;
+  top: 20.1%;
+  left: 60.7%;
 }
 
 #joolIntercept {
   position: absolute;
-  top: 42.4%;
-  left: 84.8%;
+  top: 42.6%;
+  left: 84.4%;
 }
 
 #joolOrbit {
   position: absolute;
-  top: 46.6%;
-  left: 91.7%;
+  top: 46.7%;
+  left: 91.1%;
 }
 
 #joolLand {
   position: absolute;
-  top: 55.5%;
-  left: 91.7%;
+  top: 55.8%;
+  left: 91.1%;
 }
 
 #laytheIntercept {
   position: absolute;
   top: 37.3%;
-  left: 88%;
+  left: 87.5%;
 }
 
 #laytheOrbit {
   position: absolute;
-  top: 28.2%;
-  left: 93.4%;
+  top: 28%;
+  left: 92.9%;
 }
 
 #laytheLand {
   position: absolute;
   top: 20.2%;
-  left: 93.6%;
+  left: 92.9%;
 }
 
 #vallIntercept {
   position: absolute;
-  top: 33%;
-  left: 86.4%;
+  top: 32.9%;
+  left: 86.1%;
 }
 
 #vallOrbit {
   position: absolute;
   top: 27.5%;
-  left: 89.5%;
+  left: 89%;
 }
 
 #vallLand {
   position: absolute;
   top: 20.2%;
-  left: 89.7%;
+  left: 89.2%;
 }
 
 #tyloIntercept {
   position: absolute;
   top: 36.5%;
-  left: 84.8%;
+  left: 84.4%;
 }
 
 #tyloOrbit {
   position: absolute;
   top: 27.9%;
-  left: 84.8%;
+  left: 84.4%;
 }
 
 #tyloLand {
   position: absolute;
   top: 20.2%;
-  left: 84.8%;
+  left: 84.4%;
 }
 
 #bopIntercept {
   position: absolute;
-  top: 32.4%;
-  left: 83.1%;
+  top: 32.3%;
+  left: 82.8%;
 }
 
 #bopOrbit {
   position: absolute;
   top: 27.7%;
-  left: 80.8%;
+  left: 80.5%;
 }
 
 #bopLand {
   position: absolute;
   top: 20.2%;
-  left: 80.5%;
+  left: 80.3%;
 }
 
 #polIntercept {
   position: absolute;
   top: 37.3%;
-  left: 81.5%;
+  left: 81.2%;
 }
 
 #polOrbit {
@@ -412,23 +412,23 @@ footer {
 #polLand {
   position: absolute;
   top: 20.2%;
-  left: 76.3%;
+  left: 76.1%;
 }
 
 #eelooIntercept {
   position: absolute;
-  top: 65.4%;
-  left: 84%;
+  top: 65.8%;
+  left: 83.7%;
 }
 
 #eelooOrbit {
   position: absolute;
-  top: 65.4%;
-  left: 88.4%;
+  top: 65.8%;
+  left: 87.8%;
 }
 
 #eelooLand {
   position: absolute;
-  top: 65.4%;
-  left: 92.5%;
+  top: 65.8%;
+  left: 91.8%;
 }
