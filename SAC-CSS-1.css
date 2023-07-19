@@ -154,6 +154,27 @@ footer {
   left: 60%;
 }
 
+.aero {
+  opacity: 0;
+}
+
+
+#aeroArrive {
+  width: 36%;
+  height: 75%;
+  position: absolute;
+  top: 20.1%;
+  left: 60%;
+}
+
+#aeroReturn {
+  width: 36%;
+  height: 75%;
+  position: absolute;
+  top: 19.9%;
+  left: 60%;
+}
+
 /***
 *  node positions
 ***/
