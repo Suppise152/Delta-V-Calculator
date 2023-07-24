@@ -11,6 +11,8 @@ let prevNode;
 function handleToggleChange(checkbox) {
   const aeroArrive = document.getElementById('aeroArrive');
   const aeroReturn = document.getElementById('aeroReturn');
+  const aeroArriveLO = document.getElementById('aeroArriveLO');
+  const aeroReturnLO = document.getElementById('aeroReturnLO');
   const toggle1 = document.getElementById('toggle1');
   const toggle2 = document.getElementById('toggle2');
   const toggle3 = document.getElementById('toggle3');
@@ -33,15 +35,17 @@ function handleToggleChange(checkbox) {
     case 'toggle2':
       if (checkbox.checked) {
         toggle3.checked = false;
-        aeroArrive.style.opacity = 1;
-      }else {
+        aeroArriveLO.style.opacity = 1;
         aeroArrive.style.opacity = 0;
+      }else {
+        aeroArriveLO.style.opacity = 0;
       }
         break;
     case 'toggle3':
       if (checkbox.checked) {
         toggle2.checked = false;
         aeroArrive.style.opacity = 1;
+        aeroArriveLO.style.opacity = 0;
       }else {
         aeroArrive.style.opacity = 0;
       }
@@ -56,6 +60,7 @@ function handleToggleChange(checkbox) {
         toggle5.disabled = false;
         toggle6.disabled = false;
         aeroArrive.style.opacity = 0;
+        aeroArriveLO.style.opacity = 0;
       } else {
         toggle2.disabled = false;
         toggle3.disabled = false;
@@ -65,15 +70,17 @@ function handleToggleChange(checkbox) {
     case 'toggle5':
       if (checkbox.checked) {
         toggle6.checked = false;
-        aeroReturn.style.opacity = 1;
-      } else {
+        aeroReturnLO.style.opacity = 1;
         aeroReturn.style.opacity = 0;
+      } else {
+        aeroReturnLO.style.opacity = 0;
       }
       break;
     case 'toggle6':
       if (checkbox.checked) {
         toggle5.checked = false;
         aeroReturn.style.opacity = 1;
+        aeroReturnLO.style.opacity = 0;
       } else {
         aeroReturn.style.opacity = 0;
       }

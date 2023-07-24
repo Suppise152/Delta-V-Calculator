@@ -175,6 +175,22 @@ footer {
   left: 60%;
 }
 
+#aeroArriveLO {
+  width: 36%;
+  height: 75%;
+  position: absolute;
+  top: 20%;
+  left: 60%;
+}
+
+#aeroReturnLO {
+  width: 36%;
+  height: 75%;
+  position: absolute;
+  top: 19.6%;
+  left: 60%;
+}
+
 /***
 *  node positions
 ***/
