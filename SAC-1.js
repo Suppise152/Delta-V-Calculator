@@ -1,9 +1,11 @@
+// map image change
 function changeImage(branchId, nodeIndex) {
   const imagePath = 'images/maps/' + branchId + nodeIndex + '.png';
   const calculatorImage = document.getElementById('calculator-image');
   calculatorImage.src = imagePath;
 }
 
+// phase angle image change
 function transferAnlgeImageChange(branchId, direction){
   const imagePath = 'images/transferAngles/' + branchId + direction + '.png';
   const transferAngleImage = document.getElementById('transferAngle' + direction);
@@ -26,12 +28,16 @@ function handleToggleChange(checkbox) {
   const toggle5 = document.getElementById('toggle5');
   const toggle6 = document.getElementById('toggle6');
 
-  switch (checkbox.id) {
+  switch (checkbox) {
     case 'toggle1':
-      if (checkbox.checked) {
+      if (toggle1.checked) {
         toggle4.checked = false;
-        toggle2.disabled = false;
-        toggle3.disabled = false;
+        if (toggle2.disabled) {
+          toggle2.disabled = false;
+        }
+        if(toggle3.disabled){
+          toggle3.disabled = false;
+        }
       } else {
         toggle5.disabled = false;
         toggle6.disabled = false;
@@ -39,7 +45,7 @@ function handleToggleChange(checkbox) {
         break;
       }
     case 'toggle2':
-      if (checkbox.checked) {
+      if (toggle2.checked) {
         toggle3.checked = false;
         aeroArriveLO.style.opacity = 1;
         aeroArrive.style.opacity = 0;
@@ -48,7 +54,7 @@ function handleToggleChange(checkbox) {
       }
         break;
     case 'toggle3':
-      if (checkbox.checked) {
+      if (toggle3.checked) {
         toggle2.checked = false;
         aeroArrive.style.opacity = 1;
         aeroArriveLO.style.opacity = 0;
@@ -57,7 +63,7 @@ function handleToggleChange(checkbox) {
       }
       break;
     case 'toggle4':
-      if (checkbox.checked) {
+      if (toggle4.checked) {
         toggle1.checked = false;
         toggle2.checked = false;
         toggle2.disabled = true;
@@ -74,7 +80,7 @@ function handleToggleChange(checkbox) {
       }
       break;
     case 'toggle5':
-      if (checkbox.checked) {
+      if (toggle5.checked) {
         toggle6.checked = false;
         aeroReturnLO.style.opacity = 1;
         aeroReturn.style.opacity = 0;
@@ -83,7 +89,7 @@ function handleToggleChange(checkbox) {
       }
       break;
     case 'toggle6':
-      if (checkbox.checked) {
+      if (toggle6.checked) {
         toggle5.checked = false;
         aeroReturn.style.opacity = 1;
         aeroReturnLO.style.opacity = 0;
@@ -134,7 +140,7 @@ function calculateSum(branchId, nodeIndex) {
     return;
   }
   if (toggle4.checked) {
-    document.getElementById('arrival_angle').value = 'N/A';
+    document.getElementById('arrival_angle').value = '';
     phaseAngleDepart(branchId);
     return;
   }
@@ -142,6 +148,9 @@ function calculateSum(branchId, nodeIndex) {
   phaseAngleArrive(branchId);
 }
 
+/* calcultes the base value for traveling to the target
+* e.g. 3400 + 950 for all interplanetary transfers, in addition to their respective intercept values
+*/
 function getBaseValue(branchId) {
   switch (branchId) {
     case 'kerbin':
@@ -155,6 +164,13 @@ function getBaseValue(branchId) {
   }
 }
 
+/**
+ *  Calculates all relavent aerobraking values
+ * 
+ * @param {*} branchId  The id of the branch
+ * @param {*} nodeIndex Position of the node in the branch
+ * @returns 
+ */
 function calculateAerobrake(branchId, nodeIndex) {
   const branch = document.getElementById(branchId);
   const nodes = branch.getElementsByClassName('node');
@@ -197,10 +213,10 @@ function calculateAerobrake(branchId, nodeIndex) {
         break;
     }
   }
-  if(toggle5.checked){ //low orbit depart
+  if(toggle5.checked && (toggle1.checked || toggle4.checked)){ //low orbit depart
     aerobrake += 3400;
   }
-  if(toggle6.checked){ //intercept depart
+  if(toggle6.checked && (toggle1.checked || toggle4.checked)){ //intercept depart
     switch (branchId) {
       case 'kerbin':
         for (let i = 0; i <= 0; i++) {
@@ -331,7 +347,7 @@ function phaseAngleArrive(branchId) {
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
     default:
-      document.getElementById('arrival_angle') = '';
+      document.getElementById('arrival_angle').value = '';
       transferAnlgeImageChange('emptyPhaseAngle', 'Arrive');
       break;
   }
@@ -344,11 +360,11 @@ function phaseAngleDepart(branchId) {
       transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
       break;
     case 'mun':
-      document.getElementById('departure_angle').value = 'N/A';
+      document.getElementById('departure_angle').value = '';
       transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
       break;
     case 'minmus':
-      document.getElementById('departure_angle').value = 'N/A';
+      document.getElementById('departure_angle').value = '';
       transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
       break;
     case 'moho':
@@ -404,7 +420,7 @@ function phaseAngleDepart(branchId) {
       transferAnlgeImageChange(branchId, 'Depart');
       break;
     default:
-      document.getElementById('departure_angle') = 'N/A';
+      document.getElementById('departure_angle').value = '';
       transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
       break;
   }

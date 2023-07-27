@@ -158,6 +158,10 @@ footer {
   opacity: 0;
 }
 
+#aeroArrive{
+  opacity: 1;
+}
+
 
 #aeroArrive {
   width: 36%;
