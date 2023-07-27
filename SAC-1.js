@@ -1,21 +1,38 @@
-// map image change
+// branchId and node position are stored so they may be used in other functions
+let prevBranch;
+let prevNode;
+
+/**
+ * Changes the map image to highlight the path for the target planet/node position.
+ * 
+ * Each image is named after the branchId and nodeIndex, which allows them to be correctly selected.
+ * 
+ * @param {*} branchId Target planet.
+ * @param {*} nodeIndex Position of the node in the branch.
+ */
 function changeImage(branchId, nodeIndex) {
   const imagePath = 'images/maps/' + branchId + nodeIndex + '.png';
   const calculatorImage = document.getElementById('calculator-image');
   calculatorImage.src = imagePath;
 }
 
-// phase angle image change
+/**
+ * Changes the transfer angle images, depending on the branch and direction
+ * 
+ * @param {*} branchId Target planet.
+ * @param {*} direction Direction that the player will be traveling in.
+ */
 function transferAnlgeImageChange(branchId, direction){
   const imagePath = 'images/transferAngles/' + branchId + direction + '.png';
   const transferAngleImage = document.getElementById('transferAngle' + direction);
   transferAngleImage.src = imagePath;
 }
 
-let prevBranch;
-let prevNode;
-
-  // Handle toggle checkbox change
+/**
+ * Handles all changes needed for the given checkbox, and recalculates the sum.
+ * 
+ * @param {*} checkbox The checkbox that was changed.
+ */
 function handleToggleChange(checkbox) {
   const aeroArrive = document.getElementById('aeroArrive');
   const aeroReturn = document.getElementById('aeroReturn');
@@ -29,7 +46,7 @@ function handleToggleChange(checkbox) {
   const toggle6 = document.getElementById('toggle6');
 
   switch (checkbox) {
-    case 'toggle1':
+    case 'toggle1': //round trip
       if (toggle1.checked) {
         toggle4.checked = false;
         if (toggle2.disabled) {
@@ -44,7 +61,7 @@ function handleToggleChange(checkbox) {
         document.getElementById('departure_angle').value = '';
         break;
       }
-    case 'toggle2':
+    case 'toggle2': //aerobrake low orbit arrival
       if (toggle2.checked) {
         toggle3.checked = false;
         aeroArriveLO.style.opacity = 1;
@@ -53,7 +70,7 @@ function handleToggleChange(checkbox) {
         aeroArriveLO.style.opacity = 0;
       }
         break;
-    case 'toggle3':
+    case 'toggle3': //aerobrake intercept arrival
       if (toggle3.checked) {
         toggle2.checked = false;
         aeroArrive.style.opacity = 1;
@@ -62,7 +79,7 @@ function handleToggleChange(checkbox) {
         aeroArrive.style.opacity = 0;
       }
       break;
-    case 'toggle4':
+    case 'toggle4': //return only
       if (toggle4.checked) {
         toggle1.checked = false;
         toggle2.checked = false;
@@ -79,7 +96,7 @@ function handleToggleChange(checkbox) {
         document.getElementById('departure_angle').value = '';
       }
       break;
-    case 'toggle5':
+    case 'toggle5': //aerobrake low orbit return
       if (toggle5.checked) {
         toggle6.checked = false;
         aeroReturnLO.style.opacity = 1;
@@ -88,7 +105,7 @@ function handleToggleChange(checkbox) {
         aeroReturnLO.style.opacity = 0;
       }
       break;
-    case 'toggle6':
+    case 'toggle6': //aerobrake intercept return
       if (toggle6.checked) {
         toggle5.checked = false;
         aeroReturn.style.opacity = 1;
@@ -100,27 +117,37 @@ function handleToggleChange(checkbox) {
     default:
       break;
     }
+
+  //update the dV
   calculateSum(prevBranch, prevNode);
 }
 
-// calculates the sum of the nodes in the branch
+/**
+ * Calculates the dV for the trip. 
+ * Calls the functions to calculate the phase angles, and handle aerobraking.
+ * 
+ * @param {*} branchId The target planet.
+ * @param {*} nodeIndex Position of the node in the branch.
+ * @returns 
+ */
 function calculateSum(branchId, nodeIndex) {
   const branch = document.getElementById(branchId);
   const nodes = branch.getElementsByClassName('node');
   let sum = getBaseValue(branchId);
   changeImage(branchId, nodeIndex);
 
+  //saves the branch and node position for use in other functions
   prevBranch = branchId;
   prevNode = nodeIndex;
 
-  // sums all the nodes in the branch
+  // sums all the nodes in the branch, up-to the chosen node
   for (let i = 0; i <= nodeIndex; i++) {
     const node = nodes[i];
     const nodeValue = parseInt(node.dataset.value);
     sum += nodeValue;
   }
 
-  //checkbox checks
+  //checkbox checks and aerobraking
   if (toggle1.checked) {
     sum *= 2; // Double the sum if Toggle 2 is checked
   }
@@ -132,7 +159,7 @@ function calculateSum(branchId, nodeIndex) {
 
   sum = sum.toLocaleString();
 
-  // Display the sum
+  // Displays the sum and phase angles
   document.getElementById('dV_display').value = sum + ' m/s';
   if (toggle1.checked) {
     phaseAngleArrive(branchId);
@@ -148,9 +175,14 @@ function calculateSum(branchId, nodeIndex) {
   phaseAngleArrive(branchId);
 }
 
-/* calcultes the base value for traveling to the target
-* e.g. 3400 + 950 for all interplanetary transfers, in addition to their respective intercept values
-*/
+/**
+ * Finds the base value for the target planet.
+ * Used to help calculate the dV.
+ * e.g. interplanetary transfers require 4350 m/s to escape kerbin's SOI, on top of the branches normal values
+ * 
+ * @param {*} branchId Target planet, only used for edge cases.
+ * @returns 
+ */
 function getBaseValue(branchId) {
   switch (branchId) {
     case 'kerbin':
@@ -280,10 +312,15 @@ function calculateAerobrake(branchId, nodeIndex) {
   return aerobrake;
 }
 
+/**
+ * Fetches the transfer window angle to the target from kerbin
+ * 
+ * @param {*} branchId Target planet.
+ */
 function phaseAngleArrive(branchId) {
   switch (branchId) {
     case 'kerbin':
-      document.getElementById('arrival_angle').value;
+      document.getElementById('arrival_angle').value = '';
       transferAnlgeImageChange('emptyPhaseAngle', 'Arrive');
       break;
     case 'mun':
@@ -353,6 +390,11 @@ function phaseAngleArrive(branchId) {
   }
 }
 
+/**
+ * Fetches the transfer window angle from the trget planet, back to kerbin.
+ * 
+ * @param {*} branchId Target planet.
+ */
 function phaseAngleDepart(branchId) {
   switch (branchId) {
     case 'kerbin':
