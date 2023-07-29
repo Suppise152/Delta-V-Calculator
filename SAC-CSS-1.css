@@ -10,7 +10,7 @@ html, body {
 
 .banner {
   height: 17%;
-  background-color: rgb(32, 32, 32);
+  background-color: rgb(44, 114, 253);
 }
 
 .content {
@@ -91,6 +91,16 @@ html, body {
 ***************************** TXT AND MISC POSITONS
 **************************************************/
 
+#title{
+  position: absolute;
+  top: 0.5%;
+  left: 12%;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 400;
+  font-size: 80px;
+  color: rgb(255, 255, 255);
+}
+
 footer {
   position: fixed;
   bottom: 10px;
@@ -102,13 +112,21 @@ footer {
   color: grey;
 }
 
-
 #logo {
   height: 15%;
   width: 8%;
   position: absolute;
   top: 1%;
   left: 0.5%;
+}
+
+#logoBD{
+  height: 15%;
+  width: 8%;
+  position: absolute;
+  top: 1%;
+  left: 0.5%;
+  transform: scale(1.05);
 }
 
 /********************************************
