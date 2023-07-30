@@ -22,8 +22,10 @@ html, body {
 
 .left-section {
   flex-basis: 33.33%;
-  background-color: rgb(24, 24, 24);
-  padding: 20px;
+  background-color: rgb(2, 0, 14);
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 0px;
 }
 
 .right-section {
@@ -32,7 +34,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgb(28, 28, 28);
+  background-color: rgb(28, 28, 38);
   padding: 20px;
 }
 
@@ -53,7 +55,8 @@ html, body {
   position: absolute;
   top: 18%;
   left: 35%;
-  font-size: 100%;
+  font-size: 125%;
+  font-family: monospace;
 }
 
 .toggle-boxes label:nth-child(3),
@@ -81,6 +84,7 @@ html, body {
   text-align: center;
   margin-right: 10px;
   font-size: 9px;
+  font-family: monospace;
 }
 
 .node:hover {
@@ -101,32 +105,49 @@ html, body {
   color: rgb(255, 255, 255);
 }
 
+.left-section h2 {
+  font-size: 22px;
+  padding-top: 15px;
+  margin-bottom: 0px;
+  font-family: monospace;
+}
+
+.left-section p {
+  font-size: 15px;
+  line-height: 1.5;
+  font-family: monospace;
+}
+
+#transferAngleArriveText {
+  width: 12%;
+  text-align: center;
+  position: absolute;
+  top: 52.5%;
+  left: 35%;
+  color: white;
+  font-family: monospace;
+}
+
+#transferAngleDepartText {
+  width: 12%;
+  text-align: center;
+  position: absolute;
+  top: 52.5%;
+  left: 47.5%;
+  color: white;
+  font-family: monospace;
+}
+
 footer {
   position: fixed;
   bottom: 10px;
   left: 10px;
+  font-family: monospace;
 }
 
 #version-info {
   font-size: 12px;
   color: grey;
-}
-
-#logo {
-  height: 15%;
-  width: 8%;
-  position: absolute;
-  top: 1%;
-  left: 0.5%;
-}
-
-#logoBD{
-  height: 15%;
-  width: 8%;
-  position: absolute;
-  top: 1%;
-  left: 0.5%;
-  transform: scale(1.05);
 }
 
 /********************************************
@@ -141,12 +162,14 @@ footer {
   position: absolute;
   left: 35%;
   bottom: 10%;
+  font-family: monospace;
 }
 
 #dV {
   position: absolute;
   left: 35%;
   bottom: 15%;
+  font-family: monospace;
 }
 
 #arrival_angle{
@@ -157,12 +180,14 @@ footer {
   position: absolute;
   left: 51.5%;
   bottom: 10%;
+  font-family: monospace;
 }
 
 #arrival {
   position: absolute;
   left: 51.5%;
   bottom: 15%;
+  font-family: monospace;
 }
 
 #departure_angle {
@@ -173,12 +198,14 @@ footer {
   position: absolute;
   left: 61%;
   bottom: 10%;
+  font-family: monospace;
 }
 
 #departure {
   position: absolute;
   left: 61%;
   bottom: 15%;
+  font-family: monospace;
 }
 
 /***************************************
@@ -245,15 +272,6 @@ footer {
   left: 35%;
 }
 
-#transferAngleArriveText {
-  width: 12%;
-  text-align: center;
-  position: absolute;
-  top: 52.5%;
-  left: 35%;
-  color: white;
-}
-
 #transferAngleDepart {
   width: 12%;
   position: absolute;
@@ -261,13 +279,12 @@ footer {
   left: 47.5%;
 }
 
-#transferAngleDepartText {
-  width: 12%;
-  text-align: center;
+#bannerPic{
+  width: 100%;
+  height: 17%;
   position: absolute;
-  top: 52.5%;
-  left: 47.5%;
-  color: white;
+  top: 0%;
+  left: 0%;
 }
 
 /**************************************
@@ -290,6 +307,7 @@ footer {
   position: absolute;
   top: 57.1%;
   left: 72.7%;
+  text-align: center;
 }
 
 #mohoOrbit {
@@ -308,6 +326,7 @@ footer {
   position: absolute;
   top: 50.3%;
   left: 74%;
+  text-align: center;
 }
 
 #eveOrbit {
@@ -326,6 +345,7 @@ footer {
   position: absolute;
   top: 42.4%;
   left: 71.1%;
+  text-align: center;
 }
 
 #gillyOrbit {
@@ -356,6 +376,7 @@ footer {
   position: absolute;
   top: 74.5%;
   left: 74.2%;
+  text-align: center;
 }
 
 #munOrbit {
@@ -374,6 +395,7 @@ footer {
   position: absolute;
   top: 74.5%;
   left: 82.4%;
+  text-align: center;
 }
 
 #minmusOrbit {
@@ -392,6 +414,7 @@ footer {
   position: absolute;
   top: 34.5%;
   left: 71%;
+  text-align: center;
 }
 
 #dunaOrbit {
@@ -410,6 +433,7 @@ footer {
   position: absolute;
   top: 28%;
   left: 69.8%;
+  text-align: center;
 }
 
 #ikeOrbit {
@@ -428,6 +452,7 @@ footer {
   position: absolute;
   top: 28.2%;
   left: 75.2%;
+  text-align: center;
 }
 
 #dresOrbit {
@@ -446,6 +471,7 @@ footer {
   position: absolute;
   top: 42.6%;
   left: 86.9%;
+  text-align: center;
 }
 
 #joolOrbit {
@@ -464,6 +490,7 @@ footer {
   position: absolute;
   top: 37.3%;
   left: 90%;
+  text-align: center;
 }
 
 #laytheOrbit {
@@ -482,6 +509,7 @@ footer {
   position: absolute;
   top: 32.9%;
   left: 88.6%;
+  text-align: center;
 }
 
 #vallOrbit {
@@ -500,6 +528,7 @@ footer {
   position: absolute;
   top: 36.5%;
   left: 86.9%;
+  text-align: center;
 }
 
 #tyloOrbit {
@@ -518,6 +547,7 @@ footer {
   position: absolute;
   top: 32.3%;
   left: 85.3%;
+  text-align: center;
 }
 
 #bopOrbit {
@@ -536,6 +566,7 @@ footer {
   position: absolute;
   top: 37.3%;
   left: 83.7%;
+  text-align: center;
 }
 
 #polOrbit {
@@ -554,6 +585,7 @@ footer {
   position: absolute;
   top: 65.8%;
   left: 86.2%;
+  text-align: center;
 }
 
 #eelooOrbit {
@@ -577,41 +609,47 @@ footer {
   top: 65.8%;
   left: 60%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #mohoLabel {
   position: absolute;
   top: 57.1%;
-  left: 60.4%;
+  left: 60.8%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #eveLabel {
   position: absolute;
   top: 50.3%;
-  left: 61.2%;
+  left: 61.4%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #gillyLabel {
   position: absolute;
   top: 42.4%;
-  left: 60.8%;
+  left: 60.6%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #kerbinLabel {
   position: absolute;
   top: 95.6%;
-  left: 78%;
+  left: 78.2%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #munLabel {
   position: absolute;
   top: 74.5%;
-  left: 60.8%;
+  left: 61.1%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #minmusLabel {
@@ -619,13 +657,15 @@ footer {
   top: 78.5%;
   left: 94.3%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #dunaLabel {
   position: absolute;
   top: 34.5%;
-  left: 60.6%;
+  left: 60.8%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #ikeLabel {
@@ -633,13 +673,15 @@ footer {
   top: 26%;
   left: 61.4%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #dresLabel {
   position: absolute;
   top: 20.6%;
-  left: 60.8%;
+  left: 60.9%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #joolLabel {
@@ -647,6 +689,7 @@ footer {
   top: 60.2%;
   left: 94%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #laytheLabel {
@@ -654,6 +697,7 @@ footer {
   top: 18%;
   left: 95.1%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #vallLabel {
@@ -661,6 +705,7 @@ footer {
   top: 18%;
   left: 91.7%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #tyloLabel {
@@ -668,6 +713,7 @@ footer {
   top: 18%;
   left: 87.1%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #bopLabel {
@@ -675,6 +721,7 @@ footer {
   top: 18%;
   left: 83.1%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #polLabel {
@@ -682,6 +729,7 @@ footer {
   top: 18%;
   left: 79%;
   color: lightgray;
+  font-family: monospace;
 }
 
 #eelooLabel {
@@ -689,4 +737,5 @@ footer {
   top: 69.7%;
   left: 94.3%;
   color: lightgray;
+  font-family: monospace;
 }
