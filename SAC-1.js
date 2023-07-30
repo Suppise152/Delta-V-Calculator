@@ -324,63 +324,63 @@ function phaseAngleArrive(branchId) {
       transferAnlgeImageChange('emptyPhaseAngle', 'Arrive');
       break;
     case 'mun':
-      document.getElementById('arrival_angle').value = '90';
+      document.getElementById('arrival_angle').value = '90' + '°';
       transferAnlgeImageChange('emptyPhaseAngle', 'Arrive');
       break;
     case 'minmus':
-      document.getElementById('arrival_angle').value = '90';
+      document.getElementById('arrival_angle').value = '90' + '°';
       transferAnlgeImageChange('emptyPhaseAngle', 'Arrive');
       break;
     case 'moho':
-      document.getElementById('arrival_angle').value = '108.2';
+      document.getElementById('arrival_angle').value = '108.2' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
     case 'eve':
-      document.getElementById('arrival_angle').value = '-54.1';
+      document.getElementById('arrival_angle').value = '-54.1' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
     case 'gilly':
-      document.getElementById('arrival_angle').value = '-54.1';
+      document.getElementById('arrival_angle').value = '-54.1' + '°';
       transferAnlgeImageChange('eve', 'Arrive');
       break;
     case 'duna':
-      document.getElementById('arrival_angle').value = '44.4';
+      document.getElementById('arrival_angle').value = '44.4' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
     case 'ike':
-      document.getElementById('arrival_angle').value = '44.4';
+      document.getElementById('arrival_angle').value = '44.4' + '°';
       transferAnlgeImageChange('duna', 'Arrive');
       break;
     case 'dres':
-      document.getElementById('arrival_angle').value = '82.1';
+      document.getElementById('arrival_angle').value = '82.1' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
     case 'jool':
-      document.getElementById('arrival_angle').value = '96.6';
+      document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
     case 'laythe':
-      document.getElementById('arrival_angle').value = '96.6';
+      document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange('jool', 'Arrive');
       break;
     case 'vall':
-      document.getElementById('arrival_angle').value = '96.6';
+      document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange('jool', 'Arrive');
       break;
     case 'tylo':
-      document.getElementById('arrival_angle').value = '96.6';
+      document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange('jool', 'Arrive');
       break;
     case 'bop':
-      document.getElementById('arrival_angle').value = '96.6';
+      document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange('jool', 'Arrive');
       break;
     case 'pol':
-      document.getElementById('arrival_angle').value = '96.6';
+      document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange('jool', 'Arrive');
       break;
     case 'eeloo':
-      document.getElementById('arrival_angle').value = '101.4';
+      document.getElementById('arrival_angle').value = '101.4' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
     default:
@@ -398,7 +398,7 @@ function phaseAngleArrive(branchId) {
 function phaseAngleDepart(branchId) {
   switch (branchId) {
     case 'kerbin':
-      document.getElementById('departure_angle').value;
+      document.getElementById('departure_angle').value = '';
       transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
       break;
     case 'mun':
@@ -410,55 +410,55 @@ function phaseAngleDepart(branchId) {
       transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
       break;
     case 'moho':
-      document.getElementById('departure_angle').value = '-76.1';
+      document.getElementById('departure_angle').value = '-76.1' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
     case 'eve':
-      document.getElementById('departure_angle').value = '-36.1';
+      document.getElementById('departure_angle').value = '-36.1' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
     case 'gilly':
-      document.getElementById('departure_angle').value = '-36.1';
+      document.getElementById('departure_angle').value = '-36.1' + '°';
       transferAnlgeImageChange('eve', 'Depart');
       break;
     case 'duna':
-      document.getElementById('departure_angle').value = '75.2';
+      document.getElementById('departure_angle').value = '75.2' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
     case 'ike':
-      document.getElementById('departure_angle').value = '75.2';
+      document.getElementById('departure_angle').value = '75.2' + '°';
       transferAnlgeImageChange('duna', 'Depart');
       break;
     case 'dres':
-      document.getElementById('departure_angle').value = '-30.3';
+      document.getElementById('departure_angle').value = '-30.3' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
     case 'jool':
-      document.getElementById('departure_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
     case 'laythe':
-      document.getElementById('departure_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange('jool', 'Depart');
       break;
     case 'vall':
-      document.getElementById('departure_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange('jool', 'Depart');
       break;
     case 'tylo':
-      document.getElementById('departure_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange('jool', 'Depart');
       break;
     case 'bop':
-      document.getElementById('departure_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange('jool', 'Depart');
       break;
     case 'pol':
-      document.getElementById('departure_angle').value = '48.7';
+      document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange('jool', 'Depart');
       break;
     case 'eeloo':
-      document.getElementById('departure_angle').value = '-80.3';
+      document.getElementById('departure_angle').value = '-80.3' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
     default:
