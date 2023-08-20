@@ -42,11 +42,21 @@ html, body {
 *********************************** INTERACTIVES
 ***********************************************/
 
-/* toggle boxes */
+/* toggle boxes and slider */
 
 .toggle-boxes label {
   margin-bottom: 10px;
   color: lightgrey;
+}
+
+.slider label {
+  margin-top: 10px;
+  color: lightgrey;
+}
+
+#slider-value {
+  margin-top: -40px; 
+  font-size: 100%;
 }
 
 .toggle-boxes {
@@ -59,9 +69,12 @@ html, body {
   font-family: monospace;
 }
 
-.toggle-boxes label:nth-child(3),
-.toggle-boxes label:nth-child(6) {
+.toggle-boxes label:nth-child(3){
   margin-bottom: 30px;
+}
+
+.toggle-boxes label:nth-child(6) {
+  margin-bottom: 50px;
 }
 
 .toggle-boxes:hover {

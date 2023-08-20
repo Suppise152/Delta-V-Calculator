@@ -1,6 +1,7 @@
 // branchId and node position are stored so they may be used in other functions
 let prevBranch;
 let prevNode;
+let redundancy = 1;
 
 /**
  * Changes the map image to highlight the path for the target planet/node position.
@@ -123,6 +124,55 @@ function handleToggleChange(checkbox) {
 }
 
 /**
+ * Sets the slider to the default value (0).
+ */
+function setDefaultSliderValue() {
+  const slider = document.getElementById('slider');
+  slider.value = 0;
+}
+
+/**
+ * Handles all changes needed for the given slider, and recalculates the sum.
+ * 
+ * @param {*} slider 
+ */
+function handleSliderChange(slider) {
+  const display = document.getElementById('slider-value');
+
+  switch (slider.value) {
+    case '0':
+      redundancy = 1;
+      display.textContent = `+  0% Redundancy`;
+      break;
+    case '1':
+      redundancy = 1.1;
+      display.textContent = `+  10% Redundancy`;
+      break;
+    case '2':
+      redundancy = 1.15;
+      display.textContent = `+  15% Redundancy`;
+      break;
+    case '3':
+      redundancy = 1.25;
+      display.textContent = `+  25% Redundancy`;
+      break;
+    case '4':
+      redundancy = 1.35;
+      display.textContent = `+  35% Redundancy`;
+      break;
+    case '5':
+      redundancy = 1.5;
+      display.textContent = `+  50% Redundancy`;
+      break;
+    default:
+      redundancy = 1;
+      display.textContent = `+  0% Redundancy`;
+      break;
+  }
+  calculateSum(prevBranch, prevNode);
+}
+
+/**
  * Calculates the dV for the trip. 
  * Calls the functions to calculate the phase angles, and handle aerobraking.
  * 
@@ -152,10 +202,8 @@ function calculateSum(branchId, nodeIndex) {
     sum *= 2; // Double the sum if Toggle 2 is checked
   }
   sum -= calculateAerobrake(branchId, nodeIndex);
-  if (toggle7.checked) {
-    sum *= 1.1; // apply 10% redundancy
-    sum = Math.round(sum);
-  }
+  sum *= redundancy; // apply redundancy
+  sum = Math.round(sum);
 
   sum = sum.toLocaleString();
 
