@@ -5,6 +5,7 @@
   <link rel="icon" href="favicon.ico" type="images/general/logo2.png">
 </head>
 <body>
+  <body onload="setDefaultSliderValue()">
   <div class="banner">
     <img id="bannerPic" src="images/general/banner.png" alt="bannerPic">
     <link rel="stylesheet" href="SAC-CSS-1.css">
@@ -59,6 +60,9 @@
           <input type="checkbox" id="toggle3" onchange="handleToggleChange('toggle3')">Aerobrake from Intercept on Arrival
         </label>
         <label>
+          <input type="checkbox" id="toggle7" onchange="handleToggleChange('toggle7')">Calculate from Low Kerbin  
+        </label>
+        <label>
           <input type="checkbox" id="toggle4" onchange="handleToggleChange('toggle4')">Return Only
         </label>
         <label>
@@ -67,8 +71,10 @@
         <label>
           <input type="checkbox" id="toggle6" onchange="handleToggleChange('toggle6')">Aerobrake from Kerbin Intercept
         </label>
-        <label>
-          <input type="checkbox" id="toggle7" onchange="handleToggleChange('toggle7')">+10% Redundancy
+          <div class="slider">
+            <input type="range" id="slider" min="0" max="5" step="1" onchange="handleSliderChange(this)">
+            <div id="slider-value">+ x% Redundancy</div>
+          </div>
         </label>
       </div>
       <div class="tree">
@@ -178,7 +184,7 @@
 </div>
 
   <footer>
-    <span id="version-info">Version 1.0.1</span>
+    <span id="version-info">Version 1.0.3.0</span>
   </footer>  
 
 
