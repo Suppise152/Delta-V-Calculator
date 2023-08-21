@@ -45,7 +45,7 @@ slider.addEventListener('input', function() {
 
 
 /**
- * Handles all changes needed for the given slider, and recalculates the sum.
+ * Handles changes needed for the given slider, and recalculates the sum.
  * 
  * @param {*} slider 
  */
