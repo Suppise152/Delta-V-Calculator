@@ -101,6 +101,7 @@ function handleToggleChange(checkbox) {
   const toggle4 = document.getElementById('toggle4');
   const toggle5 = document.getElementById('toggle5');
   const toggle6 = document.getElementById('toggle6');
+  const toggle7 = document.getElementById('toggle7');
 
   switch (checkbox) {
     case 'toggle1': //round trip
@@ -145,11 +146,14 @@ function handleToggleChange(checkbox) {
         toggle3.disabled = true;
         toggle5.disabled = false;
         toggle6.disabled = false;
+        toggle7.checked = false;
+        toggle7.disabled = true;
         aeroArrive.style.opacity = 0;
         aeroArriveLO.style.opacity = 0;
       } else {
         toggle2.disabled = false;
         toggle3.disabled = false;
+        toggle7.disabled = false;
         document.getElementById('departure_angle').value = '';
       }
       break;
@@ -208,8 +212,13 @@ function calculateSum(branchId, nodeIndex) {
   if (toggle1.checked) {
     sum *= 2; // Double the sum if Toggle 2 is checked
   }
+  if (toggle7.checked) {
+    sum -= 3400;
+  }
   sum -= calculateAerobrake(branchId, nodeIndex);
-  sum *= redundancy; // apply redundancy
+
+  //redundancy
+  sum *= redundancy;
   sum = Math.round(sum);
 
   sum = sum.toLocaleString();
