@@ -287,25 +287,54 @@ function calculateAerobrake(branchId, nodeIndex) {
   if (toggle3.checked){ //intercept arrive
     switch (branchId) {
       case 'duna':
-        for (let i = 0; i <= nodeIndex; i++) {
+        for (let i = 1; i <= nodeIndex; i++) {
           const node = nodes[i];
           const nodeValue = parseInt(node.dataset.value);
           aerobrake += nodeValue;
         }
+        aerobrake += 250;
         break;
       case 'laythe':
-        for (let i = 0; i <= nodeIndex; i++) {
+        for (let i = 1; i <= nodeIndex; i++) {
           const node = nodes[i];
           const nodeValue = parseInt(node.dataset.value);
           aerobrake += nodeValue;
         }
+        aerobrake += 160;
         break;
       case 'eve':
-        for (let i = 0; i <= nodeIndex; i++) {
+        for (let i = 1; i <= nodeIndex; i++) {
           const node = nodes[i];
           const nodeValue = parseInt(node.dataset.value);
           aerobrake += nodeValue;
         }
+        aerobrake += 80;
+        break;
+      case 'jool':
+        for (let i = 1; i <= nodeIndex; i++) {
+          const node = nodes[i];
+          const nodeValue = parseInt(node.dataset.value);
+          aerobrake += nodeValue;
+        }
+        aerobrake += 160;
+        break;
+      case 'gilly':
+        aerobrake += 80;
+        break;
+      case 'ike': 
+        aerobrake += 250;
+        break;
+      case 'vall':
+        aerobrake += 160;
+        break;
+      case 'tylo':
+        aerobrake += 160;
+        break;
+      case 'bop':
+        aerobrake += 160;
+        break;
+      case 'pol':
+        aerobrake += 160;
         break;
     }
   }
