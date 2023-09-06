@@ -1,3 +1,5 @@
+//test
+
 // branchId and node position are stored so they may be used in other functions
 let prevBranch;
 let prevNode;
