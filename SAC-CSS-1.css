@@ -234,6 +234,15 @@ footer {
   left: 62.5%;
 }
 
+#paths{
+  opacity: 0;
+  width: 36%;
+  height: 75%;
+  position: absolute;
+  top: 20%;
+  left: 62.5%;
+}
+
 .aero {
   opacity: 0;
 }
@@ -279,14 +288,34 @@ footer {
   left: 62.5%;
 }
 
-#transferAngleArrive {
+#mohoArrive, #eveArrive, #dunaArrive, 
+#dresArrive, #joolArrive, #eelooArrive {
   width: 12%;
   position: absolute;
   top: 59%;
   left: 35%;
+  opacity: 0;
 }
 
-#transferAngleDepart {
+#emptyPhaseAngleArrive {
+  width: 12%;
+  position: absolute;
+  top: 59%;
+  left: 35%;
+  opacity: 1;
+}
+
+#mohoDepart, #eveDepart, #dunaDepart,
+#dresDepart, #joolDepart, #eelooDepart {
+  width: 12%;
+  position: absolute;
+  top: 59%;
+  left: 47.5%;
+  opacity: 0;
+}
+
+
+#emptyPhaseAngleDepart {
   width: 12%;
   position: absolute;
   top: 59%;
@@ -299,6 +328,31 @@ footer {
   position: absolute;
   top: 0%;
   left: 0%;
+}
+
+#sun0, #sun1,
+#moho0, #moho1, #moho2,
+#eve0, #eve1, #eve2,
+#gilly0, #gilly1, #gilly2,
+#kerbin0, #kerbin1,
+#mun0, #mun1, #mun2,
+#minmus0, #minmus1, #minmus2,
+#duna0, #duna1, #duna2,
+#ike0, #ike1, #ike2,
+#dres0, #dres1, #dres2,
+#jool0, #jool1, #jool2,
+#laythe0, #laythe1, #laythe2,
+#vall0, #vall1, #vall2,
+#tylo0, #tylo1, #tylo2,
+#bop0, #bop1, #bop2,
+#pol0, #pol1, #pol2,
+#eeloo0, #eeloo1, #eeloo2 {
+  opacity: 0;
+  width: 36%;
+  height: 75%;
+  position: absolute;
+  top: 20%;
+  left: 62.5%;
 }
 
 /**************************************
@@ -580,7 +634,6 @@ footer {
   position: absolute;
   top: 37.3%;
   left: 83.7%;
-  text-align: center;
 }
 
 #polOrbit {
@@ -599,7 +652,6 @@ footer {
   position: absolute;
   top: 65.8%;
   left: 86.2%;
-  text-align: center;
 }
 
 #eelooOrbit {
@@ -618,138 +670,113 @@ footer {
 ************************************** NODE LABELS
 *************************************************/
 
+#kerbolLabel, #mohoLabel, #eveLabel, #gillyLabel,
+#kerbinLabel, #munLabel, #minmusLabel, #dunaLabel,
+#ikeLabel, #dresLabel, #joolLabel, #laytheLabel,
+#vallLabel, #tyloLabel, #bopLabel, #polLabel,
+#eelooLabel {
+  color: lightgray;
+  font-family: monospace;
+}
+
 #kerbolLabel {
   position: absolute;
   top: 65.8%;
   left: 60%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #mohoLabel {
   position: absolute;
   top: 57.1%;
   left: 60.8%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #eveLabel {
   position: absolute;
   top: 50.3%;
   left: 61.4%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #gillyLabel {
   position: absolute;
   top: 42.4%;
   left: 60.6%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #kerbinLabel {
   position: absolute;
   top: 95.6%;
   left: 78.2%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #munLabel {
   position: absolute;
   top: 74.5%;
   left: 61.1%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #minmusLabel {
   position: absolute;
   top: 78.5%;
   left: 94.3%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #dunaLabel {
   position: absolute;
   top: 34.5%;
   left: 60.8%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #ikeLabel {
   position: absolute;
   top: 26%;
   left: 61.4%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #dresLabel {
   position: absolute;
   top: 20.6%;
   left: 60.9%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #joolLabel {
   position: absolute;
   top: 60.2%;
   left: 94%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #laytheLabel {
   position: absolute;
   top: 18%;
   left: 95.1%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #vallLabel {
   position: absolute;
   top: 18%;
   left: 91.7%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #tyloLabel {
   position: absolute;
   top: 18%;
   left: 87.1%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #bopLabel {
   position: absolute;
   top: 18%;
   left: 83.1%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #polLabel {
   position: absolute;
   top: 18%;
   left: 79%;
-  color: lightgray;
-  font-family: monospace;
 }
 
 #eelooLabel {
   position: absolute;
   top: 69.7%;
   left: 94.3%;
-  color: lightgray;
-  font-family: monospace;
 }

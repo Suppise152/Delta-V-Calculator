@@ -1,8 +1,11 @@
 //test
 
-// branchId and node position are stored so they may be used in other functions
+// storage for vairables
 let prevBranch;
 let prevNode;
+let prevImg;
+let prevPhaseArrive;
+let prevPhaseDepart;
 let redundancy = 1;
 
 /**
@@ -14,9 +17,23 @@ let redundancy = 1;
  * @param {*} nodeIndex Position of the node in the branch.
  */
 function changeImage(branchId, nodeIndex) {
-  const imagePath = 'images/maps/' + branchId + nodeIndex + '.png';
-  const calculatorImage = document.getElementById('calculator-image');
-  calculatorImage.src = imagePath;
+  //enables current image
+  calculatorImage = document.getElementById(branchId + nodeIndex);
+  calculatorImage.style.opacity = 1;
+
+  // if first change, sets previous image to calculator-image
+  if (prevImg == null) {
+    prevImg = document.getElementById('calculator-image');
+  } 
+
+  // returns if same image is selected
+  if (prevImg == calculatorImage) {
+    return;
+  }
+
+  // clears previous image
+  prevImg.style.opacity = 0;
+  prevImg = calculatorImage;
 }
 
 /**
@@ -26,9 +43,31 @@ function changeImage(branchId, nodeIndex) {
  * @param {*} direction Direction that the player will be traveling in.
  */
 function transferAnlgeImageChange(branchId, direction){
-  const imagePath = 'images/transferAngles/' + branchId + direction + '.png';
-  const transferAngleImage = document.getElementById('transferAngle' + direction);
-  transferAngleImage.src = imagePath;
+  //enables current image
+  phaseImg = document.getElementById(branchId + direction);
+  phaseImg.style.opacity = 1;
+
+  // if first change, sets previous image to emptyPhaseAngle
+  if (prevPhaseArrive == null) {
+    prevPhaseArrive = document.getElementById('emptyPhaseAngleArrive');
+  }
+  if (prevPhaseDepart == null) {
+    prevPhaseDepart = document.getElementById('emptyPhaseAngleDepart');
+  }
+
+  // returns if same image is selected
+  if (prevPhaseArrive == phaseImg || prevPhaseDepart == phaseImg) {
+    return;
+  }
+
+  // clears previous image
+  if (direction == 'Arrive') {
+    prevPhaseArrive.style.opacity = 0;
+    prevPhaseArrive = phaseImg;
+  } else {
+    prevPhaseDepart.style.opacity = 0;
+    prevPhaseDepart = phaseImg;
+  }
 }
 
 /**
@@ -152,6 +191,7 @@ function handleToggleChange(checkbox) {
         toggle7.disabled = true;
         aeroArrive.style.opacity = 0;
         aeroArriveLO.style.opacity = 0;
+        transferAnlgeImageChange('emptyPhaseAngle', 'Arrive');
       } else {
         toggle2.disabled = false;
         toggle3.disabled = false;
