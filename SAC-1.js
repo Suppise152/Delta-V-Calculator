@@ -324,6 +324,9 @@ function calculateAerobrake(branchId, nodeIndex) {
       case 'eve':
         aerobrake += 8000;
         break;
+      case 'jool':
+        aerobrake += 14000;
+        break;
     }
   }
   if (toggle3.checked){ //intercept arrive
