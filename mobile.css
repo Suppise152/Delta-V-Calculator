@@ -1,0 +1,833 @@
+@media only screen and (max-width: 1200px) {
+/**********************************************
+  *************************** GENERAL POSITIONING
+  **********************************************/
+
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .banner {
+    height: 5%;
+    background-color: rgb(59, 140, 207);
+  }
+
+  .content {
+    display: flex;
+    height: 95%;
+    width: 100%;
+    color: lightgray;
+  }
+
+  .left-section {
+    display: none;
+  }
+
+  .right-section {
+    flex-basis: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(28, 28, 38);
+    padding: 20px;
+  }
+
+  /***********************************************
+*********************************** INTERACTIVES
+***********************************************/
+
+  /* toggle boxes and slider */
+
+  .toggle-boxes label {
+    margin-bottom: 20px;
+    color: lightgrey;
+  }
+
+  .slider label {
+    margin-top: 10px;
+    color: lightgrey;
+  }
+
+  #slider-value {
+    margin-top: -60px;
+    font-size: 100%;
+  }
+
+  .toggle-boxes {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 18%;
+    left: 2%;
+    font-size: 135%;
+    font-family: monospace;
+  }
+
+  .toggle-boxes label:nth-child(3),
+  .toggle-boxes label:nth-child(4) {
+    margin-bottom: 30px;
+  }
+
+  .toggle-boxes label:nth-child(7) {
+    margin-bottom: 70px;
+  }
+
+  .toggle-boxes:hover {
+    cursor: pointer;
+  }
+
+
+  /*branches and nodes*/
+
+  .node {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4%;
+    height: 4%;
+    border-radius: 50%;
+    background-color: grey;
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    margin-right: 10px;
+    font-size: 9px;
+    font-family: monospace;
+  }
+
+  .node:hover {
+    cursor: pointer;
+  }
+
+  /**************************************************
+***************************** TXT AND MISC POSITONS
+**************************************************/
+
+  #title {
+    position: absolute;
+    top: 0.5%;
+    left: 12%;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    font-size: 80px;
+    color: rgb(255, 255, 255);
+  }
+
+  .left-section h2 {
+    font-size: 22px;
+    padding-top: 15px;
+    margin-bottom: 0px;
+    font-family: monospace;
+  }
+
+  .left-section p {
+    font-size: 15px;
+    line-height: 1.5;
+    font-family: monospace;
+  }
+
+  #transferAngleArriveText {
+    width: 12%;
+    text-align: center;
+    position: absolute;
+    top: 55.5%;
+    left: 2%;
+    color: white;
+    font-family: monospace;
+  }
+
+  #transferAngleDepartText {
+    width: 12%;
+    text-align: center;
+    position: absolute;
+    top: 55.5%;
+    left: 14.5%;
+    color: white;
+    font-family: monospace;
+  }
+
+  footer {
+    position: fixed;
+    bottom: 20px;
+    left: 15px;
+    font-family: monospace;
+  }
+
+  #version-info {
+    font-size: 18px;
+    color: grey;
+  }
+
+  /********************************************
+************************************ DISPLAYS
+********************************************/
+
+  #dV_display {
+    height: 30px;
+    width: 200px;
+    font-size: 20px;
+    text-align: center;
+    position: absolute;
+    left: 2%;
+    bottom: 10%;
+    font-family: monospace;
+  }
+
+  #dV {
+    position: absolute;
+    left: 2%;
+    bottom: 15%;
+    font-family: monospace;
+  }
+
+  #arrival_angle {
+    height: 30px;
+    width: 100px;
+    font-size: 17px;
+    text-align: center;
+    position: absolute;
+    left: 51.5%;
+    bottom: 10%;
+    font-family: monospace;
+  }
+
+  #arrival {
+    position: absolute;
+    left: 51.5%;
+    bottom: 15%;
+    font-family: monospace;
+  }
+
+  #departure_angle {
+    height: 30px;
+    width: 100px;
+    font-size: 17px;
+    text-align: center;
+    position: absolute;
+    left: 61%;
+    bottom: 10%;
+    font-family: monospace;
+  }
+
+  #departure {
+    position: absolute;
+    left: 61%;
+    bottom: 15%;
+    font-family: monospace;
+  }
+
+  /***************************************
+***************************** ALL IMAGES
+***************************************/
+
+  #calculator-image {
+    width: 62%;
+    height: 75%;
+    position: absolute;
+    top: 20%;
+    left: 35%;
+  }
+
+  #paths {
+    opacity: 0;
+    width: 36%;
+    height: 75%;
+    position: absolute;
+    top: 20%;
+    left: 62.5%;
+  }
+
+  .aero {
+    opacity: 0;
+  }
+
+  #aeroArrive {
+    opacity: 1;
+  }
+
+  #aeroReturn {
+    opacity: 1;
+  }
+
+
+  #aeroArrive {
+    width: 36%;
+    height: 75%;
+    position: absolute;
+    top: 20%;
+    left: 62.5%;
+  }
+
+  #aeroReturn {
+    width: 36%;
+    height: 75%;
+    position: absolute;
+    top: 20%;
+    left: 62.5%;
+  }
+
+  #aeroArriveLO {
+    width: 36%;
+    height: 75%;
+    position: absolute;
+    top: 20%;
+    left: 62.5%;
+  }
+
+  #aeroReturnLO {
+    width: 36%;
+    height: 75%;
+    position: absolute;
+    top: 20%;
+    left: 62.5%;
+  }
+
+  #mohoArrive,
+  #eveArrive,
+  #dunaArrive,
+  #dresArrive,
+  #joolArrive,
+  #eelooArrive {
+    width: 12%;
+    position: absolute;
+    top: 59%;
+    left: 35%;
+    opacity: 0;
+  }
+
+  #emptyPhaseAngleArrive {
+    width: 12%;
+    position: absolute;
+    top: 59%;
+    left: 35%;
+    opacity: 1;
+  }
+
+  #mohoDepart,
+  #eveDepart,
+  #dunaDepart,
+  #dresDepart,
+  #joolDepart,
+  #eelooDepart {
+    width: 12%;
+    position: absolute;
+    top: 59%;
+    left: 47.5%;
+    opacity: 0;
+  }
+
+
+  #emptyPhaseAngleDepart {
+    width: 12%;
+    position: absolute;
+    top: 59%;
+    left: 47.5%;
+  }
+
+  #bannerPic {
+    width: 100%;
+    height: 17%;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+  }
+
+  #sun0,
+  #sun1,
+  #moho0,
+  #moho1,
+  #moho2,
+  #eve0,
+  #eve1,
+  #eve2,
+  #gilly0,
+  #gilly1,
+  #gilly2,
+  #kerbin0,
+  #kerbin1,
+  #mun0,
+  #mun1,
+  #mun2,
+  #minmus0,
+  #minmus1,
+  #minmus2,
+  #duna0,
+  #duna1,
+  #duna2,
+  #ike0,
+  #ike1,
+  #ike2,
+  #dres0,
+  #dres1,
+  #dres2,
+  #jool0,
+  #jool1,
+  #jool2,
+  #laythe0,
+  #laythe1,
+  #laythe2,
+  #vall0,
+  #vall1,
+  #vall2,
+  #tylo0,
+  #tylo1,
+  #tylo2,
+  #bop0,
+  #bop1,
+  #bop2,
+  #pol0,
+  #pol1,
+  #pol2,
+  #eeloo0,
+  #eeloo1,
+  #eeloo2 {
+    opacity: 0;
+    width: 36%;
+    height: 75%;
+    position: absolute;
+    top: 20%;
+    left: 62.5%;
+  }
+
+  /**************************************
+***********************  NODE POSITIONS
+**************************************/
+
+  #sunOrbit {
+    position: absolute;
+    top: 66%;
+    left: 68.8%;
+  }
+
+  #sunLand {
+    position: absolute;
+    top: 66%;
+    left: 63.2%;
+  }
+
+  #mohoIntercept {
+    position: absolute;
+    top: 57.1%;
+    left: 72.9%;
+    text-align: center;
+  }
+
+  #mohoOrbit {
+    position: absolute;
+    top: 57.1%;
+    left: 68%;
+  }
+
+  #mohoLand {
+    position: absolute;
+    top: 57.1%;
+    left: 63.2%;
+  }
+
+  #eveIntercept {
+    position: absolute;
+    top: 50.3%;
+    left: 74.2%;
+    text-align: center;
+  }
+
+  #eveOrbit {
+    position: absolute;
+    top: 50.3%;
+    left: 68.4%;
+  }
+
+  #eveLand {
+    position: absolute;
+    top: 50.3%;
+    left: 63.2%;
+  }
+
+  #gillyIntercept {
+    position: absolute;
+    top: 42.1%;
+    left: 71.1%;
+    text-align: center;
+  }
+
+  #gillyOrbit {
+    position: absolute;
+    top: 42.1%;
+    left: 67.2%;
+  }
+
+  #gillyLand {
+    position: absolute;
+    top: 42.1%;
+    left: 63.2%;
+  }
+
+  #kerbinOrbit {
+    position: absolute;
+    top: 81.1%;
+    left: 78.7%;
+  }
+
+  #kerbinEscape {
+    position: absolute;
+    top: 65.8%;
+    left: 78.7%;
+  }
+
+  #munIntercept {
+    position: absolute;
+    top: 74.9%;
+    left: 74.2%;
+    text-align: center;
+  }
+
+  #munOrbit {
+    position: absolute;
+    top: 74.9%;
+    left: 68.3%;
+  }
+
+  #munLand {
+    position: absolute;
+    top: 74.9%;
+    left: 63.2%;
+  }
+
+  #minmusIntercept {
+    position: absolute;
+    top: 75%;
+    left: 82.7%;
+    text-align: center;
+  }
+
+  #minmusOrbit {
+    position: absolute;
+    top: 74.9%;
+    left: 87.9%;
+  }
+
+  #minmusLand {
+    position: absolute;
+    top: 74.9%;
+    left: 94.3%;
+  }
+
+  #dunaIntercept {
+    position: absolute;
+    top: 34.1%;
+    left: 71.5%;
+    text-align: center;
+  }
+
+  #dunaOrbit {
+    position: absolute;
+    top: 34.1%;
+    left: 67.3%;
+  }
+
+  #dunaLand {
+    position: absolute;
+    top: 34.1%;
+    left: 63.2%;
+  }
+
+  #ikeIntercept {
+    position: absolute;
+    top: 29.5%;
+    left: 71.4%;
+    text-align: center;
+  }
+
+  #ikeOrbit {
+    position: absolute;
+    top: 25.2%;
+    left: 68.5%;
+  }
+
+  #ikeLand {
+    position: absolute;
+    top: 25.2%;
+    left: 63.2%;
+  }
+
+  #dresIntercept {
+    position: absolute;
+    top: 35.9%;
+    left: 80.1%;
+    text-align: center;
+  }
+
+  #dresOrbit {
+    position: absolute;
+    top: 19.6%;
+    left: 70.3%;
+  }
+
+  #dresLand {
+    position: absolute;
+    top: 19.6%;
+    left: 63.2%;
+  }
+
+  #joolIntercept {
+    position: absolute;
+    top: 42.6%;
+    left: 87.2%;
+    text-align: center;
+  }
+
+  #joolOrbit {
+    position: absolute;
+    top: 46.7%;
+    left: 93.7%;
+  }
+
+  #joolLand {
+    position: absolute;
+    top: 55.8%;
+    left: 93.9%;
+  }
+
+  #laytheIntercept {
+    position: absolute;
+    top: 37.3%;
+    left: 90.3%;
+    text-align: center;
+  }
+
+  #laytheOrbit {
+    position: absolute;
+    top: 28%;
+    left: 95.4%;
+  }
+
+  #laytheLand {
+    position: absolute;
+    top: 20.2%;
+    left: 95.6%;
+  }
+
+  #vallIntercept {
+    position: absolute;
+    top: 32.9%;
+    left: 88.7%;
+    text-align: center;
+  }
+
+  #vallOrbit {
+    position: absolute;
+    top: 27.5%;
+    left: 91.5%;
+  }
+
+  #vallLand {
+    position: absolute;
+    top: 20.2%;
+    left: 91.9%;
+  }
+
+  #tyloIntercept {
+    position: absolute;
+    top: 36.2%;
+    left: 87.1%;
+    text-align: center;
+  }
+
+  #tyloOrbit {
+    position: absolute;
+    top: 27.9%;
+    left: 87.1%;
+  }
+
+  #tyloLand {
+    position: absolute;
+    top: 20.2%;
+    left: 87.1%;
+  }
+
+  #bopIntercept {
+    position: absolute;
+    top: 32.3%;
+    left: 85.5%;
+    text-align: center;
+  }
+
+  #bopOrbit {
+    position: absolute;
+    top: 27.7%;
+    left: 83.4%;
+  }
+
+  #bopLand {
+    position: absolute;
+    top: 20.2%;
+    left: 83.1%;
+  }
+
+  #polIntercept {
+    position: absolute;
+    top: 37.3%;
+    left: 84%;
+  }
+
+  #polOrbit {
+    position: absolute;
+    top: 27.8%;
+    left: 79.1%;
+  }
+
+  #polLand {
+    position: absolute;
+    top: 20.2%;
+    left: 78.9%;
+  }
+
+  #eelooIntercept {
+    position: absolute;
+    top: 66%;
+    left: 86%;
+  }
+
+  #eelooOrbit {
+    position: absolute;
+    top: 66%;
+    left: 89.8%;
+  }
+
+  #eelooLand {
+    position: absolute;
+    top: 66%;
+    left: 94.3%;
+  }
+
+  /*************************************************
+************************************** NODE LABELS
+*************************************************/
+
+  #kerbolLabel,
+  #mohoLabel,
+  #eveLabel,
+  #gillyLabel,
+  #kerbinLabel,
+  #munLabel,
+  #minmusLabel,
+  #dunaLabel,
+  #ikeLabel,
+  #dresLabel,
+  #joolLabel,
+  #laytheLabel,
+  #vallLabel,
+  #tyloLabel,
+  #bopLabel,
+  #polLabel,
+  #eelooLabel {
+    color: lightgray;
+    font-family: monospace;
+  }
+
+  #kerbolLabel {
+    position: absolute;
+    top: 65.8%;
+    left: 60%;
+  }
+
+  #mohoLabel {
+    position: absolute;
+    top: 57.1%;
+    left: 60.8%;
+  }
+
+  #eveLabel {
+    position: absolute;
+    top: 50.3%;
+    left: 61.4%;
+  }
+
+  #gillyLabel {
+    position: absolute;
+    top: 42.4%;
+    left: 60.6%;
+  }
+
+  #kerbinLabel {
+    position: absolute;
+    top: 95.6%;
+    left: 78.2%;
+  }
+
+  #munLabel {
+    position: absolute;
+    top: 74.5%;
+    left: 61.1%;
+  }
+
+  #minmusLabel {
+    position: absolute;
+    top: 78.5%;
+    left: 94.3%;
+  }
+
+  #dunaLabel {
+    position: absolute;
+    top: 34.5%;
+    left: 60.8%;
+  }
+
+  #ikeLabel {
+    position: absolute;
+    top: 26%;
+    left: 61.4%;
+  }
+
+  #dresLabel {
+    position: absolute;
+    top: 20.6%;
+    left: 60.9%;
+  }
+
+  #joolLabel {
+    position: absolute;
+    top: 60.2%;
+    left: 94%;
+  }
+
+  #laytheLabel {
+    position: absolute;
+    top: 18%;
+    left: 95.1%;
+  }
+
+  #vallLabel {
+    position: absolute;
+    top: 18%;
+    left: 91.7%;
+  }
+
+  #tyloLabel {
+    position: absolute;
+    top: 18%;
+    left: 87.1%;
+  }
+
+  #bopLabel {
+    position: absolute;
+    top: 18%;
+    left: 83.1%;
+  }
+
+  #polLabel {
+    position: absolute;
+    top: 18%;
+    left: 79%;
+  }
+
+  #eelooLabel {
+    position: absolute;
+    top: 69.7%;
+    left: 94.3%;
+  }
+}
