@@ -43,7 +43,8 @@
   /* toggle boxes and slider */
 
   .toggle-boxes label {
-    margin-bottom: 20px;
+    max-width: 66%;
+    margin-bottom: 25px;
     color: lightgrey;
   }
 
@@ -57,13 +58,14 @@
     font-size: 100%;
   }
 
+
   .toggle-boxes {
     display: flex;
     flex-direction: column;
     position: absolute;
     top: 18%;
     left: 2%;
-    font-size: 20px;
+    font-size: 25px;
     font-family: monospace;
   }
 
@@ -75,11 +77,6 @@
   .toggle-boxes label:nth-child(7) {
     margin-bottom: 70px;
   }
-
-  .toggle-boxes:hover {
-    cursor: pointer;
-  }
-
 
   /*branches and nodes*/
 
@@ -157,19 +154,19 @@
   #dV_display {
     height: 30px;
     width: 200px;
-    font-size: 20px;
+    font-size: 25px;
     text-align: center;
     position: absolute;
     left: 5%;
-    bottom: 25%;
+    bottom: 35%;
     font-family: monospace;
   }
 
   #dV {
     position: absolute;
     left: 5%;
-    bottom: 27%;
-    font-size: 20px;
+    bottom: 37%;
+    font-size: 25px;
     font-family: monospace;
   }
 
@@ -180,15 +177,15 @@
     text-align: center;
     position: absolute;
     left: 5%;
-    bottom: 17%;
+    bottom: 27%;
     font-family: monospace;
   }
 
   #arrival {
     position: absolute;
     left: 5%;
-    bottom: 20%;
-    font-size: 19px;
+    bottom: 30%;
+    font-size: 20px;
     font-family: monospace;
   }
 
@@ -199,14 +196,14 @@
     text-align: center;
     position: absolute;
     left: 5%;
-    bottom: 10%;
+    bottom: 20%;
     font-family: monospace;
   }
 
   #departure {
     position: absolute;
     left: 5%;
-    bottom: 12%;
+    bottom: 22%;
     font-size: 20px;
     font-family: monospace;
   }
