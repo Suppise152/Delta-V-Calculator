@@ -43,7 +43,7 @@
   /* toggle boxes and slider */
 
   .toggle-boxes label {
-    max-width: 66%;
+    max-width: 58%;
     margin-bottom: 25px;
     color: lightgrey;
   }
@@ -65,7 +65,7 @@
     position: absolute;
     top: 18%;
     left: 2%;
-    font-size: 25px;
+    font-size: 30px;
     font-family: monospace;
   }
 
@@ -152,60 +152,60 @@
 ********************************************/
 
   #dV_display {
-    height: 30px;
-    width: 200px;
-    font-size: 25px;
-    text-align: center;
+    height: 45px;
+    width: 230px;
     position: absolute;
-    left: 5%;
-    bottom: 35%;
+    left: 3%;
+    bottom: 25%;
     font-family: monospace;
+    text-align: center;
+    font-size: 35px;
   }
 
   #dV {
     position: absolute;
-    left: 5%;
-    bottom: 37%;
-    font-size: 25px;
+    left: 3%;
+    bottom: 28%;
     font-family: monospace;
+    font-size: 30px;
   }
 
   #arrival_angle {
-    height: 30px;
-    width: 100px;
-    font-size: 20px;
-    text-align: center;
+    height: 40px;
+    width: 130px;
     position: absolute;
-    left: 5%;
-    bottom: 27%;
+    left: 3%;
+    bottom: 12%;
     font-family: monospace;
+    text-align: center;
+    font-size: 30px;
   }
 
   #arrival {
     position: absolute;
-    left: 5%;
-    bottom: 30%;
-    font-size: 20px;
+    left: 3%;
+    bottom: 15%;
     font-family: monospace;
+    font-size: 25px;
   }
 
   #departure_angle {
-    height: 30px;
-    width: 100px;
-    font-size: 20px;
-    text-align: center;
+    height: 40px;
+    width: 130px;
     position: absolute;
-    left: 5%;
-    bottom: 20%;
+    left: 3%;
+    bottom: 5%;
     font-family: monospace;
+    text-align: center;
+    font-size: 30px;
   }
 
   #departure {
     position: absolute;
-    left: 5%;
-    bottom: 22%;
-    font-size: 20px;
+    left: 3%;
+    bottom: 8%;
     font-family: monospace;
+    font-size: 25px;
   }
 
   /***************************************
