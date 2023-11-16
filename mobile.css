@@ -156,7 +156,7 @@
     width: 230px;
     position: absolute;
     left: 3%;
-    bottom: 25%;
+    bottom: 28%;
     font-family: monospace;
     text-align: center;
     font-size: 35px;
@@ -165,7 +165,7 @@
   #dV {
     position: absolute;
     left: 3%;
-    bottom: 28%;
+    bottom: 33%;
     font-family: monospace;
     font-size: 30px;
   }
@@ -175,7 +175,7 @@
     width: 130px;
     position: absolute;
     left: 3%;
-    bottom: 12%;
+    bottom: 17%;
     font-family: monospace;
     text-align: center;
     font-size: 30px;
@@ -184,7 +184,7 @@
   #arrival {
     position: absolute;
     left: 3%;
-    bottom: 15%;
+    bottom: 22%;
     font-family: monospace;
     font-size: 25px;
   }
@@ -194,7 +194,7 @@
     width: 130px;
     position: absolute;
     left: 3%;
-    bottom: 5%;
+    bottom: 6%;
     font-family: monospace;
     text-align: center;
     font-size: 30px;
@@ -203,7 +203,7 @@
   #departure {
     position: absolute;
     left: 3%;
-    bottom: 8%;
+    bottom: 11%;
     font-family: monospace;
     font-size: 25px;
   }
