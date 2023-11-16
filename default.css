@@ -342,6 +342,10 @@
     left: 0%;
   }
 
+  #mobileBannerPic {
+    display: none;
+  }
+
   #sun0,
   #sun1,
   #moho0,
