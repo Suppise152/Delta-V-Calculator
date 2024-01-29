@@ -24,7 +24,7 @@ function changeImage(branchId, nodeIndex) {
   // if first change, sets previous image to calculator-image
   if (prevImg == null) {
     prevImg = document.getElementById('calculator-image');
-  } 
+  }
 
   // returns if same image is selected
   if (prevImg == calculatorImage) {
@@ -42,7 +42,7 @@ function changeImage(branchId, nodeIndex) {
  * @param {*} branchId Target planet.
  * @param {*} direction Direction that the player will be traveling in.
  */
-function transferAnlgeImageChange(branchId, direction){
+function transferAnlgeImageChange(branchId, direction) {
   //enables current image
   phaseImg = document.getElementById(branchId + direction);
   phaseImg.style.opacity = 1;
@@ -80,7 +80,7 @@ const sliderValue = document.getElementById('slider-value');
 slider.value = 0;
 
 // Add an input event listener to the slider
-slider.addEventListener('input', function() {
+slider.addEventListener('input', function () {
   handleSliderChange(slider); // Call your calculation function here with the slider value
 });
 
@@ -151,7 +151,7 @@ function handleToggleChange(checkbox) {
         if (toggle2.disabled) {
           toggle2.disabled = false;
         }
-        if(toggle3.disabled){
+        if (toggle3.disabled) {
           toggle3.disabled = false;
         }
       } else {
@@ -165,16 +165,16 @@ function handleToggleChange(checkbox) {
         toggle3.checked = false;
         aeroArriveLO.style.opacity = 1;
         aeroArrive.style.opacity = 0;
-      }else {
+      } else {
         aeroArriveLO.style.opacity = 0;
       }
-        break;
+      break;
     case 'toggle3': //aerobrake intercept arrival
       if (toggle3.checked) {
         toggle2.checked = false;
         aeroArrive.style.opacity = 1;
         aeroArriveLO.style.opacity = 0;
-      }else {
+      } else {
         aeroArrive.style.opacity = 0;
       }
       break;
@@ -219,7 +219,7 @@ function handleToggleChange(checkbox) {
       break;
     default:
       break;
-    }
+  }
 
   //update the dV
   calculateSum(prevBranch, prevNode);
@@ -267,6 +267,7 @@ function calculateSum(branchId, nodeIndex) {
 
   // Displays the sum and phase angles
   document.getElementById('dV_display').value = sum + ' m/s';
+  populateDropdown();
   if (toggle1.checked) {
     phaseAngleArrive(branchId);
     phaseAngleDepart(branchId);
@@ -277,7 +278,7 @@ function calculateSum(branchId, nodeIndex) {
     phaseAngleDepart(branchId);
     return;
   }
-  
+
   phaseAngleArrive(branchId);
 }
 
@@ -329,7 +330,7 @@ function calculateAerobrake(branchId, nodeIndex) {
         break;
     }
   }
-  if (toggle3.checked){ //intercept arrive
+  if (toggle3.checked) { //intercept arrive
     switch (branchId) {
       case 'duna':
         for (let i = 1; i <= nodeIndex; i++) {
@@ -366,7 +367,7 @@ function calculateAerobrake(branchId, nodeIndex) {
       case 'gilly':
         aerobrake += 80;
         break;
-      case 'ike': 
+      case 'ike':
         aerobrake += 250;
         break;
       case 'vall':
@@ -383,10 +384,10 @@ function calculateAerobrake(branchId, nodeIndex) {
         break;
     }
   }
-  if(toggle5.checked && (toggle1.checked || toggle4.checked)){ //low orbit depart
+  if (toggle5.checked && (toggle1.checked || toggle4.checked)) { //low orbit depart
     aerobrake += 3400;
   }
-  if(toggle6.checked && (toggle1.checked || toggle4.checked)){ //intercept depart
+  if (toggle6.checked && (toggle1.checked || toggle4.checked)) { //intercept depart
     switch (branchId) {
       case 'kerbin':
         for (let i = 0; i <= 0; i++) {
@@ -450,47 +451,119 @@ function calculateAerobrake(branchId, nodeIndex) {
   return aerobrake;
 }
 
-// Assume data is your array list
-let data1 = ["Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry"];
-let data2 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+// dropdown data
+let kerbinText = ["Low Kerbin orbit:", "Kerbin Escape:", "Kerbin Encounter:", "Kerbin descent:"];
+let kerbinData = [3400, 950, 950, 3400];
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Populate the dropdown with entries
-    populateDropdown();
+let munText = ["Mun Encounter:", "Low Mun orbit:", "Mun Landing:", "Low Mun Orbit:", "Mun escape:"];
+let munData = [860, 310, 580, 580, 310];
 
-    // Add a click event listener to toggle the dropdown when clicking on the display text box
-    document.getElementById('dV_display').addEventListener('click', function(event) {
-        event.stopPropagation(); // Prevent the click event from reaching the document
-        toggleDropdown();
-    });
+let minmusText = ["Minmus Encounter:", "Low Minmus orbit:", "Minmus Landing:", "Low Minmus Orbit:", "Minmus escape:"];
+let minmusData = [930, 160, 180, 180, 160];
 
-    // Add a click event listener to close the dropdown when clicking outside
-    document.addEventListener('click', function() {
-        closeDropdown();
-    });
+let kerbinReturnText = ["Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry"];
+let kerbinReturnData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  // Add a click event listener to toggle the dropdown when clicking on the display text box
+  document.getElementById('dV_display').addEventListener('click', function (event) {
+    event.stopPropagation(); // Prevent the click event from reaching the document
+    toggleDropdown();
+  });
+
+  // Add a click event listener to close the dropdown when clicking outside
+  document.addEventListener('click', function () {
+    closeDropdown();
+  });
 });
 
 function populateDropdown() {
-    let dropdown = document.getElementById('dv-dropdown');
+  let dropdown = document.getElementById('dv-dropdown');
 
-    // Populate the dropdown with entries
-    for (let i = 0; i < data1.length; i++) {
+  // Clear the dropdown of existing entries
+  dropdown.innerHTML = '';
+
+  let entry = document.createElement('div');
+  entry.textContent = ' - Start - ';
+  dropdown.appendChild(entry);
+
+  // Populate the dropdown with entries
+  switch (prevBranch) {
+    case 'kerbin': // Kerbin-----------------------------------------------------------------------
+      for (let i = 0; i <= prevNode; i++) {
         let entry = document.createElement('div');
-        entry.textContent = data1[i] + ' ' + data2[i];
-        entry.dataset.value = data2[i];
-
+        entry.textContent = kerbinText[i] + ' ' + kerbinData[i];
         dropdown.appendChild(entry);
-    }
+      }
+      if (toggle1.checked) {
+        if (toggle5.checked) {
+
+        } else if (toggle6.checked) {
+          for (let i = prevNode + 1; i <= prevNode * 2 + 1; i++) {
+            let entry = document.createElement('div');
+            entry.textContent = kerbinText[i] + ' ' + 0;
+            dropdown.appendChild(entry);
+          }
+        } else {
+          for (let i = prevNode + 1; i <= prevNode * 2 + 1; i++) {
+            let entry = document.createElement('div');
+            entry.textContent = kerbinText[i] + ' ' + kerbinData[i];
+            dropdown.appendChild(entry);
+          }
+        }
+      }
+      break;
+    case 'mun': // Mun------------------------------------------------------------------------------
+      entry = document.createElement('div');
+      entry.textContent = kerbinText[0] + ' ' + kerbinData[0];
+      dropdown.appendChild(entry);
+      for (let i = 0; i <= prevNode; i++) {
+        let entry = document.createElement('div');
+        entry.textContent = munText[i] + ' ' + munData[i];
+        dropdown.appendChild(entry);
+      }
+
+      break;
+    case 'minmus': // Minmus------------------------------------------------------------------------
+      entry = document.createElement('div');
+      entry.textContent = kerbinText[0] + ' ' + kerbinData[0];
+      dropdown.appendChild(entry);
+      for (let i = 0; i <= prevNode; i++) {
+        let entry = document.createElement('div');
+        entry.textContent = minmusText[i] + ' ' + minmusData[i];
+        dropdown.appendChild(entry);
+      }
+      break;
+    default: // Interplanetary ---------------------------------------------------------------------
+      if (nodeIndex != 0) {
+        entry = document.createElement('div');
+        entry.textContent = kerbinText[0] + ' ' + kerbinData[0];
+        dropdown.appendChild(entry);
+        let entry = document.createElement('div');
+        entry.textContent = kerbinText[1] + ' ' + kerbinData[1];
+        dropdown.appendChild(entry);
+      }
+      break;
+  }
+
+  // Populate the dropdown with entries
+  // for (let i = 0; i < (departNodes + returnNodes); i++) {
+  //   let entry = document.createElement('div');
+  //   entry.textContent = kerbinLeaveText[i] + ' ' + kerbinLeaveData[i];
+
+  //   dropdown.appendChild(entry);
+  // }
 }
 
 function toggleDropdown() {
-    let dropdownContent = document.getElementById('dv-dropdown');
-    dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
+  let dropdownContent = document.getElementById('dv-dropdown');
+  dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
 }
 
 function closeDropdown() {
-    let dropdownContent = document.getElementById('dv-dropdown');
-    dropdownContent.style.display = 'none';
+  let dropdownContent = document.getElementById('dv-dropdown');
+  dropdownContent.style.display = 'none';
 }
 
 
