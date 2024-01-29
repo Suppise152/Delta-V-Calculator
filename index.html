@@ -1,36 +1,47 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>KSP Delta V Calculator | Suppise Aerospace</title>
   <link rel="icon" href="favicon.ico" type="images/general/logo2.png">
 </head>
-<body>
-  <body onload="setDefaultSliderValue()">
-  <div class="banner">
-    <img id="bannerPic" src="images/general/banner.png" alt="bannerPic">
-    <img id="mobileBannerPic" src="images/general/mobileBanner.png" alt="mobileBannerPic">
 
-    <link rel="stylesheet"href="default.css">
-    <link rel="stylesheet"href="mobile.css" media="screen and (max-width: 1200px)">
-  </div>
-  <div class="content">
-    <div class="left-section">
-      <h2>How to Use this Site</h2>
-      <p>
-        This is an interactive ΔV map. Simply click on a node on a branch to determine the target planet, and how you would like to explore it. Toggle the checkboxes to tweak the calculations to your mission parameters, and watch the required ΔV values as well as the relevant transfer angles be displayed in real time.
-      </p>
-    
-      <h2>Using a Delta-V Map</h2>
-      <p>
-        To use a typical ΔV map, you add all the values along the branch, from your starting position to your target position. A white arrow in the direction of your travel means you can aerobrake there and can therefore exclude the value from your calculation. The values above a branch indicate plane changes. This site performs all these calculations for you.
-      </p>
-    
-      <h2>What is Delta-V (ΔV)</h2>
-      <p>
-        Delta-V, or ΔV, is a crafts capacity to change its velocity, and can be interpreted as the range of a given craft. Similar to how a car may say it has 50 km of fuel left, a spacecraft may have 5000 m/s of ΔV left. Performing maneuvers such as changing your orbit or landing on a planet will use up some of your ΔV. Knowing how much ΔV is required to perform a given task is essential for planning any mission.
-      </p>
+<body>
+
+  <body onload="setDefaultSliderValue()">
+    <div class="banner">
+      <img id="bannerPic" src="images/general/banner.png" alt="bannerPic">
+      <img id="mobileBannerPic" src="images/general/mobileBanner.png" alt="mobileBannerPic">
+
+      <link rel="stylesheet" href="default.css">
+      <link rel="stylesheet" href="mobile.css" media="screen and (max-width: 1200px)">
     </div>
-    <div class="right-section"></div>
+    <div class="content">
+      <div class="left-section">
+        <h2>How to Use this Site</h2>
+        <p>
+          This is an interactive ΔV map. Simply click on a node on a branch to determine the target planet, and how you
+          would like to explore it. Toggle the checkboxes to tweak the calculations to your mission parameters, and
+          watch the required ΔV values as well as the relevant transfer angles be displayed in real time.
+        </p>
+
+        <h2>Using a Delta-V Map</h2>
+        <p>
+          To use a typical ΔV map, you add all the values along the branch, from your starting position to your target
+          position. A white arrow in the direction of your travel means you can aerobrake there and can therefore
+          exclude the value from your calculation. The values above a branch indicate plane changes. This site performs
+          all these calculations for you.
+        </p>
+
+        <h2>What is Delta-V (ΔV)</h2>
+        <p>
+          Delta-V, or ΔV, is a crafts capacity to change its velocity, and can be interpreted as the range of a given
+          craft. Similar to how a car may say it has 50 km of fuel left, a spacecraft may have 5000 m/s of ΔV left.
+          Performing maneuvers such as changing your orbit or landing on a planet will use up some of your ΔV. Knowing
+          how much ΔV is required to perform a given task is essential for planning any mission.
+        </p>
+      </div>
+      <div class="right-section"></div>
       <input type="text" id="dV_display" readonly>
       <div id="dV">Delta V Required:</div>
 
@@ -39,6 +50,14 @@
 
       <input type="text" id="departure_angle" readonly>
       <div id="departure">Transfer Angle <br> from Target:</div>
+
+      <div class="dropdown">
+
+        <div class="dropdown-content" id="dv-dropdown">
+          <!-- Entries will be added dynamically using JavaScript -->
+        </div>
+      </div>
+
 
       <img id="calculator-image" src="images/maps/mapV3.png" alt="Calculator Image">
       <div class="paths">
@@ -121,27 +140,29 @@
           <input type="checkbox" id="toggle1" onchange="handleToggleChange('toggle1')">Round Trip
         </label>
         <label>
-          <input type="checkbox" id="toggle2" onchange="handleToggleChange('toggle2')">Aerobrake from Low Orbit on Arrival
+          <input type="checkbox" id="toggle2" onchange="handleToggleChange('toggle2')">Aerobrake from Low Orbit on
+          Arrival
         </label>
         <label>
-          <input type="checkbox" id="toggle3" onchange="handleToggleChange('toggle3')">Aerobrake from Intercept on Arrival
+          <input type="checkbox" id="toggle3" onchange="handleToggleChange('toggle3')">Aerobrake from Intercept on
+          Arrival
         </label>
         <label>
-          <input type="checkbox" id="toggle7" onchange="handleToggleChange('toggle7')">Calculate from Low Kerbin Orbit  
+          <input type="checkbox" id="toggle7" onchange="handleToggleChange('toggle7')">Calculate from Low Kerbin Orbit
         </label>
         <label>
           <input type="checkbox" id="toggle4" onchange="handleToggleChange('toggle4')">Return Only
         </label>
         <label>
-          <input type="checkbox" id="toggle5" onchange="handleToggleChange('toggle5')">Aerobrake from Low Kerbin Orbit 
+          <input type="checkbox" id="toggle5" onchange="handleToggleChange('toggle5')">Aerobrake from Low Kerbin Orbit
         </label>
         <label>
           <input type="checkbox" id="toggle6" onchange="handleToggleChange('toggle6')">Aerobrake from Kerbin Intercept
         </label>
-          <div class="slider">
-            <input type="range" id="slider" min="0" max="5" step="1" onchange="handleSliderChange(this)">
-            <div id="slider-value">+ x% Redundancy</div>
-          </div>
+        <div class="slider">
+          <input type="range" id="slider" min="0" max="5" step="1" onchange="handleSliderChange(this)">
+          <div id="slider-value">+ x% Redundancy</div>
+        </div>
         </label>
       </div>
       <div class="tree">
@@ -210,7 +231,8 @@
           <div id="joolLabel">Jool</div>
         </div>
         <div class="branch" id="laythe"> <!-- laythe -->
-          <button class="node" id="laytheIntercept" onclick="calculateSum('laythe', 0)" data-value="2340">Fly by</button>
+          <button class="node" id="laytheIntercept" onclick="calculateSum('laythe', 0)" data-value="2340">Fly
+            by</button>
           <button class="node" id="laytheOrbit" onclick="calculateSum('laythe', 1)" data-value="1070">Orbit</button>
           <button class="node" id="laytheLand" onclick="calculateSum('laythe', 2)" data-value="2900">Land</button>
           <div id="laytheLabel">Laythe</div>
@@ -247,13 +269,14 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
+    </div>
+    </div>
 
-  <footer>
-    <span id="version-info">Version 1.3.3.1</span>
-  </footer>  
+    <footer>
+      <span id="version-info">Version 2.4.0.0</span>
+    </footer>
 
-  <script src="SAC-1.js"></script>
-</body>
+    <script src="SAC-1.js"></script>
+  </body>
+
 </html>

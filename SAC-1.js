@@ -450,6 +450,51 @@ function calculateAerobrake(branchId, nodeIndex) {
   return aerobrake;
 }
 
+// Assume data is your array list
+let data1 = ["Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry"];
+let data2 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Populate the dropdown with entries
+    populateDropdown();
+
+    // Add a click event listener to toggle the dropdown when clicking on the display text box
+    document.getElementById('dV_display').addEventListener('click', function(event) {
+        event.stopPropagation(); // Prevent the click event from reaching the document
+        toggleDropdown();
+    });
+
+    // Add a click event listener to close the dropdown when clicking outside
+    document.addEventListener('click', function() {
+        closeDropdown();
+    });
+});
+
+function populateDropdown() {
+    let dropdown = document.getElementById('dv-dropdown');
+
+    // Populate the dropdown with entries
+    for (let i = 0; i < data1.length; i++) {
+        let entry = document.createElement('div');
+        entry.textContent = data1[i] + ' ' + data2[i];
+        entry.dataset.value = data2[i];
+
+        dropdown.appendChild(entry);
+    }
+}
+
+function toggleDropdown() {
+    let dropdownContent = document.getElementById('dv-dropdown');
+    dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
+}
+
+function closeDropdown() {
+    let dropdownContent = document.getElementById('dv-dropdown');
+    dropdownContent.style.display = 'none';
+}
+
+
+
 /**
  * Fetches the transfer window angle to the target from kerbin
  * 
