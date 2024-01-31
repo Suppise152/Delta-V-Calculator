@@ -451,19 +451,9 @@ function calculateAerobrake(branchId, nodeIndex) {
   return aerobrake;
 }
 
-// dropdown data
-let kerbinText = ["Low Kerbin orbit:", "Kerbin Escape:", "Kerbin Encounter:", "Kerbin descent:"];
-let kerbinData = [3400, 950, 950, 3400];
-
-let munText = ["Mun Encounter:", "Low Mun orbit:", "Mun Landing:", "Low Mun Orbit:", "Mun escape:", "Kerbin descent:"];
-let munData = [860, 310, 580, 580, 310, 3400];
-
-let minmusText = ["Minmus Encounter:", "Low Minmus orbit:", "Minmus Landing:", "Low Minmus Orbit:", "Minmus escape:"];
-let minmusData = [930, 160, 180, 180, 160];
-
-let kerbinReturnText = ["Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry", "Entry"];
-let kerbinReturnData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
+/**
+ * Handles the dropdown menu
+ **/
 document.addEventListener('DOMContentLoaded', function () {
 
   // Add a click event listener to toggle the dropdown when clicking on the display text box
@@ -496,36 +486,40 @@ function populateDropdown() {
   switch (prevBranch) {
     case 'kerbin': // Kerbin-----------------------------------------------------------------------
       atmo = true;
-      if (toggle1.checked) {
+      if (toggle1.checked) { // Round trip
         switch (prevNode) {
           case 0:
-            descent('kerbin', atmo);
+            kerbinDescent();
             break;
           case 1:
-            descent(atmo);
-            lowOrbit(atmo);
-            encounter(atmo);
-            escape(atmo);
-            break;
-        }
-      } else if (toggle4.checked) {
-        switch (prevNode) {
-          case 0:
-            descent(atmo);
-            break;
-          case 1:
+            kerbinDescent();
+            kerbinLowOrbit();
             let entry = document.createElement('div');
-            entry.textContent = prevBranch + ' ' + 'escape: ' + nodeValue;
+            entry.textContent = prevBranch + ' encounter: ' + 0;
+            dropdown.appendChild(entry);
+            entry = document.createElement('div');
+            entry.textContent = prevBranch + ' escape: ' + Math.round(950 * redundancy);
             dropdown.appendChild(entry);
             break;
         }
-      } else {
+      } else if (toggle4.checked) { // Return only
+        switch (prevNode) {
+          case 0:
+            kerbinDescent();
+            break;
+          case 1:
+            let entry = document.createElement('div');
+            entry.textContent = prevBranch + ' escape: ' + Math.round(950 * redundancy);
+            dropdown.appendChild(entry);
+            break;
+        }
+      } else { // One way
         switch (prevNode) {
           case 0:
             break;
           case 1:
             let entry = document.createElement('div');
-            entry.textContent = prevBranch + ' ' + 'escape: ' + nodeValue;
+            entry.textContent = prevBranch + ' escape: ' + Math.round(950 * redundancy);
             dropdown.appendChild(entry);
             break;
         }
@@ -533,7 +527,7 @@ function populateDropdown() {
       break;
     case 'mun': // Mun------------------------------------------------------------------------------
       atmo = false;
-      if (toggle1.checked) {
+      if (toggle1.checked) { // Round trip
         switch (prevNode) {
           case 0:
             kerbinDescent();
@@ -549,6 +543,16 @@ function populateDropdown() {
             encounter(atmo);
             break;
           case 1:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 860 * redundancy;
+              dropdown.appendChild(entry);
+            }
             lowOrbit(atmo);
             encounter(atmo);
             break;
@@ -564,30 +568,55 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             }
             escape(atmo);
-            ascent(atmo);
+            ascent();
             descent(atmo);
             lowOrbit(atmo);
             encounter(atmo);
             break;
         }
-      } else if (toggle4.checked) {
+      } else if (toggle4.checked) { // Return only
         switch (prevNode) {
           case 0:
-            escape(true);
-            lowOrbit(true);
-
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 860 * redundancy;
+              dropdown.appendChild(entry);
+            }
             break;
           case 1:
-            lowOrbit(atmo);
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 860 * redundancy;
+              dropdown.appendChild(entry);
+            }
             escape(atmo);
             break;
           case 2:
-            descent(atmo);
-            lowOrbit(atmo);
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 860 * redundancy;
+              dropdown.appendChild(entry);
+            }
             escape(atmo);
+            ascent();
             break;
         }
-      } else {
+      } else { // One way
         switch (prevNode) {
           case 0:
             encounter(atmo);
@@ -605,36 +634,253 @@ function populateDropdown() {
       }
       break;
     case 'minmus': // Minmus------------------------------------------------------------------------
-      for (let i = prevNode; i >= 0; i--) {
-        let entry = document.createElement('div');
-        entry.textContent = minmusText[i] + ' ' + minmusData[i];
-        dropdown.appendChild(entry);
+      atmo = false;
+      if (toggle1.checked) { // Round trip
+        switch (prevNode) {
+          case 0:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              dropdown.appendChild(entry);
+            }
+            encounter(atmo);
+            break;
+          case 1:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              dropdown.appendChild(entry);
+            }
+            lowOrbit(atmo);
+            encounter(atmo);
+            break;
+          case 2:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              dropdown.appendChild(entry);
+            }
+            escape(atmo);
+            ascent();
+            descent(atmo);
+            lowOrbit(atmo);
+            encounter(atmo);
+            break;
+        }
+      } else if (toggle4.checked) { // Return only
+        switch (prevNode) {
+          case 0:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              dropdown.appendChild(entry);
+            }
+            break;
+          case 1:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              dropdown.appendChild(entry);
+            }
+            escape(atmo);
+            break;
+          case 2:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              dropdown.appendChild(entry);
+            }
+            escape(atmo);
+            ascent();
+            break;
+        }
+      } else { // One way
+        switch (prevNode) {
+          case 0:
+            encounter(atmo);
+            break;
+          case 1:
+            lowOrbit(atmo);
+            encounter(atmo);
+            break;
+          case 2:
+            descent(atmo);
+            lowOrbit(atmo);
+            encounter(atmo);
+            break;
+        }
       }
-      entry = document.createElement('div');
-      entry.textContent = kerbinText[0] + ' ' + kerbinData[0];
-      dropdown.appendChild(entry);
       break;
     default: // Interplanetary ---------------------------------------------------------------------
-      if (nodeIndex != 0) {
-        entry = document.createElement('div');
-        entry.textContent = kerbinText[0] + ' ' + kerbinData[0];
-        dropdown.appendChild(entry);
-        let entry = document.createElement('div');
-        entry.textContent = kerbinText[1] + ' ' + kerbinData[1];
-        dropdown.appendChild(entry);
+      switch (prevBranch) {
+        case 'eve':
+          atmo = true;
+          break;
+        case 'duna':
+          atmo = true;
+          break;
+        case 'jool':
+          atmo = true;
+          break;
+        case 'laythe':
+          atmo = true;
+          break;
+        default:
+          atmo = false;
+          break;
       }
+      if (toggle1.checked) { // Round trip
+        switch (prevNode) {
+          case 0:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
+              dropdown.appendChild(entry);
+            }
+            encounter(atmo);
+            break;
+          case 1:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
+              dropdown.appendChild(entry);
+            }
+            lowOrbit(atmo);
+            encounter(atmo);
+            break;
+          case 2:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
+              dropdown.appendChild(entry);
+            }
+            escape(atmo);
+            ascent();
+            descent(atmo);
+            lowOrbit(atmo);
+            encounter(atmo);
+            break;
+        }
+      } else if (toggle4.checked) { // Return only
+        switch (prevNode) {
+          case 0:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
+              dropdown.appendChild(entry);
+            }
+            break;
+          case 1:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
+              dropdown.appendChild(entry);
+            }
+            escape(atmo);
+            break;
+          case 2:
+            kerbinDescent();
+            if (toggle6.checked) {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              let entry = document.createElement('div');
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
+              dropdown.appendChild(entry);
+            }
+            escape(atmo);
+            ascent();
+            break;
+        }
+      } else { // One way
+        switch (prevNode) {
+          case 0:
+            encounter(atmo);
+            break;
+          case 1:
+            lowOrbit(atmo);
+            encounter(atmo);
+            break;
+          case 2:
+            descent(atmo);
+            lowOrbit(atmo);
+            encounter(atmo);
+            break;
+        }
+      }
+      let entry = document.createElement('div');
+      entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
+      dropdown.appendChild(entry);
       break;
   }
-
-  entry = document.createElement('div');
-  entry.textContent = 'Low Kerbin orbit: ' + Math.round(3400 * redundancy);
-  dropdown.appendChild(entry);
+  if (!toggle4.checked && !toggle7.checked) {
+    entry = document.createElement('div');
+    entry.textContent = 'Low Kerbin orbit: ' + Math.round(3400 * redundancy);
+    dropdown.appendChild(entry);
+  }
 
   entry = document.createElement('div');
   entry.textContent = ' - Start - ';
   dropdown.appendChild(entry);
 }
 
+// LKO to surface
 function kerbinDescent() {
   let dropdown = document.getElementById('dv-dropdown');
 
@@ -649,6 +895,7 @@ function kerbinDescent() {
   dropdown.appendChild(entry);
 }
 
+// Interplanetary to LKO
 function kerbinLowOrbit() {
   let dropdown = document.getElementById('dv-dropdown');
 
@@ -663,81 +910,7 @@ function kerbinLowOrbit() {
   dropdown.appendChild(entry);
 }
 
-function descent(atmo) {
-  let dropdown = document.getElementById('dv-dropdown');
-
-  const branch = document.getElementById(prevBranch);
-  const nodes = branch.getElementsByClassName('node');
-  const node = nodes[2];
-  const nodeValue = parseInt(node.dataset.value);
-
-  if (atmo) {
-    if (toggle5.checked || toggle6.checked) {
-      let entry = document.createElement('div');
-      entry.textContent = prevBranch + ' ' + 'descent: ' + 0;
-      dropdown.appendChild(entry);
-      return;
-    }
-  }
-  let entry = document.createElement('div');
-  entry.textContent = prevBranch + ' ' + 'descent: ' + Math.round(nodeValue * redundancy);
-  dropdown.appendChild(entry);
-}
-
-function ascent(atmo) {
-  let dropdown = document.getElementById('dv-dropdown');
-
-  const branch = document.getElementById(prevBranch);
-  const nodes = branch.getElementsByClassName('node');
-  const node = nodes[2];
-  const nodeValue = parseInt(node.dataset.value);
-  let entry = document.createElement('div');
-  entry.textContent = 'Low ' + prevBranch + ' ' + 'orbit: ' + Math.round(nodeValue * redundancy);
-  dropdown.appendChild(entry);
-}
-
-function lowOrbit(atmo) {
-  let dropdown = document.getElementById('dv-dropdown');
-
-  const branch = document.getElementById(prevBranch);
-  const nodes = branch.getElementsByClassName('node');
-  const node = nodes[1];
-  const nodeValue = parseInt(node.dataset.value);
-
-  if (atmo) {
-    if (toggle6.checked) {
-      let entry = document.createElement('div');
-      entry.textContent = prevBranch + ' ' + 'low orbit: ' + 0;
-      dropdown.appendChild(entry);
-      return;
-    }
-  }
-  let entry = document.createElement('div');
-  entry.textContent = 'Low ' + prevBranch + ' orbit: ' + Math.round(nodeValue * redundancy);
-  dropdown.appendChild(entry);
-}
-
-function escape(atmo) {
-  let dropdown = document.getElementById('dv-dropdown');
-
-  const branch = document.getElementById(prevBranch);
-  const nodes = branch.getElementsByClassName('node');
-  const node = nodes[1];
-  const nodeValue = parseInt(node.dataset.value);
-
-  if (atmo) {
-    if (toggle6.checked) {
-      let entry = document.createElement('div');
-      entry.textContent = prevBranch + ' ' + 'escape: ' + 0;
-      dropdown.appendChild(entry);
-      return;
-    }
-  }
-  let entry = document.createElement('div');
-  entry.textContent = prevBranch + ' ' + 'escape: ' + Math.round(nodeValue * redundancy);
-  dropdown.appendChild(entry);
-}
-
+// Encounter target
 function encounter(atmo) {
   let dropdown = document.getElementById('dv-dropdown');
 
@@ -746,8 +919,68 @@ function encounter(atmo) {
   const node = nodes[0];
   const nodeValue = parseInt(node.dataset.value);
 
+  // Edge cases for moons of atmospheric planets (60 line switch statement lol)
+  switch (prevBranch) {
+    case 'gilly':
+      if (toggle3.checked) {
+        let entry = document.createElement('div');
+        entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 1470) * redundancy);
+        dropdown.appendChild(entry);
+        return;
+      }
+      break;
+    case 'ike':
+      if (toggle3.checked) {
+        let entry = document.createElement('div');
+        entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 1090) * redundancy);
+        dropdown.appendChild(entry);
+        return;
+      }
+      break;
+    case 'laythe':
+      if (toggle3.checked) {
+        let entry = document.createElement('div');
+        entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 2200) * redundancy);
+        dropdown.appendChild(entry);
+        return;
+      }
+      break;
+    case 'vall':
+      if (toggle3.checked) {
+        let entry = document.createElement('div');
+        entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 2200) * redundancy);
+        dropdown.appendChild(entry);
+        return;
+      }
+      break;
+    case 'tylo':
+      if (toggle3.checked) {
+        let entry = document.createElement('div');
+        entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 2200) * redundancy);
+        dropdown.appendChild(entry);
+        return;
+      }
+      break;
+    case 'bop':
+      if (toggle3.checked) {
+        let entry = document.createElement('div');
+        entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 2200) * redundancy);
+        dropdown.appendChild(entry);
+        return;
+      }
+      break;
+    case 'pol':
+      if (toggle3.checked) {
+        let entry = document.createElement('div');
+        entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 2200) * redundancy);
+        dropdown.appendChild(entry);
+        return;
+      }
+      break;
+  }
+
   if (atmo) {
-    if (toggle6.checked) {
+    if (toggle3.checked) {
       let entry = document.createElement('div');
       entry.textContent = prevBranch + ' ' + 'encounter: ' + 0;
       dropdown.appendChild(entry);
@@ -759,11 +992,98 @@ function encounter(atmo) {
   dropdown.appendChild(entry);
 }
 
+// Intercept to low orbit
+function lowOrbit(atmo) {
+  let dropdown = document.getElementById('dv-dropdown');
+
+  const branch = document.getElementById(prevBranch);
+  const nodes = branch.getElementsByClassName('node');
+  const node = nodes[1];
+  const nodeValue = parseInt(node.dataset.value);
+
+  if (atmo) {
+    if (toggle3.checked) {
+      let entry = document.createElement('div');
+      entry.textContent = prevBranch + ' ' + 'low orbit: ' + 0;
+      dropdown.appendChild(entry);
+      return;
+    }
+  }
+  let entry = document.createElement('div');
+  entry.textContent = 'Low ' + prevBranch + ' orbit: ' + Math.round(nodeValue * redundancy);
+  dropdown.appendChild(entry);
+}
+
+// Low orbit to surface
+function descent(atmo) {
+  let dropdown = document.getElementById('dv-dropdown');
+
+  const branch = document.getElementById(prevBranch);
+  const nodes = branch.getElementsByClassName('node');
+  const node = nodes[2];
+  const nodeValue = parseInt(node.dataset.value);
+
+  if (atmo) {
+    if (toggle2.checked || toggle3.checked) {
+      let entry = document.createElement('div');
+      entry.textContent = prevBranch + ' ' + 'descent: ' + 0;
+      dropdown.appendChild(entry);
+      return;
+    }
+    let entry = document.createElement('div');
+    entry.textContent = prevBranch + ' ' + 'descent: ' + Math.round(nodeValue * redundancy);
+    dropdown.appendChild(entry);
+  }
+}
+
+// Surface to low orbit
+function ascent() {
+  let dropdown = document.getElementById('dv-dropdown');
+
+  const branch = document.getElementById(prevBranch);
+  const nodes = branch.getElementsByClassName('node');
+  const node = nodes[2];
+  const nodeValue = parseInt(node.dataset.value);
+  let entry = document.createElement('div');
+  entry.textContent = 'Low ' + prevBranch + ' ' + 'orbit: ' + Math.round(nodeValue * redundancy);
+  dropdown.appendChild(entry);
+}
+
+// Low orbit to escape
+function escape(atmo) {
+  let dropdown = document.getElementById('dv-dropdown');
+
+  const branch = document.getElementById(prevBranch);
+  const nodes = branch.getElementsByClassName('node');
+  const node = nodes[1];
+  const nodeValue = parseInt(node.dataset.value);
+
+  if (atmo) {
+    if (toggle6.checked && 0) {
+      let entry = document.createElement('div');
+      entry.textContent = prevBranch + ' ' + 'escape: ' + 0;
+      dropdown.appendChild(entry);
+      return;
+    }
+  }
+  let entry = document.createElement('div');
+  entry.textContent = prevBranch + ' ' + 'escape: ' + Math.round(nodeValue * redundancy);
+  dropdown.appendChild(entry);
+}
+
+/**
+ * Toggles the dropdown menu when clicking on the dv display text box
+ * 
+ **/
 function toggleDropdown() {
   let dropdownContent = document.getElementById('dv-dropdown');
   dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
 }
 
+/**
+ * Closes the dropdown menu when clicking outside of the dropdown
+ * 
+ **/
 function closeDropdown() {
   let dropdownContent = document.getElementById('dv-dropdown');
   dropdownContent.style.display = 'none';
