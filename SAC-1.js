@@ -17,8 +17,11 @@ let redundancy = 1;
  * @param {*} nodeIndex Position of the node in the branch.
  */
 function changeImage(branchId, nodeIndex) {
+
+  let branch = branchId.toLowerCase();
+
   //enables current image
-  calculatorImage = document.getElementById(branchId + nodeIndex);
+  calculatorImage = document.getElementById(branch + nodeIndex);
   calculatorImage.style.opacity = 1;
 
   // if first change, sets previous image to calculator-image
@@ -43,8 +46,11 @@ function changeImage(branchId, nodeIndex) {
  * @param {*} direction Direction that the player will be traveling in.
  */
 function transferAnlgeImageChange(branchId, direction) {
+
+  let branch = String(branchId).toLowerCase();
+
   //enables current image
-  phaseImg = document.getElementById(branchId + direction);
+  phaseImg = document.getElementById(branch + direction);
   phaseImg.style.opacity = 1;
 
   // if first change, sets previous image to emptyPhaseAngle
@@ -236,6 +242,7 @@ function handleToggleChange(checkbox) {
 function calculateSum(branchId, nodeIndex) {
   const branch = document.getElementById(branchId);
   const nodes = branch.getElementsByClassName('node');
+
   let sum = getBaseValue(branchId);
   changeImage(branchId, nodeIndex);
 
@@ -292,11 +299,11 @@ function calculateSum(branchId, nodeIndex) {
  */
 function getBaseValue(branchId) {
   switch (branchId) {
-    case 'kerbin':
+    case 'Kerbin':
       return 0;
-    case 'mun':
+    case 'Mun':
       return 3400;
-    case 'minmus':
+    case 'Minmus':
       return 3400;
     default:
       return 4350;
@@ -316,23 +323,23 @@ function calculateAerobrake(branchId, nodeIndex) {
   let aerobrake = 0;
   if (toggle2.checked && nodeIndex === 2) { //low orbit arrive
     switch (branchId) {
-      case 'duna':
+      case 'Duna':
         aerobrake += 1450;
         break;
-      case 'laythe':
+      case 'Laythe':
         aerobrake += 2900;
         break;
-      case 'eve':
+      case 'Eve':
         aerobrake += 8000;
         break;
-      case 'jool':
+      case 'Jool':
         aerobrake += 14000;
         break;
     }
   }
   if (toggle3.checked) { //intercept arrive
     switch (branchId) {
-      case 'duna':
+      case 'Duna':
         for (let i = 1; i <= nodeIndex; i++) {
           const node = nodes[i];
           const nodeValue = parseInt(node.dataset.value);
@@ -340,7 +347,7 @@ function calculateAerobrake(branchId, nodeIndex) {
         }
         aerobrake += 250;
         break;
-      case 'laythe':
+      case 'Laythe':
         for (let i = 1; i <= nodeIndex; i++) {
           const node = nodes[i];
           const nodeValue = parseInt(node.dataset.value);
@@ -348,7 +355,7 @@ function calculateAerobrake(branchId, nodeIndex) {
         }
         aerobrake += 160;
         break;
-      case 'eve':
+      case 'Eve':
         for (let i = 1; i <= nodeIndex; i++) {
           const node = nodes[i];
           const nodeValue = parseInt(node.dataset.value);
@@ -356,7 +363,7 @@ function calculateAerobrake(branchId, nodeIndex) {
         }
         aerobrake += 80;
         break;
-      case 'jool':
+      case 'Jool':
         for (let i = 1; i <= nodeIndex; i++) {
           const node = nodes[i];
           const nodeValue = parseInt(node.dataset.value);
@@ -364,22 +371,22 @@ function calculateAerobrake(branchId, nodeIndex) {
         }
         aerobrake += 160;
         break;
-      case 'gilly':
+      case 'Gilly':
         aerobrake += 80;
         break;
-      case 'ike':
+      case 'Ike':
         aerobrake += 250;
         break;
-      case 'vall':
+      case 'Vall':
         aerobrake += 160;
         break;
-      case 'tylo':
+      case 'Tylo':
         aerobrake += 160;
         break;
-      case 'bop':
+      case 'Bop':
         aerobrake += 160;
         break;
-      case 'pol':
+      case 'Pol':
         aerobrake += 160;
         break;
     }
@@ -389,22 +396,14 @@ function calculateAerobrake(branchId, nodeIndex) {
   }
   if (toggle6.checked && (toggle1.checked || toggle4.checked)) { //intercept depart
     switch (branchId) {
-      case 'kerbin':
+      case 'Kerbin':
         for (let i = 0; i <= 0; i++) {
           const node = nodes[i];
           const nodeValue = parseInt(node.dataset.value);
           aerobrake += nodeValue;
         }
         break;
-      case 'mun':
-        for (let i = 0; i <= 0; i++) {
-          const node = nodes[i];
-          const nodeValue = parseInt(node.dataset.value);
-          aerobrake += nodeValue;
-        }
-        aerobrake += 3400;
-        break;
-      case 'minmus':
+      case 'Mun':
         for (let i = 0; i <= 0; i++) {
           const node = nodes[i];
           const nodeValue = parseInt(node.dataset.value);
@@ -412,31 +411,39 @@ function calculateAerobrake(branchId, nodeIndex) {
         }
         aerobrake += 3400;
         break;
-      case 'gilly':
+      case 'Minmus':
+        for (let i = 0; i <= 0; i++) {
+          const node = nodes[i];
+          const nodeValue = parseInt(node.dataset.value);
+          aerobrake += nodeValue;
+        }
+        aerobrake += 3400;
+        break;
+      case 'Gilly':
         aerobrake += 1470;
         aerobrake += 3400;
         break;
-      case 'ike':
+      case 'Ike':
         aerobrake += 1090;
         aerobrake += 3400;
         break;
-      case 'laythe':
+      case 'Laythe':
         aerobrake += 2200;
         aerobrake += 3400;
         break;
-      case 'vall':
+      case 'Vall':
         aerobrake += 2200;
         aerobrake += 3400;
         break;
-      case 'tylo':
+      case 'Tylo':
         aerobrake += 2200;
         aerobrake += 3400;
         break;
-      case 'bop':
+      case 'Bop':
         aerobrake += 2200;
         aerobrake += 3400;
         break;
-      case 'pol':
+      case 'Pol':
         aerobrake += 2200;
         aerobrake += 3400;
         break;
@@ -478,13 +485,13 @@ function populateDropdown() {
 
   let entry = document.createElement('div');
   entry.textContent = ' - End - ';
+  entry.style.color = 'red';
   dropdown.appendChild(entry);
-
 
 
   // Populate the dropdown with entries
   switch (prevBranch) {
-    case 'kerbin': // Kerbin-----------------------------------------------------------------------
+    case 'Kerbin': // Kerbin-----------------------------------------------------------------------
       atmo = true;
       if (toggle1.checked) { // Round trip
         switch (prevNode) {
@@ -525,7 +532,7 @@ function populateDropdown() {
         }
       }
       break;
-    case 'mun': // Mun------------------------------------------------------------------------------
+    case 'Mun': // Mun------------------------------------------------------------------------------
       atmo = false;
       if (toggle1.checked) { // Round trip
         switch (prevNode) {
@@ -537,7 +544,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 860 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
               dropdown.appendChild(entry);
             }
             encounter(atmo);
@@ -550,7 +557,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 860 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
               dropdown.appendChild(entry);
             }
             lowOrbit(atmo);
@@ -564,7 +571,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 860 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
               dropdown.appendChild(entry);
             }
             escape(atmo);
@@ -584,7 +591,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 860 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
               dropdown.appendChild(entry);
             }
             break;
@@ -596,7 +603,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 860 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
               dropdown.appendChild(entry);
             }
             escape(atmo);
@@ -609,7 +616,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 860 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
               dropdown.appendChild(entry);
             }
             escape(atmo);
@@ -633,7 +640,7 @@ function populateDropdown() {
         }
       }
       break;
-    case 'minmus': // Minmus------------------------------------------------------------------------
+    case 'Minmus': // Minmus------------------------------------------------------------------------
       atmo = false;
       if (toggle1.checked) { // Round trip
         switch (prevNode) {
@@ -645,7 +652,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
               dropdown.appendChild(entry);
             }
             encounter(atmo);
@@ -658,7 +665,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
               dropdown.appendChild(entry);
             }
             lowOrbit(atmo);
@@ -672,7 +679,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
               dropdown.appendChild(entry);
             }
             escape(atmo);
@@ -692,7 +699,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
               dropdown.appendChild(entry);
             }
             break;
@@ -704,7 +711,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
               dropdown.appendChild(entry);
             }
             escape(atmo);
@@ -717,7 +724,7 @@ function populateDropdown() {
               dropdown.appendChild(entry);
             } else {
               let entry = document.createElement('div');
-              entry.textContent = 'Low Kerbin orbit: ' + 1170 * redundancy;
+              entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
               dropdown.appendChild(entry);
             }
             escape(atmo);
@@ -743,16 +750,16 @@ function populateDropdown() {
       break;
     default: // Interplanetary ---------------------------------------------------------------------
       switch (prevBranch) {
-        case 'eve':
+        case 'Eve':
           atmo = true;
           break;
-        case 'duna':
+        case 'Duna':
           atmo = true;
           break;
-        case 'jool':
+        case 'Jool':
           atmo = true;
           break;
-        case 'laythe':
+        case 'Laythe':
           atmo = true;
           break;
         default:
@@ -872,11 +879,13 @@ function populateDropdown() {
   if (!toggle4.checked && !toggle7.checked) {
     entry = document.createElement('div');
     entry.textContent = 'Low Kerbin orbit: ' + Math.round(3400 * redundancy);
+    entry.style.color = 'white';
     dropdown.appendChild(entry);
   }
 
   entry = document.createElement('div');
   entry.textContent = ' - Start - ';
+  entry.style.color = 'rgb(50, 255, 50)';
   dropdown.appendChild(entry);
 }
 
@@ -886,12 +895,14 @@ function kerbinDescent() {
 
   if (toggle5.checked || toggle6.checked) {
     let entry = document.createElement('div');
-    entry.textContent = 'kerbin descent: ' + 0;
+    entry.textContent = 'Kerbin descent: ' + 0;
+    entry.style.color = 'white';
     dropdown.appendChild(entry);
     return;
   }
   let entry = document.createElement('div');
-  entry.textContent = 'kerbin descent: ' + Math.round(3400 * redundancy);
+  entry.textContent = 'Kerbin descent: ' + Math.round(3400 * redundancy);
+  entry.style.color = 'white';
   dropdown.appendChild(entry);
 }
 
@@ -921,7 +932,7 @@ function encounter(atmo) {
 
   // Edge cases for moons of atmospheric planets (60 line switch statement lol)
   switch (prevBranch) {
-    case 'gilly':
+    case 'Gilly':
       if (toggle3.checked) {
         let entry = document.createElement('div');
         entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 1470) * redundancy);
@@ -929,7 +940,7 @@ function encounter(atmo) {
         return;
       }
       break;
-    case 'ike':
+    case 'Ike':
       if (toggle3.checked) {
         let entry = document.createElement('div');
         entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 1090) * redundancy);
@@ -937,7 +948,7 @@ function encounter(atmo) {
         return;
       }
       break;
-    case 'laythe':
+    case 'Laythe':
       if (toggle3.checked) {
         let entry = document.createElement('div');
         entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 2200) * redundancy);
@@ -945,7 +956,7 @@ function encounter(atmo) {
         return;
       }
       break;
-    case 'vall':
+    case 'Vall':
       if (toggle3.checked) {
         let entry = document.createElement('div');
         entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 2200) * redundancy);
@@ -953,7 +964,7 @@ function encounter(atmo) {
         return;
       }
       break;
-    case 'tylo':
+    case 'Tylo':
       if (toggle3.checked) {
         let entry = document.createElement('div');
         entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 2200) * redundancy);
@@ -961,7 +972,7 @@ function encounter(atmo) {
         return;
       }
       break;
-    case 'bop':
+    case 'Bop':
       if (toggle3.checked) {
         let entry = document.createElement('div');
         entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 2200) * redundancy);
@@ -969,7 +980,7 @@ function encounter(atmo) {
         return;
       }
       break;
-    case 'pol':
+    case 'Pol':
       if (toggle3.checked) {
         let entry = document.createElement('div');
         entry.textContent = prevBranch + ' ' + 'encounter: ' + Math.round((nodeValue - 2200) * redundancy);
@@ -1027,13 +1038,15 @@ function descent(atmo) {
     if (toggle2.checked || toggle3.checked) {
       let entry = document.createElement('div');
       entry.textContent = prevBranch + ' ' + 'descent: ' + 0;
+      entry.style.color = 'white';
       dropdown.appendChild(entry);
       return;
     }
-    let entry = document.createElement('div');
-    entry.textContent = prevBranch + ' ' + 'descent: ' + Math.round(nodeValue * redundancy);
-    dropdown.appendChild(entry);
   }
+  let entry = document.createElement('div');
+  entry.textContent = prevBranch + ' ' + 'descent: ' + Math.round(nodeValue * redundancy);
+  entry.style.color = 'white';
+  dropdown.appendChild(entry);
 }
 
 // Surface to low orbit
@@ -1046,6 +1059,7 @@ function ascent() {
   const nodeValue = parseInt(node.dataset.value);
   let entry = document.createElement('div');
   entry.textContent = 'Low ' + prevBranch + ' ' + 'orbit: ' + Math.round(nodeValue * redundancy);
+  entry.style.color = 'white';
   dropdown.appendChild(entry);
 }
 
@@ -1098,67 +1112,67 @@ function closeDropdown() {
  */
 function phaseAngleArrive(branchId) {
   switch (branchId) {
-    case 'kerbin':
+    case 'Kerbin':
       document.getElementById('arrival_angle').value = '';
       transferAnlgeImageChange('emptyPhaseAngle', 'Arrive');
       break;
-    case 'mun':
+    case 'Mun':
       document.getElementById('arrival_angle').value = '90' + '°';
       transferAnlgeImageChange('emptyPhaseAngle', 'Arrive');
       break;
-    case 'minmus':
+    case 'Minmus':
       document.getElementById('arrival_angle').value = '90' + '°';
       transferAnlgeImageChange('emptyPhaseAngle', 'Arrive');
       break;
-    case 'moho':
+    case 'Moho':
       document.getElementById('arrival_angle').value = '108.2' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
-    case 'eve':
+    case 'Eve':
       document.getElementById('arrival_angle').value = '-54.1' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
-    case 'gilly':
+    case 'Gilly':
       document.getElementById('arrival_angle').value = '-54.1' + '°';
       transferAnlgeImageChange('eve', 'Arrive');
       break;
-    case 'duna':
+    case 'Duna':
       document.getElementById('arrival_angle').value = '44.4' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
-    case 'ike':
+    case 'Ike':
       document.getElementById('arrival_angle').value = '44.4' + '°';
       transferAnlgeImageChange('duna', 'Arrive');
       break;
-    case 'dres':
+    case 'Dres':
       document.getElementById('arrival_angle').value = '82.1' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
-    case 'jool':
+    case 'Jool':
       document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
-    case 'laythe':
+    case 'Laythe':
       document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange('jool', 'Arrive');
       break;
-    case 'vall':
+    case 'Vall':
       document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange('jool', 'Arrive');
       break;
-    case 'tylo':
+    case 'Tylo':
       document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange('jool', 'Arrive');
       break;
-    case 'bop':
+    case 'Bop':
       document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange('jool', 'Arrive');
       break;
-    case 'pol':
+    case 'Pol':
       document.getElementById('arrival_angle').value = '96.6' + '°';
       transferAnlgeImageChange('jool', 'Arrive');
       break;
-    case 'eeloo':
+    case 'Eeloo':
       document.getElementById('arrival_angle').value = '101.4' + '°';
       transferAnlgeImageChange(branchId, 'Arrive');
       break;
@@ -1176,67 +1190,67 @@ function phaseAngleArrive(branchId) {
  */
 function phaseAngleDepart(branchId) {
   switch (branchId) {
-    case 'kerbin':
+    case 'Kerbin':
       document.getElementById('departure_angle').value = '';
       transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
       break;
-    case 'mun':
+    case 'Mun':
       document.getElementById('departure_angle').value = '';
       transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
       break;
-    case 'minmus':
+    case 'Minmus':
       document.getElementById('departure_angle').value = '';
       transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
       break;
-    case 'moho':
+    case 'Moho':
       document.getElementById('departure_angle').value = '-76.1' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
-    case 'eve':
+    case 'Eve':
       document.getElementById('departure_angle').value = '-36.1' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
-    case 'gilly':
+    case 'Gilly':
       document.getElementById('departure_angle').value = '-36.1' + '°';
       transferAnlgeImageChange('eve', 'Depart');
       break;
-    case 'duna':
+    case 'Duna':
       document.getElementById('departure_angle').value = '75.2' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
-    case 'ike':
+    case 'Ike':
       document.getElementById('departure_angle').value = '75.2' + '°';
       transferAnlgeImageChange('duna', 'Depart');
       break;
-    case 'dres':
+    case 'Dres':
       document.getElementById('departure_angle').value = '-30.3' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
-    case 'jool':
+    case 'Jool':
       document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
-    case 'laythe':
+    case 'Laythe':
       document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange('jool', 'Depart');
       break;
-    case 'vall':
+    case 'Vall':
       document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange('jool', 'Depart');
       break;
-    case 'tylo':
+    case 'Tylo':
       document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange('jool', 'Depart');
       break;
-    case 'bop':
+    case 'Bop':
       document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange('jool', 'Depart');
       break;
-    case 'pol':
+    case 'Pol':
       document.getElementById('departure_angle').value = '48.7' + '°';
       transferAnlgeImageChange('jool', 'Depart');
       break;
-    case 'eeloo':
+    case 'Eeloo':
       document.getElementById('departure_angle').value = '-80.3' + '°';
       transferAnlgeImageChange(branchId, 'Depart');
       break;
