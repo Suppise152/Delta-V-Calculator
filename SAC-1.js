@@ -47,11 +47,19 @@ function changeImage(branchId, nodeIndex) {
  */
 function transferAnlgeImageChange(branchId, direction) {
 
-  let branch = String(branchId).toLowerCase();
+  if (branchId == 'emptyPhaseAngle') {
+    let branch = String(branchId);
+    phaseImg = document.getElementById(branch + direction);
+    phaseImg.style.opacity = 1;
+  } else {
+    let branch = String(branchId).toLowerCase();
+    phaseImg = document.getElementById(branch + direction);
+    phaseImg.style.opacity = 1;
+  }
 
-  //enables current image
-  phaseImg = document.getElementById(branch + direction);
-  phaseImg.style.opacity = 1;
+  // //enables current image
+  // phaseImg = document.getElementById(branch + direction);
+  // phaseImg.style.opacity = 1;
 
   // if first change, sets previous image to emptyPhaseAngle
   if (prevPhaseArrive == null) {
@@ -161,6 +169,9 @@ function handleToggleChange(checkbox) {
         if (toggle3.disabled) {
           toggle3.disabled = false;
         }
+        if (toggle7.disabled) {
+          toggle7.disabled = false;
+        }
       } else {
         toggle5.disabled = false;
         toggle6.disabled = false;
@@ -248,6 +259,10 @@ function calculateSum(branchId, nodeIndex) {
   const branch = document.getElementById(branchId);
   const nodes = branch.getElementsByClassName('node');
 
+  if (toggle4.checked) {
+    document.getElementById('dV_display').value = 'hmm';
+  }
+
   let sum = getBaseValue(branchId);
   changeImage(branchId, nodeIndex);
 
@@ -288,6 +303,7 @@ function calculateSum(branchId, nodeIndex) {
   if (toggle4.checked) {
     document.getElementById('arrival_angle').value = '';
     phaseAngleDepart(branchId);
+
     return;
   }
 
@@ -474,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function () {
     toggleDropdown();
   });
 
-  document.getElementById('toggle8').addEventListener('click', function (evemt) {
+  document.getElementById('toggle8').addEventListener('click', function (event) {
     event.stopPropagation(); // Prevent the click event from reaching the document
     return;
   });
@@ -501,7 +517,7 @@ function populateDropdown() {
 
   // Populate the dropdown with entries
   switch (prevBranch) {
-    case 'Kerbin': // Kerbin-----------------------------------------------------------------------
+    case 'Kerbin': // Kerbin------------------------------------------------------------------------
       atmo = true;
       if (toggle1.checked) { // Round trip
         switch (prevNode) {
@@ -761,20 +777,20 @@ function populateDropdown() {
     case 'Sun': // Sun------------------------------------------------------------------------------
       atmo = false;
       if (toggle1.checked) { // Round trip
+        let entry = document.createElement('div');
         switch (prevNode) {
           case 0:
             kerbinDescent();
             kerbinLowOrbit();
             if (toggle6.checked) {
-              entry = document.createElement('div');
+              let entry = document.createElement('div');
               entry.textContent = 'Kerbin encounter: ' + 0;
               dropdown.appendChild(entry);
             } else {
-              entry = document.createElement('div');
+              let entry = document.createElement('div');
               entry.textContent = 'Kerbin encounter: ' + Math.round(19700 * redundancy);
               dropdown.appendChild(entry);
             }
-            entry = document.createElement('div');
             entry.textContent = ' Low Kerbol orbit: ' + Math.round(19700 * redundancy);
             dropdown.appendChild(entry);
             entry = document.createElement('div');
@@ -785,15 +801,14 @@ function populateDropdown() {
             kerbinDescent();
             kerbinLowOrbit();
             if (toggle6.checked) {
-              entry = document.createElement('div');
+              let entry = document.createElement('div');
               entry.textContent = 'Kerbin encounter: ' + 0;
               dropdown.appendChild(entry);
             } else {
-              entry = document.createElement('div');
+              let entry = document.createElement('div');
               entry.textContent = 'Kerbin encounter: ' + Math.round(19700 * redundancy);
               dropdown.appendChild(entry);
             }
-            entry = document.createElement('div');
             entry.textContent = ' Low Kerbol orbit: ' + Math.round(67000 * redundancy);
             dropdown.appendChild(entry);
             entry = document.createElement('div');
@@ -813,11 +828,11 @@ function populateDropdown() {
             kerbinDescent();
             kerbinLowOrbit();
             if (toggle6.checked) {
-              entry = document.createElement('div');
+              let entry = document.createElement('div');
               entry.textContent = 'Kerbin encounter: ' + 0;
               dropdown.appendChild(entry);
             } else {
-              entry = document.createElement('div');
+              let entry = document.createElement('div');
               entry.textContent = 'Kerbin encounter: ' + Math.round(19700 * redundancy);
               dropdown.appendChild(entry);
             }
@@ -826,11 +841,11 @@ function populateDropdown() {
             kerbinDescent();
             kerbinLowOrbit();
             if (toggle6.checked) {
-              entry = document.createElement('div');
+              let entry = document.createElement('div');
               entry.textContent = 'Kerbin encounter: ' + 0;
               dropdown.appendChild(entry);
             } else {
-              entry = document.createElement('div');
+              let entry = document.createElement('div');
               entry.textContent = 'Kerbin encounter: ' + Math.round(19700 * redundancy);
               dropdown.appendChild(entry);
             }
@@ -841,9 +856,9 @@ function populateDropdown() {
             break;
         }
       } else { // One way
+        let entry = document.createElement('div');
         switch (prevNode) {
           case 0:
-            entry = document.createElement('div');
             entry.textContent = ' Low Kerbol orbit: ' + Math.round(19700 * redundancy);
             dropdown.appendChild(entry);
             entry = document.createElement('div');
@@ -851,7 +866,6 @@ function populateDropdown() {
             dropdown.appendChild(entry);
             break;
           case 1:
-            entry = document.createElement('div');
             entry.textContent = ' Kerbol descent: ' + Math.round(67000 * redundancy);
             dropdown.appendChild(entry);
             entry = document.createElement('div');
@@ -929,6 +943,9 @@ function populateDropdown() {
             encounter(atmo);
             break;
         }
+        let entry = document.createElement('div');
+        entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
+        dropdown.appendChild(entry);
       } else if (toggle4.checked) { // Return only
         switch (prevNode) {
           case 0:
@@ -986,10 +1003,11 @@ function populateDropdown() {
             encounter(atmo);
             break;
         }
+        let entry = document.createElement('div');
+        entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
+        dropdown.appendChild(entry);
       }
-      let entry = document.createElement('div');
-      entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
-      dropdown.appendChild(entry);
+
       break;
   }
   if (!toggle4.checked && !toggle7.checked) {
