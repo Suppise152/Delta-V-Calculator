@@ -1,5 +1,5 @@
 @media only screen and (max-width: 1200px) {
-/**********************************************
+  /**********************************************
   *************************** GENERAL POSITIONING
   **********************************************/
 
@@ -76,6 +76,11 @@
 
   .toggle-boxes label:nth-child(7) {
     margin-bottom: 80px;
+  }
+
+  /* disables the last toggle box */
+  .toggle-boxes label:last-child {
+    display: none;
   }
 
   /*branches and nodes*/
@@ -175,7 +180,7 @@
     width: 130px;
     position: absolute;
     left: 3%;
-    bottom: 17%;
+    bottom: 16%;
     font-family: monospace;
     text-align: center;
     font-size: 30px;
@@ -184,7 +189,7 @@
   #arrival {
     position: absolute;
     left: 3%;
-    bottom: 22%;
+    bottom: 21%;
     font-family: monospace;
     font-size: 25px;
   }
@@ -194,7 +199,7 @@
     width: 130px;
     position: absolute;
     left: 3%;
-    bottom: 6%;
+    bottom: 5%;
     font-family: monospace;
     text-align: center;
     font-size: 30px;
@@ -203,9 +208,35 @@
   #departure {
     position: absolute;
     left: 3%;
-    bottom: 11%;
+    bottom: 10%;
     font-family: monospace;
     font-size: 25px;
+  }
+
+  /* Styles for the dropdown container */
+  .dropdown {
+    position: absolute;
+    left: 2%;
+    bottom: 32%;
+    display: inline-block;
+    z-index: 2;
+  }
+
+  /* Styles for the dropdown content */
+  .dropdown-content {
+    display: none;
+    background-color: #2b2e3f;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    color: rgb(190, 190, 190);
+    font-family: monospace;
+    font-size: 25px;
+  }
+
+  .dropdown-content div {
+    padding: 12px 16px;
+    border-bottom: 1px solid #ddd;
   }
 
   /***************************************

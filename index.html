@@ -135,7 +135,7 @@
       <img id="eelooDepart" src="images/transferAngles/eelooDepart.png" alt="eelooDepart">
       <div id="transferAngleDepartText">Transfer Window from Target</div>
 
-      <div class="toggle-boxes">
+      <div class="toggle-boxes"> <!-- Apear in the order of which they are on the site (not numerical) -->
         <label>
           <input type="checkbox" id="toggle1" onchange="handleToggleChange('toggle1')">Round Trip
         </label>
@@ -163,6 +163,9 @@
           <input type="range" id="slider" min="0" max="5" step="1" onchange="handleSliderChange(this)">
           <div id="slider-value">+ x% Redundancy</div>
         </div>
+        </label>
+        <label>
+          <input type="checkbox" id="toggle8" onchange="handleToggleChange('toggle8')">Toggle dropdown menu
         </label>
       </div>
       <div class="tree">
@@ -274,7 +277,7 @@
     </div>
 
     <footer>
-      <span id="version-info">Version 2.4.4.0</span>
+      <span id="version-info">Version 2.4.5.0</span>
     </footer>
 
     <script src="SAC-1.js"></script>

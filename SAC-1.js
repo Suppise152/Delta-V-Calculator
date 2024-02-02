@@ -149,6 +149,7 @@ function handleToggleChange(checkbox) {
   const toggle5 = document.getElementById('toggle5');
   const toggle6 = document.getElementById('toggle6');
   const toggle7 = document.getElementById('toggle7');
+  const toggle8 = document.getElementById('toggle8');
 
   switch (checkbox) {
     case 'toggle1': //round trip
@@ -223,7 +224,11 @@ function handleToggleChange(checkbox) {
         aeroReturn.style.opacity = 0;
       }
       break;
-    default:
+    case 'toggle8': // dropdown
+      if (toggle8.checked) {
+        let dropdownContent = document.getElementById('dv-dropdown');
+        dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
+      }
       break;
   }
 
@@ -467,6 +472,11 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('dV_display').addEventListener('click', function (event) {
     event.stopPropagation(); // Prevent the click event from reaching the document
     toggleDropdown();
+  });
+
+  document.getElementById('toggle8').addEventListener('click', function (evemt) {
+    event.stopPropagation(); // Prevent the click event from reaching the document
+    return;
   });
 
   // Add a click event listener to close the dropdown when clicking outside
@@ -744,6 +754,112 @@ function populateDropdown() {
             descent(atmo);
             lowOrbit(atmo);
             encounter(atmo);
+            break;
+        }
+      }
+      break;
+    case 'Sun': // Sun------------------------------------------------------------------------------
+      atmo = false;
+      if (toggle1.checked) { // Round trip
+        switch (prevNode) {
+          case 0:
+            kerbinDescent();
+            kerbinLowOrbit();
+            if (toggle6.checked) {
+              entry = document.createElement('div');
+              entry.textContent = 'Kerbin encounter: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              entry = document.createElement('div');
+              entry.textContent = 'Kerbin encounter: ' + Math.round(19700 * redundancy);
+              dropdown.appendChild(entry);
+            }
+            entry = document.createElement('div');
+            entry.textContent = ' Low Kerbol orbit: ' + Math.round(19700 * redundancy);
+            dropdown.appendChild(entry);
+            entry = document.createElement('div');
+            entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
+            dropdown.appendChild(entry);
+            break;
+          case 1:
+            kerbinDescent();
+            kerbinLowOrbit();
+            if (toggle6.checked) {
+              entry = document.createElement('div');
+              entry.textContent = 'Kerbin encounter: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              entry = document.createElement('div');
+              entry.textContent = 'Kerbin encounter: ' + Math.round(19700 * redundancy);
+              dropdown.appendChild(entry);
+            }
+            entry = document.createElement('div');
+            entry.textContent = ' Low Kerbol orbit: ' + Math.round(67000 * redundancy);
+            dropdown.appendChild(entry);
+            entry = document.createElement('div');
+            entry.textContent = ' Kerbol descent: ' + Math.round(67000 * redundancy);
+            dropdown.appendChild(entry);
+            entry = document.createElement('div');
+            entry.textContent = ' Low Kerbol orbit: ' + Math.round(19700 * redundancy);
+            dropdown.appendChild(entry);
+            entry = document.createElement('div');
+            entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
+            dropdown.appendChild(entry);
+            break;
+        }
+      } else if (toggle4.checked) { // Return only
+        switch (prevNode) {
+          case 0:
+            kerbinDescent();
+            kerbinLowOrbit();
+            if (toggle6.checked) {
+              entry = document.createElement('div');
+              entry.textContent = 'Kerbin encounter: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              entry = document.createElement('div');
+              entry.textContent = 'Kerbin encounter: ' + Math.round(19700 * redundancy);
+              dropdown.appendChild(entry);
+            }
+            break;
+          case 1:
+            kerbinDescent();
+            kerbinLowOrbit();
+            if (toggle6.checked) {
+              entry = document.createElement('div');
+              entry.textContent = 'Kerbin encounter: ' + 0;
+              dropdown.appendChild(entry);
+            } else {
+              entry = document.createElement('div');
+              entry.textContent = 'Kerbin encounter: ' + Math.round(19700 * redundancy);
+              dropdown.appendChild(entry);
+            }
+            entry = document.createElement('div');
+            entry.textContent = ' Low Kerbol orbit: ' + Math.round(67000 * redundancy);
+            dropdown.appendChild(entry);
+
+            break;
+        }
+      } else { // One way
+        switch (prevNode) {
+          case 0:
+            entry = document.createElement('div');
+            entry.textContent = ' Low Kerbol orbit: ' + Math.round(19700 * redundancy);
+            dropdown.appendChild(entry);
+            entry = document.createElement('div');
+            entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
+            dropdown.appendChild(entry);
+            break;
+          case 1:
+            entry = document.createElement('div');
+            entry.textContent = ' Kerbol descent: ' + Math.round(67000 * redundancy);
+            dropdown.appendChild(entry);
+            entry = document.createElement('div');
+            entry.textContent = ' Low Kerbol orbit: ' + Math.round(19700 * redundancy);
+            dropdown.appendChild(entry);
+            entry = document.createElement('div');
+            entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
+            dropdown.appendChild(entry);
             break;
         }
       }
@@ -1091,7 +1207,14 @@ function escape(atmo) {
  **/
 function toggleDropdown() {
   let dropdownContent = document.getElementById('dv-dropdown');
-  dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
+  if (dropdownContent.style.display === 'block') {
+    dropdownContent.style.display = 'none';
+    toggle8.checked = false;
+  } else {
+    dropdownContent.style.display = 'block';
+    toggle8.checked = true;
+  }
+  // dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
 }
 
 /**
@@ -1100,7 +1223,9 @@ function toggleDropdown() {
  **/
 function closeDropdown() {
   let dropdownContent = document.getElementById('dv-dropdown');
+  const toggle8 = document.getElementById('toggle8');
   dropdownContent.style.display = 'none';
+  toggle8.checked = false;
 }
 
 
