@@ -79,7 +79,15 @@
   }
 
   /* disables the last toggle box */
-  .toggle-boxes label:last-child {
+  /* .toggle-boxes label:last-child {
+    display: none;
+  } */
+
+  #toggle8 {
+    display: none;
+  }
+
+  #dropdown-toggle {
     display: none;
   }
 

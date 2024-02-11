@@ -59,7 +59,6 @@
 
   #slider-value {
     margin-top: -40px;
-    margin-bottom: 350px;
     font-size: 100%;
   }
 
@@ -82,8 +81,18 @@
     margin-bottom: 50px;
   }
 
-  .toggle-boxes label:nth-child(8) {
-    margin-bottom: -150px;
+  #toggle8 {
+    position: absolute;
+    left: 35%;
+    bottom: 6%;
+  }
+
+  #dropdown-toggle {
+    position: absolute;
+    left: calc(35% + 20px);
+    bottom: 6%;
+    font-size: 125%;
+    font-family: monospace;
   }
 
   .toggle-boxes:hover {

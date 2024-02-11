@@ -1,11 +1,13 @@
-//test
-
 // storage for vairables
 let prevBranch;
 let prevNode;
+
 let prevImg;
 let prevPhaseArrive;
 let prevPhaseDepart;
+
+let firstCall = true;
+
 let redundancy = 1;
 
 /**
@@ -176,24 +178,17 @@ function handleToggleChange(checkbox) {
         toggle5.disabled = false;
         toggle6.disabled = false;
         document.getElementById('departure_angle').value = '';
+        transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
         break;
       }
     case 'toggle2': //aerobrake low orbit arrival
       if (toggle2.checked) {
         toggle3.checked = false;
-        aeroArriveLO.style.opacity = 1;
-        aeroArrive.style.opacity = 0;
-      } else {
-        aeroArriveLO.style.opacity = 0;
       }
       break;
     case 'toggle3': //aerobrake intercept arrival
       if (toggle3.checked) {
         toggle2.checked = false;
-        aeroArrive.style.opacity = 1;
-        aeroArriveLO.style.opacity = 0;
-      } else {
-        aeroArrive.style.opacity = 0;
       }
       break;
     case 'toggle4': //return only
@@ -207,32 +202,23 @@ function handleToggleChange(checkbox) {
         toggle6.disabled = false;
         toggle7.checked = false;
         toggle7.disabled = true;
-        aeroArrive.style.opacity = 0;
-        aeroArriveLO.style.opacity = 0;
         transferAnlgeImageChange('emptyPhaseAngle', 'Arrive');
       } else {
         toggle2.disabled = false;
         toggle3.disabled = false;
         toggle7.disabled = false;
         document.getElementById('departure_angle').value = '';
+        transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
       }
       break;
     case 'toggle5': //aerobrake low orbit return
       if (toggle5.checked) {
         toggle6.checked = false;
-        aeroReturnLO.style.opacity = 1;
-        aeroReturn.style.opacity = 0;
-      } else {
-        aeroReturnLO.style.opacity = 0;
       }
       break;
     case 'toggle6': //aerobrake intercept return
       if (toggle6.checked) {
         toggle5.checked = false;
-        aeroReturn.style.opacity = 1;
-        aeroReturnLO.style.opacity = 0;
-      } else {
-        aeroReturn.style.opacity = 0;
       }
       break;
     case 'toggle8': // dropdown
@@ -298,14 +284,19 @@ function calculateSum(branchId, nodeIndex) {
   if (toggle1.checked) {
     phaseAngleArrive(branchId);
     phaseAngleDepart(branchId);
+    firstCall = false;
+
     return;
   }
   if (toggle4.checked) {
     document.getElementById('arrival_angle').value = '';
     phaseAngleDepart(branchId);
+    firstCall = false;
 
     return;
   }
+
+  firstCall = false;
 
   phaseAngleArrive(branchId);
 }
@@ -476,7 +467,42 @@ function calculateAerobrake(branchId, nodeIndex) {
         break;
     }
   }
+  updateAerobrakeDisplay();
+
   return aerobrake;
+}
+
+function updateAerobrakeDisplay() {
+  if (firstCall) {
+    document.getElementById('aeroArrive').style.opacity = 0.5;
+    document.getElementById('aeroArriveLO').style.opacity = 0;
+    document.getElementById('aeroReturn').style.opacity = 0.5;
+    document.getElementById('aeroReturnLO').style.opacity = 0;
+  }
+
+  if (toggle2.checked) {
+    document.getElementById('aeroArriveLO').style.opacity = 1;
+  } else {
+    document.getElementById('aeroArriveLO').style.opacity = 0;
+  }
+  if (toggle3.checked) {
+    document.getElementById('aeroArrive').style.opacity = 1;
+    document.getElementById('aeroArriveLO').style.opacity = 0;
+  } else {
+    document.getElementById('aeroArrive').style.opacity = 0.5;
+  }
+  if (toggle5.checked) {
+    document.getElementById('aeroReturnLO').style.opacity = 1;
+  } else {
+    document.getElementById('aeroReturnLO').style.opacity = 0;
+  }
+  if (toggle6.checked) {
+    document.getElementById('aeroReturn').style.opacity = 1;
+    document.getElementById('aeroReturnLO').style.opacity = 0;
+  } else {
+    document.getElementById('aeroReturn').style.opacity = 0.5;
+  }
+
 }
 
 /**
