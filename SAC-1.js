@@ -148,10 +148,6 @@ function handleSliderChange(slider) {
  * @param {*} checkbox The checkbox that was changed.
  */
 function handleToggleChange(checkbox) {
-  const aeroArrive = document.getElementById('aeroArrive');
-  const aeroReturn = document.getElementById('aeroReturn');
-  const aeroArriveLO = document.getElementById('aeroArriveLO');
-  const aeroReturnLO = document.getElementById('aeroReturnLO');
   const toggle1 = document.getElementById('toggle1');
   const toggle2 = document.getElementById('toggle2');
   const toggle3 = document.getElementById('toggle3');
