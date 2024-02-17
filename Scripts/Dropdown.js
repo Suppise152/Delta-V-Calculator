@@ -79,222 +79,6 @@ function populateDropdown() {
                 }
             }
             break;
-        case 'Mun': // Mun------------------------------------------------------------------------------
-            atmo = false;
-            if (toggle1.checked) { // Round trip
-                switch (prevNode) {
-                    case 0:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        encounter(atmo);
-                        break;
-                    case 1:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        lowOrbit(atmo);
-                        encounter(atmo);
-                        break;
-                    case 2:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        escape(atmo);
-                        ascent();
-                        descent(atmo);
-                        lowOrbit(atmo);
-                        encounter(atmo);
-                        break;
-                }
-            } else if (toggle4.checked) { // Return only
-                switch (prevNode) {
-                    case 0:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        break;
-                    case 1:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        escape(atmo);
-                        break;
-                    case 2:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        escape(atmo);
-                        ascent();
-                        break;
-                }
-            } else { // One way
-                switch (prevNode) {
-                    case 0:
-                        encounter(atmo);
-                        break;
-                    case 1:
-                        lowOrbit(atmo);
-                        encounter(atmo);
-                        break;
-                    case 2:
-                        descent(atmo);
-                        lowOrbit(atmo);
-                        encounter(atmo);
-                        break;
-                }
-            }
-            break;
-        case 'Minmus': // Minmus------------------------------------------------------------------------
-            atmo = false;
-            if (toggle1.checked) { // Round trip
-                switch (prevNode) {
-                    case 0:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        encounter(atmo);
-                        break;
-                    case 1:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        lowOrbit(atmo);
-                        encounter(atmo);
-                        break;
-                    case 2:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        escape(atmo);
-                        ascent();
-                        descent(atmo);
-                        lowOrbit(atmo);
-                        encounter(atmo);
-                        break;
-                }
-            } else if (toggle4.checked) { // Return only
-                switch (prevNode) {
-                    case 0:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        break;
-                    case 1:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        escape(atmo);
-                        break;
-                    case 2:
-                        kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
-                        escape(atmo);
-                        ascent();
-                        break;
-                }
-            } else { // One way
-                switch (prevNode) {
-                    case 0:
-                        encounter(atmo);
-                        break;
-                    case 1:
-                        lowOrbit(atmo);
-                        encounter(atmo);
-                        break;
-                    case 2:
-                        descent(atmo);
-                        lowOrbit(atmo);
-                        encounter(atmo);
-                        break;
-                }
-            }
-            break;
         case 'Sun': // Sun------------------------------------------------------------------------------
             atmo = false;
             if (toggle1.checked) { // Round trip
@@ -421,42 +205,21 @@ function populateDropdown() {
                 switch (prevNode) {
                     case 0:
                         kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
+                        kerbinLowOrbit();
+                        kerbinEncounter();
                         encounter(atmo);
                         break;
                     case 1:
                         kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
+                        kerbinLowOrbit();
+                        kerbinEncounter();
                         lowOrbit(atmo);
                         encounter(atmo);
                         break;
                     case 2:
                         kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
+                        kerbinLowOrbit();
+                        kerbinEncounter();
                         escape(atmo);
                         ascent();
                         descent(atmo);
@@ -464,47 +227,34 @@ function populateDropdown() {
                         encounter(atmo);
                         break;
                 }
-                let entry = document.createElement('div');
-                entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
-                dropdown.appendChild(entry);
+                switch (prevBranch) {
+                    case 'Mun':
+                        break;
+                    case 'Minmus':
+                        break;
+                    default:
+                        entry = document.createElement('div');
+                        entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
+                        dropdown.appendChild(entry);
+                        break;
+                }
             } else if (toggle4.checked) { // Return only
                 switch (prevNode) {
                     case 0:
                         kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
+                        kerbinLowOrbit();
+                        kerbinEncounter();
                         break;
                     case 1:
                         kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
+                        kerbinLowOrbit();
+                        kerbinEncounter();
                         escape(atmo);
                         break;
                     case 2:
                         kerbinDescent();
-                        if (toggle6.checked) {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + 0;
-                            dropdown.appendChild(entry);
-                        } else {
-                            let entry = document.createElement('div');
-                            entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
-                            dropdown.appendChild(entry);
-                        }
+                        kerbinLowOrbit();
+                        kerbinEncounter();
                         escape(atmo);
                         ascent();
                         break;
@@ -524,9 +274,18 @@ function populateDropdown() {
                         encounter(atmo);
                         break;
                 }
-                let entry = document.createElement('div');
-                entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
-                dropdown.appendChild(entry);
+                switch (prevBranch) {
+                    case 'Mun':
+                        break;
+                    case 'Minmus':
+                        break;
+                    default:
+                        entry = document.createElement('div');
+                        entry.textContent = 'Kerbin escape: ' + Math.round(950 * redundancy);
+                        dropdown.appendChild(entry);
+                        break;
+                }
+
             }
 
             break;
@@ -569,11 +328,48 @@ function kerbinLowOrbit() {
         let entry = document.createElement('div');
         entry.textContent = 'Low Kerbin orbit: ' + 0;
         dropdown.appendChild(entry);
+    } else {
+        switch (prevBranch) {
+            case 'Mun':
+                entry = document.createElement('div');
+                entry.textContent = 'Low Kerbin orbit: ' + Math.round(860 * redundancy);
+                dropdown.appendChild(entry);
+                break;
+            case 'Minmus':
+                entry = document.createElement('div');
+                entry.textContent = 'Low Kerbin orbit: ' + Math.round(1170 * redundancy);
+                dropdown.appendChild(entry);
+                break;
+            default:
+                entry = document.createElement('div');
+                entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
+                dropdown.appendChild(entry);
+                break;
+        }
+    }
+}
+
+function kerbinEncounter() {
+    let dropdown = document.getElementById('dv-dropdown');
+
+    const branch = document.getElementById(prevBranch);
+    const nodes = branch.getElementsByClassName('node');
+    const node = nodes[0];
+    const nodeValue = parseInt(node.dataset.value);
+
+    if (branch.id === 'Mun' || branch.id === 'Minmus') {
         return;
     }
-    let entry = document.createElement('div');
-    entry.textContent = 'Low Kerbin orbit: ' + Math.round(950 * redundancy);
-    dropdown.appendChild(entry);
+
+    if (toggle6.checked) {
+        let entry = document.createElement('div');
+        entry.textContent = 'Kerbin encounter: ' + 0;
+        dropdown.appendChild(entry);
+    } else {
+        let entry = document.createElement('div');
+        entry.textContent = 'Kerbin encounter: ' + Math.round(nodeValue * redundancy);
+        dropdown.appendChild(entry);
+    }
 }
 
 // Encounter target
@@ -713,7 +509,7 @@ function ascent() {
     const node = nodes[2];
     const nodeValue = parseInt(node.dataset.value);
     let entry = document.createElement('div');
-    entry.textContent = 'Low ' + prevBranch + ' ' + 'orbit: ' + Math.round(nodeValue * redundancy);
+    entry.textContent = prevBranch + ' ascent to orbit: ' + Math.round(nodeValue * redundancy);
     entry.style.color = 'white';
     dropdown.appendChild(entry);
 }
