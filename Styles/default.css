@@ -185,6 +185,8 @@
 ************************************ DISPLAYS
 ********************************************/
 
+  /* dV display */
+
   #dV_display {
     height: 30px;
     width: 200px;
@@ -203,6 +205,8 @@
     bottom: 15%;
     font-family: monospace;
   }
+
+  /* arrival and departure angle displays */
 
   #arrival_angle {
     height: 30px;
@@ -240,20 +244,20 @@
     font-family: monospace;
   }
 
-  /* Styles for the dropdown container */
+  /* dropdown */
+
   .dropdown {
     position: absolute;
-    left: 21.5%;
+    right: calc(52.5% + 200px);
     bottom: 10%;
     display: inline-block;
     z-index: 2;
   }
 
-  /* Styles for the dropdown content */
   .dropdown-content {
     display: none;
     background-color: #2b2e3f;
-    right: 5px;
+    left: 5px;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 2;
@@ -263,9 +267,14 @@
 
   .dropdown-content div {
     padding: 12px 16px;
-    right: 5px;
+    left: 5px;
     border-bottom: 1px solid #ddd;
   }
+
+  /* .dropdown:hover .dropdown-content {
+    display: block;
+    left: -100%;
+  } */
 
 
   /***************************************
