@@ -90,9 +90,11 @@ function handleToggleChange(checkbox) {
         if (toggle7.disabled) {
           toggle7.disabled = false;
         }
+        if (!toggle5.checked) {
+          toggle6.checked = true;
+        }
       } else {
-        toggle5.disabled = false;
-        toggle6.disabled = false;
+        toggle6.checked = false;
         document.getElementById('departure_angle').value = '';
         transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
         break;
@@ -114,8 +116,9 @@ function handleToggleChange(checkbox) {
         toggle2.disabled = true;
         toggle3.checked = false;
         toggle3.disabled = true;
-        toggle5.disabled = false;
-        toggle6.disabled = false;
+        if (!toggle5.checked) {
+          toggle6.checked = true;
+        }
         toggle7.checked = false;
         toggle7.disabled = true;
         transferAnlgeImageChange('emptyPhaseAngle', 'Arrive');
@@ -123,6 +126,7 @@ function handleToggleChange(checkbox) {
         toggle2.disabled = false;
         toggle3.disabled = false;
         toggle7.disabled = false;
+        toggle6.checked = false;
         document.getElementById('departure_angle').value = '';
         transferAnlgeImageChange('emptyPhaseAngle', 'Depart');
       }
@@ -212,10 +216,6 @@ function changeImage(branchId, nodeIndex) {
 function calculateSum(branchId, nodeIndex) {
   const branch = document.getElementById(branchId);
   const nodes = branch.getElementsByClassName('node');
-
-  if (toggle4.checked) {
-    document.getElementById('dV_display').value = 'hmm';
-  }
 
   let sum = getBaseValue(branchId);
   changeImage(branchId, nodeIndex);

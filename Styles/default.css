@@ -106,11 +106,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.4%;
-    height: 4%;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     background-color: grey;
     color: black;
+    border: #2b2e3f 2px solid;
     font-weight: bold;
     text-align: center;
     margin-right: 10px;

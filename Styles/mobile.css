@@ -101,6 +101,7 @@
     border-radius: 50%;
     background-color: gray;
     color: black;
+    border: #2b2e3f 2px solid;
     font-weight: bold;
     text-align: center;
     margin-right: 10px;
