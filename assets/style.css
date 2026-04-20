@@ -330,6 +330,7 @@ body {
 
 .map-node circle {
     fill: #3a3a4a;
+    opacity: 1;
     transition: fill 0.15s ease, filter 0.15s ease;
 }
 
@@ -340,6 +341,11 @@ body {
 
 .map-node.is-active circle {
     fill: #b0c4de;
+}
+
+.map-node.has-atmo-glow circle {
+    filter: drop-shadow(0 0 4px var(--node-glow-color))
+        drop-shadow(0 0 8px color-mix(in srgb, var(--node-glow-color) 65%, transparent));
 }
 
 /* Node label text inside circle */
@@ -354,6 +360,26 @@ body {
     fill: #111;
 }
 
+.dv-map.has-selection .map-node:not(.is-active) circle {
+    fill: #262634;
+}
+
+.dv-map.has-selection .map-node:not(.is-active) text {
+    fill: #8b8b98;
+}
+
+.dv-map.has-selection .map-node.is-route:not(.is-active) circle {
+    fill: #3a3a4a;
+}
+
+.dv-map.has-selection .map-node.is-route:not(.is-active) text {
+    fill: #ccc;
+}
+
+.dv-map.has-selection .map-node.has-atmo-glow:not(.is-active):not(.is-route) circle {
+    filter: drop-shadow(0 0 3px color-mix(in srgb, var(--node-glow-color) 55%, transparent));
+}
+
 /* Body name labels */
 .map-label {
     fill: var(--text-primary);
@@ -362,11 +388,23 @@ body {
     pointer-events: none;
 }
 
+.dv-map.has-selection .map-label {
+    fill: #8a8a98;
+}
+
 /* ─── MAP PATH ELEMENTS (SVG) ─────────────────────────────────── */
 .map-path {
     fill: none;
-    opacity: 0.3;
+    opacity: 1;
     transition: opacity 0.2s ease;
+}
+
+.dv-map.has-selection .map-path {
+    opacity: 0.3;
+}
+
+.dv-map.has-selection .map-path.is-active {
+    opacity: 1;
 }
 
 .map-path.is-active {

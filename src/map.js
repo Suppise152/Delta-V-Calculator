@@ -120,6 +120,8 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 let _bodies = null;       // map of id → body from JSON
 let _activePath = null;   // currently lit path elements
 let _activeNodeEl = null; // currently highlighted node element
+let _mapSvgEl = null;     // root SVG for dimming non-selected branches
+let _activeRouteNodes = null; // nodes that belong to the active route
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
@@ -137,6 +139,7 @@ function initMap(systemData) {
 
     const svg = _buildSVG(systemData);
     container.appendChild(svg);
+    _mapSvgEl = svg;
 }
 
 /**
@@ -154,6 +157,10 @@ function setActiveNode(bodyId, nodeKey) {
     if (nodeEl) {
         nodeEl.classList.add('is-active');
         _activeNodeEl = nodeEl;
+    }
+
+    if (_mapSvgEl) {
+        _mapSvgEl.classList.add('has-selection');
     }
 
     // Animate the path segments leading to this node
@@ -299,11 +306,16 @@ function _drawBodyNodes(group, body) {
     nodeKeys.forEach(key => {
         const pos = NODE_POSITIONS[`${body.id}_${key}`];
         if (!pos) return;
+        const hasAtmosphereGlow = _shouldGlowTerminalNode(body, key);
 
         const nodeGroup = _el('g', {
             id: `node_${body.id}_${key}`,
-            class: 'map-node',
+            class: hasAtmosphereGlow ? 'map-node has-atmo-glow' : 'map-node',
         });
+
+        if (hasAtmosphereGlow) {
+            nodeGroup.style.setProperty('--node-glow-color', colour);
+        }
 
         // Click handler
         nodeGroup.addEventListener('click', () => {
@@ -339,6 +351,17 @@ function _drawBodyNodes(group, body) {
 // ─── Active State ─────────────────────────────────────────────────────────────
 
 function _clearActive() {
+    if (_mapSvgEl) {
+        _mapSvgEl.classList.remove('has-selection');
+    }
+
+    if (_activeRouteNodes) {
+        _activeRouteNodes.forEach(el => {
+            el.classList.remove('is-route');
+        });
+        _activeRouteNodes = null;
+    }
+
     // Clear node highlight
     if (_activeNodeEl) {
         _activeNodeEl.classList.remove('is-active');
@@ -363,6 +386,7 @@ function _activatePath(bodyId, nodeKey) {
     if (!body) return;
 
     const activated = [];
+    const routeNodes = [];
 
     if (bodyId === 'kerbol') {
         const rootSpine = document.getElementById('trunk_kerbin');
@@ -372,23 +396,32 @@ function _activatePath(bodyId, nodeKey) {
         }
     }
 
-    _activatePathChain(bodyId, nodeKey, activated);
+    _activatePathChain(bodyId, nodeKey, activated, routeNodes);
 
     _activePath = activated;
+    _activeRouteNodes = routeNodes;
 }
 
-function _activatePathChain(bodyId, nodeKey, activated) {
+function _activatePathChain(bodyId, nodeKey, activated, routeNodes) {
     const body = _bodies[bodyId];
     if (!body) return;
 
     const parentTarget = _parentTargetNode(body);
     if (parentTarget) {
-        _activatePathChain(parentTarget.bodyId, parentTarget.nodeKey, activated);
+        _activatePathChain(parentTarget.bodyId, parentTarget.nodeKey, activated, routeNodes);
     }
 
     const nodeKeys = Object.keys(body.nodes).filter(k => k !== 'comment');
     const targetIndex = nodeKeys.indexOf(nodeKey);
     if (targetIndex === -1) return;
+
+    for (let i = 0; i <= targetIndex; i++) {
+        const routeNode = document.getElementById(`node_${bodyId}_${nodeKeys[i]}`);
+        if (routeNode && !routeNodes.includes(routeNode)) {
+            routeNode.classList.add('is-route');
+            routeNodes.push(routeNode);
+        }
+    }
 
     const trunk = bodyId === 'kerbin' ? null : document.getElementById(`trunk_${bodyId}`);
     if (trunk && !activated.includes(trunk)) {
@@ -440,4 +473,14 @@ function _parentTargetNode(body) {
     }
 
     return { bodyId: body.parent, nodeKey: 'intercept' };
+}
+
+function _shouldGlowTerminalNode(body, nodeKey) {
+    if (!body.surface || !body.surface.canAerobrake) return false;
+
+    if (body.id === 'kerbin') {
+        return nodeKey === 'orbit';
+    }
+
+    return nodeKey === 'land';
 }
