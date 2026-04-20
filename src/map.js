@@ -61,7 +61,7 @@ const NODE_POSITIONS = {
     ike_label: { x: 60, y: 90 },
 
     // Dres
-    dres_intercept: { x: 527, y: 189 },
+    dres_intercept: { x: 495, y: 189 },
     dres_orbit: { x: 282, y: 26 },
     dres_land: { x: 105, y: 26 },
     dres_label: { x: 47, y: 36 },
@@ -228,15 +228,20 @@ function _drawBodyPaths(group, body) {
  */
 function _drawTrunkLine(group, body, colour) {
     const nodeKeys = Object.keys(body.nodes).filter(k => k !== 'comment');
-    const firstKey = nodeKeys[0];
+    const firstKey = body.id === 'kerbin' ? 'escape' : nodeKeys[0];
     const firstPos = NODE_POSITIONS[`${body.id}_${firstKey}`];
     if (!firstPos) return;
 
     let originPos = null;
+    let strokeColour = colour;
 
     if (body.id === 'kerbol') return; // central body, no trunk
 
-    if (body.parent === 'kerbol') {
+    if (body.id === 'kerbin') {
+        // Root transfer spine from the sun branch to Kerbin escape.
+        originPos = NODE_POSITIONS['kerbol_orbit'];
+        strokeColour = (_bodies.kerbol && _bodies.kerbol.mapColour) || colour;
+    } else if (body.parent === 'kerbol') {
         // Interplanetary: trunk from kerbin_escape
         originPos = NODE_POSITIONS['kerbin_escape'];
     } else if (body.parent === 'kerbin') {
@@ -262,7 +267,7 @@ function _drawTrunkLine(group, body, colour) {
         y1: originPos.y,
         x2: firstPos.x,
         y2: firstPos.y,
-        stroke: colour,
+        stroke: strokeColour,
         'stroke-width': 1.5,
     });
     group.appendChild(trunk);
@@ -357,27 +362,47 @@ function _activatePath(bodyId, nodeKey) {
     if (!body) return;
 
     const activated = [];
+
+    if (bodyId === 'kerbol') {
+        const rootSpine = document.getElementById('trunk_kerbin');
+        if (rootSpine) {
+            rootSpine.classList.add('is-active');
+            activated.push(rootSpine);
+        }
+    }
+
+    _activatePathChain(bodyId, nodeKey, activated);
+
+    _activePath = activated;
+}
+
+function _activatePathChain(bodyId, nodeKey, activated) {
+    const body = _bodies[bodyId];
+    if (!body) return;
+
+    const parentTarget = _parentTargetNode(body);
+    if (parentTarget) {
+        _activatePathChain(parentTarget.bodyId, parentTarget.nodeKey, activated);
+    }
+
     const nodeKeys = Object.keys(body.nodes).filter(k => k !== 'comment');
     const targetIndex = nodeKeys.indexOf(nodeKey);
+    if (targetIndex === -1) return;
 
-    // Activate trunk
-    const trunk = document.getElementById(`trunk_${bodyId}`);
-    if (trunk) {
+    const trunk = bodyId === 'kerbin' ? null : document.getElementById(`trunk_${bodyId}`);
+    if (trunk && !activated.includes(trunk)) {
         trunk.classList.add('is-active');
         activated.push(trunk);
     }
 
-    // Activate branch segments up to selected node
     for (let i = 0; i < targetIndex; i++) {
         const segId = `path_${bodyId}_${nodeKeys[i]}_${nodeKeys[i + 1]}`;
         const seg = document.getElementById(segId);
-        if (seg) {
+        if (seg && !activated.includes(seg)) {
             seg.classList.add('is-active');
             activated.push(seg);
         }
     }
-
-    _activePath = activated;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -396,4 +421,22 @@ function _nodeLabel(key) {
         escape: 'Escape',
     };
     return labels[key] || key;
+}
+
+function _parentTargetNode(body) {
+    if (!body.parent) return null;
+
+    if (body.id === 'kerbin') {
+        return null;
+    }
+
+    if (body.parent === 'kerbol') {
+        return { bodyId: 'kerbin', nodeKey: 'escape' };
+    }
+
+    if (body.parent === 'kerbin') {
+        return { bodyId: 'kerbin', nodeKey: 'orbit' };
+    }
+
+    return { bodyId: body.parent, nodeKey: 'intercept' };
 }
