@@ -346,7 +346,7 @@ body {
 .map-node text {
     fill: #ccc;
     font-family: var(--font-ui);
-    font-size: 9px;
+    font-size: 11px;
     pointer-events: none;
 }
 
@@ -358,7 +358,7 @@ body {
 .map-label {
     fill: var(--text-primary);
     font-family: var(--font-ui);
-    font-size: 11px;
+    font-size: 15px;
     pointer-events: none;
 }
 
@@ -371,7 +371,7 @@ body {
 
 .map-path.is-active {
     opacity: 1;
-    stroke-dasharray: 8 6;
+    stroke-dasharray: 7 10;
     animation: flow 1s linear infinite;
 }
 

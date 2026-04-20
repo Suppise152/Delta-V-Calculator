@@ -9,27 +9,27 @@
 // ViewBox: 1000 x 820
 const NODE_POSITIONS = {
     // Kerbol
-    kerbol_orbit: { x: 245, y: 490 },
-    kerbol_land: { x: 105, y: 490 },
-    kerbol_label: { x: 25, y: 488 },
+    kerbol_orbit: { x: 215, y: 490 },
+    kerbol_land: { x: 55, y: 490 },
+    kerbol_label: { x: 10, y: 488 },
 
     // Moho
-    moho_intercept: { x: 348, y: 401 },
-    moho_orbit: { x: 225, y: 401 },
-    moho_land: { x: 105, y: 401 },
-    moho_label: { x: 45, y: 401 },
+    moho_intercept: { x: 325, y: 401 },
+    moho_orbit: { x: 185, y: 401 },
+    moho_land: { x: 55, y: 401 },
+    moho_label: { x: 15, y: 401 },
 
     // Eve
-    eve_intercept: { x: 380, y: 333 },
-    eve_orbit: { x: 235, y: 333 },
-    eve_land: { x: 105, y: 333 },
-    eve_label: { x: 60, y: 333 },
+    eve_intercept: { x: 360, y: 333 },
+    eve_orbit: { x: 200, y: 333 },
+    eve_land: { x: 55, y: 333 },
+    eve_label: { x: 25, y: 333 },
 
     // Gilly
-    gilly_intercept: { x: 302, y: 251 },
-    gilly_orbit: { x: 205, y: 251 },
-    gilly_land: { x: 105, y: 251 },
-    gilly_label: { x: 40, y: 254 },
+    gilly_intercept: { x: 280, y: 251 },
+    gilly_orbit: { x: 165, y: 251 },
+    gilly_land: { x: 55, y: 251 },
+    gilly_label: { x: 10, y: 254 },
 
     // Kerbin
     kerbin_orbit: { x: 493, y: 641 },
@@ -37,80 +37,81 @@ const NODE_POSITIONS = {
     kerbin_label: { x: 480, y: 786 },
 
     // Mun
-    mun_intercept: { x: 380, y: 579 },
-    mun_orbit: { x: 232, y: 579 },
-    mun_land: { x: 105, y: 579 },
-    mun_label: { x: 53, y: 575 },
+    mun_intercept: { x: 360, y: 579 },
+    mun_orbit: { x: 195, y: 579 },
+    mun_land: { x: 55, y: 579 },
+    mun_label: { x: 20, y: 575 },
 
     // Minmus
-    minmus_intercept: { x: 593, y: 580 },
-    minmus_orbit: { x: 723, y: 579 },
-    minmus_land: { x: 883, y: 579 },
-    minmus_label: { x: 883, y: 615 },
+    minmus_intercept: { x: 615, y: 580 },
+    minmus_orbit: { x: 770, y: 579 },
+    minmus_land: { x: 940, y: 579 },
+    minmus_label: { x: 930, y: 615 },
 
     // Duna
-    duna_intercept: { x: 313, y: 171 },
-    duna_orbit: { x: 207, y: 171 },
-    duna_land: { x: 105, y: 171 },
-    duna_label: { x: 45, y: 175 },
+    duna_intercept: { x: 290, y: 171 },
+    duna_orbit: { x: 170, y: 171 },
+    duna_land: { x: 55, y: 171 },
+    duna_label: { x: 15, y: 175 },
 
     // Ike
-    ike_intercept: { x: 310, y: 125 },
-    ike_orbit: { x: 238, y: 82 },
-    ike_land: { x: 105, y: 82 },
-    ike_label: { x: 60, y: 90 },
+    ike_intercept: { x: 290, y: 125 },
+    ike_orbit: { x: 205, y: 82 },
+    ike_land: { x: 55, y: 82 },
+    ike_label: { x: 20, y: 90 },
 
     // Dres
-    dres_intercept: { x: 495, y: 189 },
-    dres_orbit: { x: 282, y: 26 },
-    dres_land: { x: 105, y: 26 },
-    dres_label: { x: 47, y: 36 },
+    dres_intercept: { x: 470, y: 189 },
+    dres_orbit: { x: 240, y: 26 },
+    dres_land: { x: 55, y: 26 },
+    dres_label: { x: 15, y: 36 },
 
     // Jool
-    jool_intercept: { x: 705, y: 256 },
-    jool_orbit: { x: 868, y: 297 },
-    jool_land: { x: 873, y: 388 },
-    jool_label: { x: 875, y: 432 },
+    jool_intercept: { x: 730, y: 256 },
+    jool_orbit: { x: 910, y: 297 },
+    jool_land: { x: 925, y: 388 },
+    jool_label: { x: 920, y: 432 },
 
     // Laythe
-    laythe_intercept: { x: 783, y: 203 },
-    laythe_orbit: { x: 910, y: 110 },
-    laythe_land: { x: 915, y: 32 },
-    laythe_label: { x: 902, y: 10 },
+    laythe_intercept: { x: 815, y: 203 },
+    laythe_orbit: { x: 955, y: 110 },
+    laythe_land: { x: 970, y: 32 },
+    laythe_label: { x: 950, y: 10 },
 
     // Vall
-    vall_intercept: { x: 743, y: 159 },
-    vall_orbit: { x: 813, y: 105 },
-    vall_land: { x: 823, y: 32 },
-    vall_label: { x: 818, y: 10 },
+    vall_intercept: { x: 770, y: 159 },
+    vall_orbit: { x: 850, y: 105 },
+    vall_land: { x: 865, y: 32 },
+    vall_label: { x: 855, y: 10 },
 
     // Tylo
-    tylo_intercept: { x: 702, y: 192 },
-    tylo_orbit: { x: 702, y: 109 },
-    tylo_land: { x: 702, y: 32 },
-    tylo_label: { x: 702, y: 10 },
+    tylo_intercept: { x: 725, y: 192 },
+    tylo_orbit: { x: 725, y: 109 },
+    tylo_land: { x: 725, y: 32 },
+    tylo_label: { x: 715, y: 10 },
 
     // Bop
-    bop_intercept: { x: 663, y: 153 },
-    bop_orbit: { x: 610, y: 107 },
-    bop_land: { x: 602, y: 32 },
-    bop_label: { x: 602, y: 10 },
+    bop_intercept: { x: 680, y: 153 },
+    bop_orbit: { x: 620, y: 107 },
+    bop_land: { x: 610, y: 32 },
+    bop_label: { x: 600, y: 10 },
 
     // Pol
-    pol_intercept: { x: 625, y: 203 },
-    pol_orbit: { x: 502, y: 108 },
-    pol_land: { x: 498, y: 32 },
-    pol_label: { x: 500, y: 10 },
+    pol_intercept: { x: 650, y: 203 },
+    pol_orbit: { x: 500, y: 108 },
+    pol_land: { x: 495, y: 32 },
+    pol_label: { x: 485, y: 10 },
 
     // Eeloo
-    eeloo_intercept: { x: 675, y: 490 },
-    eeloo_orbit: { x: 770, y: 490 },
-    eeloo_land: { x: 883, y: 490 },
-    eeloo_label: { x: 883, y: 527 },
+    eeloo_intercept: { x: 705, y: 490 },
+    eeloo_orbit: { x: 825, y: 490 },
+    eeloo_land: { x: 960, y: 490 },
+    eeloo_label: { x: 950, y: 527 },
 };
 
 // Node radius
-const NODE_R = 16;
+const NODE_R = 20;
+const PATH_STROKE_W = 15;
 
 // SVG namespace
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -163,7 +164,7 @@ function setActiveNode(bodyId, nodeKey) {
 
 function _buildSVG(systemData) {
     const svg = _el('svg', {
-        viewBox: '0 0 1000 820',
+        viewBox: '260 -5 420 760',
         preserveAspectRatio: 'xMidYMid meet',
         class: 'dv-map',
     });
@@ -212,7 +213,7 @@ function _drawBodyPaths(group, body) {
             x2: toPos.x,
             y2: toPos.y,
             stroke: colour,
-            'stroke-width': 1.5,
+            'stroke-width': PATH_STROKE_W,
         });
         group.appendChild(path);
     }
@@ -268,7 +269,7 @@ function _drawTrunkLine(group, body, colour) {
         x2: firstPos.x,
         y2: firstPos.y,
         stroke: strokeColour,
-        'stroke-width': 1.5,
+        'stroke-width': PATH_STROKE_W,
     });
     group.appendChild(trunk);
 }
@@ -415,7 +416,7 @@ function _el(tag, attrs = {}) {
 
 function _nodeLabel(key) {
     const labels = {
-        intercept: 'Fly by',
+        intercept: 'Fly-by',
         orbit: 'Orbit',
         land: 'Land',
         escape: 'Escape',
