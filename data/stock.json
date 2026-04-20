@@ -1,0 +1,571 @@
+{
+  "meta": {
+    "name": "Kerbol System",
+    "pack": "stock",
+    "centralBody": "kerbin",
+    "originBody": "kerbin",
+    "comment": "Transfer dV and phase angles are calculated dynamically from orbital parameters. Surface/node costs are hardcoded from established dV maps. Node costs are INCREMENTAL - each value is the cost of the next step deeper, not cumulative."
+  },
+  "bodies": [
+
+    {
+      "id": "kerbol",
+      "label": "Kerbol",
+      "parent": null,
+      "moons": [
+        "moho", "eve", "kerbin", "duna", "dres", "jool", "eeloo"
+      ],
+      "mapColour": "#FFD700",
+      "orbit": {
+        "sma": 0,
+        "eccentricity": 0,
+        "inclination": 0,
+        "comment": "Central body, no orbit"
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 19700,
+        "dvToLand": null,
+        "comment": "dvToOrbit here represents cost to reach low Kerbol orbit from interplanetary space"
+      },
+      "nodes": {
+        "orbit": 19700,
+        "land": 67000
+      },
+      "phaseAngles": {
+        "arrive": null,
+        "depart": null,
+        "comment": "Central body, no transfer angles"
+      }
+    },
+
+    {
+      "id": "moho",
+      "label": "Moho",
+      "parent": "kerbol",
+      "moons": [],
+      "mapColour": "#A0522D",
+      "orbit": {
+        "sma": 5263138304,
+        "eccentricity": 0.2,
+        "inclination": 7.0,
+        "longitudeOfAscendingNode": 70.0,
+        "argumentOfPeriapsis": 15.0,
+        "siderealPeriod": 2215754
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 870,
+        "dvToLand": 870
+      },
+      "nodes": {
+        "intercept": 3280,
+        "orbit": 2410,
+        "land": 870
+      },
+      "phaseAngles": {
+        "comment": "Calculated dynamically via Hohmann transfer from originBody"
+      }
+    },
+
+    {
+      "id": "eve",
+      "label": "Eve",
+      "parent": "kerbol",
+      "moons": ["gilly"],
+      "mapColour": "#9B59B6",
+      "orbit": {
+        "sma": 9832684544,
+        "eccentricity": 0.01,
+        "inclination": 2.1,
+        "longitudeOfAscendingNode": 15.0,
+        "argumentOfPeriapsis": 0.0,
+        "siderealPeriod": 5657995
+      },
+      "surface": {
+        "hasAtmosphere": true,
+        "canAerobrake": true,
+        "dvToOrbit": 8000,
+        "dvToLand": 8000,
+        "aerobrakeOrbitSaving": 8000,
+        "aerobrakeInterceptSaving": 80
+      },
+      "nodes": {
+        "intercept": 520,
+        "orbit": 1410,
+        "land": 8000
+      },
+      "phaseAngles": {
+        "comment": "Calculated dynamically via Hohmann transfer from originBody"
+      }
+    },
+
+    {
+      "id": "gilly",
+      "label": "Gilly",
+      "parent": "eve",
+      "moons": [],
+      "mapColour": "#8B7355",
+      "orbit": {
+        "sma": 31500000,
+        "eccentricity": 0.55,
+        "inclination": 12.0,
+        "longitudeOfAscendingNode": 80.0,
+        "argumentOfPeriapsis": 10.0,
+        "siderealPeriod": 388587
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 30,
+        "dvToLand": 30,
+        "aerobrakeInterceptSaving": 80,
+        "comment": "Intercept saving uses Eve aerobrake - craft arrives via Eve SOI"
+      },
+      "nodes": {
+        "intercept": 660,
+        "orbit": 410,
+        "land": 30
+      },
+      "transferAngleDiagram": "eve",
+      "phaseAngles": {
+        "comment": "Uses parent body (Eve) phase angles for interplanetary transfer"
+      }
+    },
+
+    {
+      "id": "kerbin",
+      "label": "Kerbin",
+      "parent": "kerbol",
+      "moons": ["mun", "minmus"],
+      "mapColour": "#4A90D9",
+      "orbit": {
+        "sma": 13599840256,
+        "eccentricity": 0.0,
+        "inclination": 0.0,
+        "longitudeOfAscendingNode": 0.0,
+        "argumentOfPeriapsis": 0.0,
+        "siderealPeriod": 9203545
+      },
+      "surface": {
+        "hasAtmosphere": true,
+        "canAerobrake": true,
+        "dvToOrbit": 3400,
+        "dvToLand": 3400,
+        "aerobrakeOrbitSaving": 3400,
+        "aerobrakeInterceptSaving": 0,
+        "comment": "Origin body. dvToOrbit = LKO. Aerobrake intercept saving = 0 because Kerbin return handled separately."
+      },
+      "nodes": {
+        "orbit": 3400,
+        "escape": 950,
+        "comment": "Kerbin has orbit/escape instead of intercept/orbit/land"
+      },
+      "phaseAngles": {
+        "comment": "Origin body, no inbound transfer angles in v2.0"
+      }
+    },
+
+    {
+      "id": "mun",
+      "label": "Mun",
+      "parent": "kerbin",
+      "moons": [],
+      "mapColour": "#AAAAAA",
+      "orbit": {
+        "sma": 12000000,
+        "eccentricity": 0.0,
+        "inclination": 0.0,
+        "longitudeOfAscendingNode": 0.0,
+        "argumentOfPeriapsis": 0.0,
+        "siderealPeriod": 138984
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 580,
+        "dvToLand": 580
+      },
+      "nodes": {
+        "intercept": 860,
+        "orbit": 310,
+        "land": 580
+      },
+      "baseTransferCost": 3400,
+      "phaseAngles": {
+        "arrive": 90,
+        "depart": null,
+        "comment": "Suborbital transfer, fixed 90 degree phase angle. No departure angle needed."
+      }
+    },
+
+    {
+      "id": "minmus",
+      "label": "Minmus",
+      "parent": "kerbin",
+      "moons": [],
+      "mapColour": "#88CCAA",
+      "orbit": {
+        "sma": 47000000,
+        "eccentricity": 0.0,
+        "inclination": 6.0,
+        "longitudeOfAscendingNode": 78.0,
+        "argumentOfPeriapsis": 38.0,
+        "siderealPeriod": 1077311
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 180,
+        "dvToLand": 180
+      },
+      "nodes": {
+        "intercept": 1170,
+        "orbit": 160,
+        "land": 180
+      },
+      "baseTransferCost": 3400,
+      "phaseAngles": {
+        "arrive": 90,
+        "depart": null,
+        "comment": "Suborbital transfer, fixed 90 degree phase angle. No departure angle needed."
+      }
+    },
+
+    {
+      "id": "duna",
+      "label": "Duna",
+      "parent": "kerbol",
+      "moons": ["ike"],
+      "mapColour": "#C1440E",
+      "orbit": {
+        "sma": 20726155264,
+        "eccentricity": 0.051,
+        "inclination": 0.06,
+        "longitudeOfAscendingNode": 135.5,
+        "argumentOfPeriapsis": 0.0,
+        "siderealPeriod": 17315400
+      },
+      "surface": {
+        "hasAtmosphere": true,
+        "canAerobrake": true,
+        "dvToOrbit": 1450,
+        "dvToLand": 1450,
+        "aerobrakeOrbitSaving": 1450,
+        "aerobrakeInterceptSaving": 250
+      },
+      "nodes": {
+        "intercept": 140,
+        "orbit": 610,
+        "land": 1450
+      },
+      "phaseAngles": {
+        "comment": "Calculated dynamically via Hohmann transfer from originBody"
+      }
+    },
+
+    {
+      "id": "ike",
+      "label": "Ike",
+      "parent": "duna",
+      "moons": [],
+      "mapColour": "#888888",
+      "orbit": {
+        "sma": 3200000,
+        "eccentricity": 0.03,
+        "inclination": 0.2,
+        "longitudeOfAscendingNode": 0.0,
+        "argumentOfPeriapsis": 0.0,
+        "siderealPeriod": 65518
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 390,
+        "dvToLand": 390,
+        "aerobrakeInterceptSaving": 250,
+        "comment": "Intercept saving uses Duna aerobrake"
+      },
+      "nodes": {
+        "intercept": 420,
+        "orbit": 180,
+        "land": 390
+      },
+      "transferAngleDiagram": "duna",
+      "phaseAngles": {
+        "comment": "Uses parent body (Duna) phase angles for interplanetary transfer"
+      }
+    },
+
+    {
+      "id": "dres",
+      "label": "Dres",
+      "parent": "kerbol",
+      "moons": [],
+      "mapColour": "#9B9B7A",
+      "orbit": {
+        "sma": 40839348203,
+        "eccentricity": 0.145,
+        "inclination": 5.0,
+        "longitudeOfAscendingNode": 280.0,
+        "argumentOfPeriapsis": 90.0,
+        "siderealPeriod": 47893063
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 430,
+        "dvToLand": 430
+      },
+      "nodes": {
+        "intercept": 1620,
+        "orbit": 1290,
+        "land": 430
+      },
+      "phaseAngles": {
+        "comment": "Calculated dynamically via Hohmann transfer from originBody"
+      }
+    },
+
+    {
+      "id": "jool",
+      "label": "Jool",
+      "parent": "kerbol",
+      "moons": ["laythe", "vall", "tylo", "bop", "pol"],
+      "mapColour": "#5B8C3E",
+      "orbit": {
+        "sma": 68773560320,
+        "eccentricity": 0.05,
+        "inclination": 1.304,
+        "longitudeOfAscendingNode": 52.0,
+        "argumentOfPeriapsis": 0.0,
+        "siderealPeriod": 104661432
+      },
+      "surface": {
+        "hasAtmosphere": true,
+        "canAerobrake": true,
+        "dvToOrbit": 14000,
+        "dvToLand": 14000,
+        "aerobrakeOrbitSaving": 14000,
+        "aerobrakeInterceptSaving": 160,
+        "comment": "Landing on Jool is theoretically impossible but value preserved from v1"
+      },
+      "nodes": {
+        "intercept": 1250,
+        "orbit": 2970,
+        "land": 14000
+      },
+      "phaseAngles": {
+        "comment": "Calculated dynamically via Hohmann transfer from originBody"
+      }
+    },
+
+    {
+      "id": "laythe",
+      "label": "Laythe",
+      "parent": "jool",
+      "moons": [],
+      "mapColour": "#4A7FA5",
+      "orbit": {
+        "sma": 27184000,
+        "eccentricity": 0.0,
+        "inclination": 0.0,
+        "longitudeOfAscendingNode": 0.0,
+        "argumentOfPeriapsis": 0.0,
+        "siderealPeriod": 52981
+      },
+      "surface": {
+        "hasAtmosphere": true,
+        "canAerobrake": true,
+        "dvToOrbit": 2900,
+        "dvToLand": 2900,
+        "aerobrakeOrbitSaving": 2900,
+        "aerobrakeInterceptSaving": 2200
+      },
+      "nodes": {
+        "intercept": 2340,
+        "orbit": 1070,
+        "land": 2900
+      },
+      "transferAngleDiagram": "jool",
+      "phaseAngles": {
+        "comment": "Uses parent body (Jool) phase angles for interplanetary transfer"
+      }
+    },
+
+    {
+      "id": "vall",
+      "label": "Vall",
+      "parent": "jool",
+      "moons": [],
+      "mapColour": "#7EB8C9",
+      "orbit": {
+        "sma": 43152000,
+        "eccentricity": 0.0,
+        "inclination": 0.0,
+        "longitudeOfAscendingNode": 0.0,
+        "argumentOfPeriapsis": 0.0,
+        "siderealPeriod": 105962
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 860,
+        "dvToLand": 860,
+        "aerobrakeInterceptSaving": 2200,
+        "comment": "Intercept saving via Jool aerobrake capture"
+      },
+      "nodes": {
+        "intercept": 2030,
+        "orbit": 910,
+        "land": 860
+      },
+      "transferAngleDiagram": "jool",
+      "phaseAngles": {
+        "comment": "Uses parent body (Jool) phase angles for interplanetary transfer"
+      }
+    },
+
+    {
+      "id": "tylo",
+      "label": "Tylo",
+      "parent": "jool",
+      "moons": [],
+      "mapColour": "#C8B89A",
+      "orbit": {
+        "sma": 68500000,
+        "eccentricity": 0.0,
+        "inclination": 0.025,
+        "longitudeOfAscendingNode": 0.0,
+        "argumentOfPeriapsis": 0.0,
+        "siderealPeriod": 211926
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 2270,
+        "dvToLand": 2270,
+        "aerobrakeInterceptSaving": 2200,
+        "comment": "Intercept saving via Jool aerobrake capture"
+      },
+      "nodes": {
+        "intercept": 1810,
+        "orbit": 1100,
+        "land": 2270
+      },
+      "transferAngleDiagram": "jool",
+      "phaseAngles": {
+        "comment": "Uses parent body (Jool) phase angles for interplanetary transfer"
+      }
+    },
+
+    {
+      "id": "bop",
+      "label": "Bop",
+      "parent": "jool",
+      "moons": [],
+      "mapColour": "#8B7D6B",
+      "orbit": {
+        "sma": 128500000,
+        "eccentricity": 0.235,
+        "inclination": 15.0,
+        "longitudeOfAscendingNode": 10.0,
+        "argumentOfPeriapsis": 25.0,
+        "siderealPeriod": 544507
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 230,
+        "dvToLand": 230,
+        "aerobrakeInterceptSaving": 2200,
+        "comment": "Intercept saving via Jool aerobrake capture"
+      },
+      "nodes": {
+        "intercept": 4070,
+        "orbit": 900,
+        "land": 230
+      },
+      "transferAngleDiagram": "jool",
+      "phaseAngles": {
+        "comment": "Uses parent body (Jool) phase angles for interplanetary transfer"
+      }
+    },
+
+    {
+      "id": "pol",
+      "label": "Pol",
+      "parent": "jool",
+      "moons": [],
+      "mapColour": "#C8B45A",
+      "orbit": {
+        "sma": 179890000,
+        "eccentricity": 0.171,
+        "inclination": 4.25,
+        "longitudeOfAscendingNode": 2.0,
+        "argumentOfPeriapsis": 15.0,
+        "siderealPeriod": 901903
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 130,
+        "dvToLand": 130,
+        "aerobrakeInterceptSaving": 2200,
+        "comment": "Intercept saving via Jool aerobrake capture"
+      },
+      "nodes": {
+        "intercept": 2270,
+        "orbit": 820,
+        "land": 130
+      },
+      "transferAngleDiagram": "jool",
+      "phaseAngles": {
+        "comment": "Uses parent body (Jool) phase angles for interplanetary transfer"
+      }
+    },
+
+    {
+      "id": "eeloo",
+      "label": "Eeloo",
+      "parent": "kerbol",
+      "moons": [],
+      "mapColour": "#C8D8E8",
+      "orbit": {
+        "sma": 90118820000,
+        "eccentricity": 0.26,
+        "inclination": 6.15,
+        "longitudeOfAscendingNode": 50.0,
+        "argumentOfPeriapsis": 260.0,
+        "siderealPeriod": 156992048
+      },
+      "surface": {
+        "hasAtmosphere": false,
+        "canAerobrake": false,
+        "dvToOrbit": 620,
+        "dvToLand": 620
+      },
+      "nodes": {
+        "intercept": 2470,
+        "orbit": 1370,
+        "land": 620
+      },
+      "phaseAngles": {
+        "comment": "Calculated dynamically via Hohmann transfer from originBody"
+      }
+    }
+
+  ],
+
+  "transferConfig": {
+    "comment": "Configuration for the dynamic transfer calculator",
+    "originBody": "kerbin",
+    "lkoAltitude": 80000,
+    "lkoVelocity": 2246,
+    "ejectionDV": 4350,
+    "kerbinMoonBaseCost": 3400,
+    "comment2": "ejectionDV is the hardcoded LKO escape cost used for all interplanetary transfers in v2.0. kerbinMoonBaseCost is the base cost added before Mun/Minmus node values. These will be replaced by dynamic calculation in v2.1 when multi-body origin is supported."
+  }
+}
