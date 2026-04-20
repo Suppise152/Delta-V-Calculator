@@ -2,9 +2,9 @@
   "meta": {
     "name": "Kerbol System",
     "pack": "stock",
-    "centralBody": "kerbin",
+    "centralBody": "kerbol",
     "originBody": "kerbin",
-    "comment": "Transfer dV and phase angles are calculated dynamically from orbital parameters. Surface/node costs are hardcoded from established dV maps. Node costs are INCREMENTAL - each value is the cost of the next step deeper, not cumulative."
+    "comment": "Transfer dV and phase angles are calculated dynamically from orbital parameters. Surface/node costs are hardcoded from established dV maps. Node costs are INCREMENTAL - each value is the cost of the next step deeper, not cumulative. Aerobrake savings are derived directly from node values by the calculator - no separate saving values stored here."
   },
   "bodies": [
 
@@ -12,9 +12,7 @@
       "id": "kerbol",
       "label": "Kerbol",
       "parent": null,
-      "moons": [
-        "moho", "eve", "kerbin", "duna", "dres", "jool", "eeloo"
-      ],
+      "moons": ["moho", "eve", "kerbin", "duna", "dres", "jool", "eeloo"],
       "mapColour": "#FFD700",
       "orbit": {
         "sma": 0,
@@ -23,21 +21,15 @@
         "comment": "Central body, no orbit"
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 19700,
-        "dvToLand": null,
-        "comment": "dvToOrbit here represents cost to reach low Kerbol orbit from interplanetary space"
+        "dvToLand": null
       },
       "nodes": {
         "orbit": 19700,
         "land": 67000
       },
-      "phaseAngles": {
-        "arrive": null,
-        "depart": null,
-        "comment": "Central body, no transfer angles"
-      }
+      "comment": "Kerbol has orbit/land instead of intercept/orbit/land. No transfer angles as central body."
     },
 
     {
@@ -55,7 +47,6 @@
         "siderealPeriod": 2215754
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 870,
         "dvToLand": 870
@@ -64,9 +55,6 @@
         "intercept": 3280,
         "orbit": 2410,
         "land": 870
-      },
-      "phaseAngles": {
-        "comment": "Calculated dynamically via Hohmann transfer from originBody"
       }
     },
 
@@ -85,21 +73,16 @@
         "siderealPeriod": 5657995
       },
       "surface": {
-        "hasAtmosphere": true,
         "canAerobrake": true,
         "dvToOrbit": 8000,
-        "dvToLand": 8000,
-        "aerobrakeOrbitSaving": 8000,
-        "aerobrakeInterceptSaving": 80
+        "dvToLand": 8000
       },
       "nodes": {
         "intercept": 520,
         "orbit": 1410,
         "land": 8000
       },
-      "phaseAngles": {
-        "comment": "Calculated dynamically via Hohmann transfer from originBody"
-      }
+      "comment": "canAerobrake: aerobrakeIntercept zeroes nodes.intercept. aerobrakeOrbit zeroes nodes.intercept + nodes.orbit. Surface descent also zeroed when either aerobrake active."
     },
 
     {
@@ -117,22 +100,18 @@
         "siderealPeriod": 388587
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 30,
-        "dvToLand": 30,
-        "aerobrakeInterceptSaving": 80,
-        "comment": "Intercept saving uses Eve aerobrake - craft arrives via Eve SOI"
+        "dvToLand": 30
       },
       "nodes": {
         "intercept": 660,
         "orbit": 410,
         "land": 30
       },
+      "parentAerobrake": "eve",
       "transferAngleDiagram": "eve",
-      "phaseAngles": {
-        "comment": "Uses parent body (Eve) phase angles for interplanetary transfer"
-      }
+      "comment": "parentAerobrake: when aerobrakeIntercept is active, zeroes nodes.intercept via Eve atmosphere. Calculator reads saving from eve.nodes.intercept."
     },
 
     {
@@ -150,22 +129,15 @@
         "siderealPeriod": 9203545
       },
       "surface": {
-        "hasAtmosphere": true,
         "canAerobrake": true,
         "dvToOrbit": 3400,
-        "dvToLand": 3400,
-        "aerobrakeOrbitSaving": 3400,
-        "aerobrakeInterceptSaving": 0,
-        "comment": "Origin body. dvToOrbit = LKO. Aerobrake intercept saving = 0 because Kerbin return handled separately."
+        "dvToLand": 3400
       },
       "nodes": {
         "orbit": 3400,
-        "escape": 950,
-        "comment": "Kerbin has orbit/escape instead of intercept/orbit/land"
+        "escape": 950
       },
-      "phaseAngles": {
-        "comment": "Origin body, no inbound transfer angles in v2.0"
-      }
+      "comment": "Origin body in v2.0. Has orbit/escape instead of intercept/orbit/land. canAerobrake handles return aerobraking - zeroes nodes.orbit on intercept return, or full capture cost on LO return."
     },
 
     {
@@ -183,7 +155,6 @@
         "siderealPeriod": 138984
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 580,
         "dvToLand": 580
@@ -197,7 +168,7 @@
       "phaseAngles": {
         "arrive": 90,
         "depart": null,
-        "comment": "Suborbital transfer, fixed 90 degree phase angle. No departure angle needed."
+        "comment": "Fixed 90 degree phase angle - suborbital transfer. No departure angle needed."
       }
     },
 
@@ -216,7 +187,6 @@
         "siderealPeriod": 1077311
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 180,
         "dvToLand": 180
@@ -230,7 +200,7 @@
       "phaseAngles": {
         "arrive": 90,
         "depart": null,
-        "comment": "Suborbital transfer, fixed 90 degree phase angle. No departure angle needed."
+        "comment": "Fixed 90 degree phase angle - suborbital transfer. No departure angle needed."
       }
     },
 
@@ -249,20 +219,14 @@
         "siderealPeriod": 17315400
       },
       "surface": {
-        "hasAtmosphere": true,
         "canAerobrake": true,
         "dvToOrbit": 1450,
-        "dvToLand": 1450,
-        "aerobrakeOrbitSaving": 1450,
-        "aerobrakeInterceptSaving": 250
+        "dvToLand": 1450
       },
       "nodes": {
         "intercept": 140,
         "orbit": 610,
         "land": 1450
-      },
-      "phaseAngles": {
-        "comment": "Calculated dynamically via Hohmann transfer from originBody"
       }
     },
 
@@ -281,22 +245,18 @@
         "siderealPeriod": 65518
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 390,
-        "dvToLand": 390,
-        "aerobrakeInterceptSaving": 250,
-        "comment": "Intercept saving uses Duna aerobrake"
+        "dvToLand": 390
       },
       "nodes": {
         "intercept": 420,
         "orbit": 180,
         "land": 390
       },
+      "parentAerobrake": "duna",
       "transferAngleDiagram": "duna",
-      "phaseAngles": {
-        "comment": "Uses parent body (Duna) phase angles for interplanetary transfer"
-      }
+      "comment": "parentAerobrake: when aerobrakeIntercept active, zeroes nodes.intercept via Duna atmosphere."
     },
 
     {
@@ -314,7 +274,6 @@
         "siderealPeriod": 47893063
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 430,
         "dvToLand": 430
@@ -323,9 +282,6 @@
         "intercept": 1620,
         "orbit": 1290,
         "land": 430
-      },
-      "phaseAngles": {
-        "comment": "Calculated dynamically via Hohmann transfer from originBody"
       }
     },
 
@@ -344,22 +300,16 @@
         "siderealPeriod": 104661432
       },
       "surface": {
-        "hasAtmosphere": true,
         "canAerobrake": true,
         "dvToOrbit": 14000,
-        "dvToLand": 14000,
-        "aerobrakeOrbitSaving": 14000,
-        "aerobrakeInterceptSaving": 160,
-        "comment": "Landing on Jool is theoretically impossible but value preserved from v1"
+        "dvToLand": 14000
       },
       "nodes": {
         "intercept": 1250,
         "orbit": 2970,
         "land": 14000
       },
-      "phaseAngles": {
-        "comment": "Calculated dynamically via Hohmann transfer from originBody"
-      }
+      "comment": "Landing on Jool is not physically possible but node value preserved from v1 for completeness."
     },
 
     {
@@ -377,22 +327,18 @@
         "siderealPeriod": 52981
       },
       "surface": {
-        "hasAtmosphere": true,
         "canAerobrake": true,
         "dvToOrbit": 2900,
-        "dvToLand": 2900,
-        "aerobrakeOrbitSaving": 2900,
-        "aerobrakeInterceptSaving": 2200
+        "dvToLand": 2900
       },
       "nodes": {
         "intercept": 2340,
         "orbit": 1070,
         "land": 2900
       },
+      "parentAerobrake": "jool",
       "transferAngleDiagram": "jool",
-      "phaseAngles": {
-        "comment": "Uses parent body (Jool) phase angles for interplanetary transfer"
-      }
+      "comment": "canAerobrake: own atmosphere handles orbit/surface aerobraking. parentAerobrake: Jool atmosphere zeroes nodes.intercept on capture."
     },
 
     {
@@ -410,22 +356,17 @@
         "siderealPeriod": 105962
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 860,
-        "dvToLand": 860,
-        "aerobrakeInterceptSaving": 2200,
-        "comment": "Intercept saving via Jool aerobrake capture"
+        "dvToLand": 860
       },
       "nodes": {
         "intercept": 2030,
         "orbit": 910,
         "land": 860
       },
-      "transferAngleDiagram": "jool",
-      "phaseAngles": {
-        "comment": "Uses parent body (Jool) phase angles for interplanetary transfer"
-      }
+      "parentAerobrake": "jool",
+      "transferAngleDiagram": "jool"
     },
 
     {
@@ -443,22 +384,17 @@
         "siderealPeriod": 211926
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 2270,
-        "dvToLand": 2270,
-        "aerobrakeInterceptSaving": 2200,
-        "comment": "Intercept saving via Jool aerobrake capture"
+        "dvToLand": 2270
       },
       "nodes": {
         "intercept": 1810,
         "orbit": 1100,
         "land": 2270
       },
-      "transferAngleDiagram": "jool",
-      "phaseAngles": {
-        "comment": "Uses parent body (Jool) phase angles for interplanetary transfer"
-      }
+      "parentAerobrake": "jool",
+      "transferAngleDiagram": "jool"
     },
 
     {
@@ -476,22 +412,17 @@
         "siderealPeriod": 544507
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 230,
-        "dvToLand": 230,
-        "aerobrakeInterceptSaving": 2200,
-        "comment": "Intercept saving via Jool aerobrake capture"
+        "dvToLand": 230
       },
       "nodes": {
         "intercept": 4070,
         "orbit": 900,
         "land": 230
       },
-      "transferAngleDiagram": "jool",
-      "phaseAngles": {
-        "comment": "Uses parent body (Jool) phase angles for interplanetary transfer"
-      }
+      "parentAerobrake": "jool",
+      "transferAngleDiagram": "jool"
     },
 
     {
@@ -509,22 +440,17 @@
         "siderealPeriod": 901903
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 130,
-        "dvToLand": 130,
-        "aerobrakeInterceptSaving": 2200,
-        "comment": "Intercept saving via Jool aerobrake capture"
+        "dvToLand": 130
       },
       "nodes": {
         "intercept": 2270,
         "orbit": 820,
         "land": 130
       },
-      "transferAngleDiagram": "jool",
-      "phaseAngles": {
-        "comment": "Uses parent body (Jool) phase angles for interplanetary transfer"
-      }
+      "parentAerobrake": "jool",
+      "transferAngleDiagram": "jool"
     },
 
     {
@@ -542,7 +468,6 @@
         "siderealPeriod": 156992048
       },
       "surface": {
-        "hasAtmosphere": false,
         "canAerobrake": false,
         "dvToOrbit": 620,
         "dvToLand": 620
@@ -551,21 +476,17 @@
         "intercept": 2470,
         "orbit": 1370,
         "land": 620
-      },
-      "phaseAngles": {
-        "comment": "Calculated dynamically via Hohmann transfer from originBody"
       }
     }
 
   ],
 
   "transferConfig": {
-    "comment": "Configuration for the dynamic transfer calculator",
     "originBody": "kerbin",
     "lkoAltitude": 80000,
     "lkoVelocity": 2246,
     "ejectionDV": 4350,
     "kerbinMoonBaseCost": 3400,
-    "comment2": "ejectionDV is the hardcoded LKO escape cost used for all interplanetary transfers in v2.0. kerbinMoonBaseCost is the base cost added before Mun/Minmus node values. These will be replaced by dynamic calculation in v2.1 when multi-body origin is supported."
+    "comment": "ejectionDV and kerbinMoonBaseCost are hardcoded for v2.0 with Kerbin as fixed origin. Both replaced by dynamic vis-viva calculation in v2.1."
   }
 }

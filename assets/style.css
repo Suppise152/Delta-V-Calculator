@@ -1,0 +1,473 @@
+/* ═══════════════════════════════════════════════════════════════
+   KSP ΔV Calculator v2.0 — style.css
+   Single file replaces default.css + mobile.css
+   Breakpoint: 1200px (matches v1)
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── TOKENS ─────────────────────────────────────────────────── */
+:root {
+    --bg-page: rgb(28, 28, 38);
+    --bg-left: rgb(2, 0, 14);
+    --bg-right: rgb(28, 28, 38);
+    --bg-node: #666;
+    --bg-node-hover: #888;
+    --bg-node-active: #b0c4de;
+    --bg-dropdown: #2b2e3f;
+    --bg-input: transparent;
+
+    --text-primary: lightgray;
+    --text-label: lightgray;
+    --text-muted: grey;
+    --text-node: #000;
+    --text-input: lightgray;
+
+    --accent: rgb(59, 140, 207);
+    --accent-glow: rgba(59, 140, 207, 0.4);
+
+    --border-panel: #2b2e3f;
+    --border-node: #2b2e3f;
+    --border-input: #444;
+
+    --font-ui: 'Share Tech Mono', monospace;
+    --font-title: 'Oswald', sans-serif;
+
+    --banner-h: 17%;
+    --banner-h-mobile: 5%;
+    --left-w: 33.33%;
+    --right-w: 66.67%;
+}
+
+/* ─── RESET & BASE ────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--bg-page);
+    color: var(--text-primary);
+}
+
+/* ─── BANNER ──────────────────────────────────────────────────── */
+.banner {
+    height: var(--banner-h);
+    background-color: var(--accent);
+    position: relative;
+    overflow: hidden;
+}
+
+.banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.banner-img--mobile {
+    display: none;
+}
+
+/* ─── CONTENT WRAPPER ─────────────────────────────────────────── */
+.content {
+    display: flex;
+    height: calc(100% - var(--banner-h));
+    width: 100%;
+}
+
+/* ─── LEFT PANEL ──────────────────────────────────────────────── */
+.panel-left {
+    flex: 0 0 var(--left-w);
+    background-color: var(--bg-left);
+    padding: 0 20px;
+    overflow-y: auto;
+}
+
+.panel-left h2 {
+    font-size: 22px;
+    padding-top: 15px;
+    margin-bottom: 0;
+    font-family: var(--font-ui);
+    color: var(--text-primary);
+}
+
+.panel-left p {
+    font-size: 15px;
+    line-height: 1.6;
+    font-family: var(--font-ui);
+    color: var(--text-primary);
+}
+
+/* ─── RIGHT PANEL ─────────────────────────────────────────────── */
+.panel-right {
+    flex: 0 0 var(--right-w);
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-right);
+    padding: 16px 20px;
+    overflow: hidden;
+    gap: 12px;
+}
+
+/* ─── MAP ─────────────────────────────────────────────────────── */
+.map-container {
+    flex: 1 1 auto;
+    position: relative;
+    min-height: 0;
+}
+
+.map-container svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.map-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--border-panel);
+    border-radius: 4px;
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    font-size: 13px;
+}
+
+/* ─── CONTROLS ROW ────────────────────────────────────────────── */
+.controls-row {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+/* ─── TOGGLE BOXES ────────────────────────────────────────────── */
+.toggle-boxes {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    flex: 0 0 auto;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-label);
+    cursor: pointer;
+    line-height: 1.4;
+    user-select: none;
+}
+
+.toggle-label input[type="checkbox"] {
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+}
+
+.toggle-label--inline {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* visual separator between outbound/return groups */
+.toggle-label:nth-child(4) {
+    margin-bottom: 6px;
+}
+
+.toggle-label:nth-child(7) {
+    margin-bottom: 10px;
+}
+
+/* ─── SLIDER ──────────────────────────────────────────────────── */
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+#slider {
+    accent-color: var(--accent);
+    width: 100%;
+    cursor: pointer;
+}
+
+#slider-value {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    color: var(--text-label);
+}
+
+/* ─── RESULTS COLUMN ──────────────────────────────────────────── */
+.results-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.result-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.result-label {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.result-display-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.result-display {
+    font-family: var(--font-ui);
+    font-size: 20px;
+    color: var(--text-input);
+    background: var(--bg-input);
+    border: none;
+    border-bottom: 1px solid var(--border-input);
+    padding: 2px 0;
+    outline: none;
+    cursor: default;
+    width: 200px;
+}
+
+.result-display--angle {
+    font-size: 17px;
+    width: 110px;
+}
+
+.result-display::placeholder {
+    color: var(--text-muted);
+}
+
+/* ─── DROPDOWN ────────────────────────────────────────────────── */
+.dropdown {
+    display: none;
+    background-color: var(--bg-dropdown);
+    min-width: 200px;
+    max-height: 240px;
+    overflow-y: auto;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    margin-top: 2px;
+    z-index: 10;
+}
+
+.dropdown.is-open {
+    display: block;
+}
+
+.dropdown-entry {
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    color: rgb(190, 190, 190);
+}
+
+.dropdown-entry--end {
+    color: #e05555;
+}
+
+.dropdown-entry--surface {
+    color: white;
+}
+
+/* ─── TRANSFER ANGLES ─────────────────────────────────────────── */
+.transfer-angles {
+    display: flex;
+    gap: 24px;
+}
+
+.transfer-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.phase-diagram {
+    width: 90px;
+    height: 90px;
+    position: relative;
+}
+
+.phase-diagram svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* ─── SVG MAP ─────────────────────────────────────────────────── */
+.dv-map {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ─── MAP NODE ELEMENTS (SVG) ─────────────────────────────────── */
+.map-node {
+    cursor: pointer;
+}
+
+.map-node circle {
+    fill: #3a3a4a;
+    transition: fill 0.15s ease, filter 0.15s ease;
+}
+
+.map-node:hover circle {
+    fill: #55556a;
+    filter: brightness(1.2);
+}
+
+.map-node.is-active circle {
+    fill: #b0c4de;
+}
+
+/* Node label text inside circle */
+.map-node text {
+    fill: #ccc;
+    font-family: var(--font-ui);
+    font-size: 9px;
+    pointer-events: none;
+}
+
+.map-node.is-active text {
+    fill: #111;
+}
+
+/* Body name labels */
+.map-label {
+    fill: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    pointer-events: none;
+}
+
+/* ─── MAP PATH ELEMENTS (SVG) ─────────────────────────────────── */
+.map-path {
+    fill: none;
+    opacity: 0.3;
+    transition: opacity 0.2s ease;
+}
+
+.map-path.is-active {
+    opacity: 1;
+    stroke-dasharray: 8 6;
+    animation: flow 1s linear infinite;
+}
+
+@keyframes flow {
+    to {
+        stroke-dashoffset: -14;
+    }
+}
+
+/* ─── FOOTER ──────────────────────────────────────────────────── */
+.site-footer {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-family: var(--font-ui);
+    pointer-events: none;
+}
+
+#version-info {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE  (max-width: 1200px)
+═══════════════════════════════════════════════════════════════ */
+@media only screen and (max-width: 1200px) {
+
+    :root {
+        --banner-h: var(--banner-h-mobile);
+    }
+
+    /* hide left info panel */
+    .panel-left {
+        display: none;
+    }
+
+    /* right panel takes full width */
+    .panel-right {
+        flex: 0 0 100%;
+        padding: 10px 12px;
+    }
+
+    /* stack controls vertically on mobile */
+    .controls-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .toggle-boxes {
+        font-size: 16px;
+        gap: 10px;
+    }
+
+    .toggle-label input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+
+    .result-display {
+        font-size: 28px;
+        width: 220px;
+    }
+
+    .result-display--angle {
+        font-size: 24px;
+        width: 140px;
+    }
+
+    .result-label {
+        font-size: 16px;
+    }
+
+    #slider-value {
+        font-size: 16px;
+    }
+
+    .phase-diagram {
+        width: 120px;
+        height: 120px;
+    }
+
+    /* hide breakdown toggle on mobile (matches v1) */
+    #label-toggle8 {
+        display: none;
+    }
+
+    .banner-img--desktop {
+        display: none;
+    }
+
+    .banner-img--mobile {
+        display: block;
+    }
+
+    #version-info {
+        font-size: 16px;
+    }
+}
