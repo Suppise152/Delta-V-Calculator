@@ -107,36 +107,19 @@ body {
 /* ─── RIGHT PANEL ─────────────────────────────────────────────── */
 .panel-right {
     flex: 0 0 var(--right-w);
-    display: grid;
-    grid-template-columns: minmax(320px, 380px) 1fr;
-    grid-template-rows: auto 1fr;
+    display: flex;
+    flex-direction: column;
     background-color: var(--bg-right);
     padding: 16px 20px;
     overflow: hidden;
     gap: 12px;
-    min-height: 0;
 }
 
-.controls-panel,
-.results-col {
-    width: 100%;
-    grid-column: 1 / 2;
-}
-
-.controls-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
+/* ─── MAP ─────────────────────────────────────────────────────── */
 .map-container {
-    grid-column: 2 / 3;
-    grid-row: 1 / span 2;
-    display: flex;
-    flex-direction: column;
+    flex: 1 1 auto;
     position: relative;
     min-height: 0;
-    height: 100%;
 }
 
 .map-container svg {
@@ -147,9 +130,8 @@ body {
 
 .map-placeholder {
     width: 100%;
-    flex: 1 1 auto;
+    height: 100%;
     min-height: 300px;
-    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -176,7 +158,6 @@ body {
     font-family: var(--font-ui);
     font-size: 13px;
     flex: 0 0 auto;
-    width: 100%;
 }
 
 .toggle-label {
@@ -217,8 +198,6 @@ body {
     flex-direction: column;
     gap: 4px;
     margin-top: 4px;
-    max-width: 360px;
-    width: 100%;
 }
 
 #slider {
@@ -238,7 +217,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
     min-width: 0;
 }
 
@@ -258,14 +237,6 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.breakdown-toggle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding-top: 6px;
-    width: fit-content;
 }
 
 .result-display {
@@ -325,9 +296,7 @@ body {
 /* ─── TRANSFER ANGLES ─────────────────────────────────────────── */
 .transfer-angles {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
+    gap: 24px;
 }
 
 .transfer-block {
@@ -375,7 +344,8 @@ body {
 }
 
 .map-node.has-atmo-glow circle {
-    filter: drop-shadow(0 0 4px var(--node-glow-color)) drop-shadow(0 0 8px color-mix(in srgb, var(--node-glow-color) 65%, transparent));
+    filter: drop-shadow(0 0 4px var(--node-glow-color))
+        drop-shadow(0 0 8px color-mix(in srgb, var(--node-glow-color) 65%, transparent));
 }
 
 /* Node label text inside circle */
@@ -489,10 +459,6 @@ body {
         gap: 16px;
     }
 
-    .controls-panel {
-        width: 100%;
-    }
-
     .toggle-boxes {
         font-size: 16px;
         gap: 10px;
@@ -524,10 +490,6 @@ body {
     .phase-diagram {
         width: 120px;
         height: 120px;
-    }
-
-    .transfer-angles {
-        gap: 16px;
     }
 
     /* hide breakdown toggle on mobile (matches v1) */

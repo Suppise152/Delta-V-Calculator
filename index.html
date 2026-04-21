@@ -112,56 +112,63 @@
                     </div>
 
                 </div>
-            </div>
 
-            <div class="results-col">
-                <div class="result-block">
-                    <div class="result-label" id="dV">Delta V Required</div>
-                    <div class="result-display-wrap">
-                        <input type="text" class="result-display" id="dV_display" readonly placeholder="-">
-                    </div>
-                    <label class="toggle-label breakdown-toggle" id="label-toggle8">
-                        <input type="checkbox" id="toggle8" onchange="handleToggleChange('toggle8')">
-                        <span>Breakdown</span>
-                    </label>
-                    <div class="dropdown" id="dv-dropdown">
-                        <!-- populated by dropdown.js -->
-                    </div>
-                </div>
+                <!-- RESULTS COLUMN -->
+                <div class="results-col">
 
-                <div class="transfer-angles">
-                    <div class="transfer-block">
-                        <div class="result-label" id="arrival">Transfer Window to Target</div>
-                        <input type="text" class="result-display result-display--angle" id="arrival_angle" readonly placeholder="-">
-                        <div class="phase-diagram" id="phase-arrive">
-                            <!-- SVG phase diagram injected by transfer.js -->
+                    <!-- ΔV display + breakdown dropdown -->
+                    <div class="result-block">
+                        <div class="result-label" id="dV">Delta V Required</div>
+                        <div class="result-display-wrap">
+                            <input type="text" class="result-display" id="dV_display" readonly placeholder="—">
+                            <label class="toggle-label toggle-label--inline" id="label-toggle8">
+                                <input type="checkbox" id="toggle8" onchange="handleToggleChange('toggle8')">
+                                <span>Breakdown</span>
+                            </label>
+                        </div>
+                        <div class="dropdown" id="dv-dropdown">
+                            <!-- populated by dropdown.js -->
                         </div>
                     </div>
 
-                    <div class="transfer-block">
-                        <div class="result-label" id="departure">Transfer Window from Target</div>
-                        <input type="text" class="result-display result-display--angle" id="departure_angle" readonly placeholder="-">
-                        <div class="phase-diagram" id="phase-depart">
-                            <!-- SVG phase diagram injected by transfer.js -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    <!-- Transfer angle displays -->
+                    <div class="transfer-angles">
 
-            <div class="map-container" id="map-container">
-                <div class="map-placeholder" id="map-placeholder">
-                    <span>Map loading...</span>
+                        <div class="transfer-block">
+                            <div class="result-label" id="arrival">Transfer Window to Target</div>
+                            <input type="text" class="result-display result-display--angle" id="arrival_angle" readonly placeholder="—">
+                            <div class="phase-diagram" id="phase-arrive">
+                                <!-- SVG phase diagram injected by transfer.js -->
+                            </div>
+                        </div>
+
+                        <div class="transfer-block">
+                            <div class="result-label" id="departure">Transfer Window from Target</div>
+                            <input type="text" class="result-display result-display--angle" id="departure_angle" readonly placeholder="—">
+                            <div class="phase-diagram" id="phase-depart">
+                                <!-- SVG phase diagram injected by transfer.js -->
+                            </div>
+                        </div>
+
+                    </div>
+
                 </div>
+                <!-- end results-col -->
+
             </div>
+            <!-- end controls-row -->
 
         </section>
+        <!-- end panel-right -->
 
     </main>
 
+    <!-- ═══════════════════════════════════════════════ FOOTER -->
     <footer class="site-footer">
         <span id="version-info">Version 2.0.0</span>
     </footer>
 
+    <!-- ═══════════════════════════════════════════════ SCRIPTS -->
     <script src="src/state.js"></script>
     <script src="src/calculator.js"></script>
     <script src="src/map.js"></script>

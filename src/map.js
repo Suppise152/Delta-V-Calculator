@@ -9,104 +9,104 @@
 // ViewBox: 1000 x 820
 const NODE_POSITIONS = {
     // Kerbol
-    kerbol_orbit: { x: 313, y: 490 },
-    kerbol_land: { x: 225, y: 490 },
-    kerbol_label: { x: 200, y: 488 },
+    kerbol_orbit: { x: 215, y: 490 },
+    kerbol_land: { x: 55, y: 490 },
+    kerbol_label: { x: 10, y: 488 },
 
     // Moho
-    moho_intercept: { x: 374, y: 401 },
-    moho_orbit: { x: 297, y: 401 },
-    moho_land: { x: 225, y: 401 },
-    moho_label: { x: 203, y: 401 },
+    moho_intercept: { x: 325, y: 401 },
+    moho_orbit: { x: 185, y: 401 },
+    moho_land: { x: 55, y: 401 },
+    moho_label: { x: 15, y: 401 },
 
     // Eve
-    eve_intercept: { x: 393, y: 333 },
-    eve_orbit: { x: 305, y: 333 },
-    eve_land: { x: 225, y: 333 },
-    eve_label: { x: 208, y: 333 },
+    eve_intercept: { x: 360, y: 333 },
+    eve_orbit: { x: 200, y: 333 },
+    eve_land: { x: 55, y: 333 },
+    eve_label: { x: 25, y: 333 },
 
     // Gilly
-    gilly_intercept: { x: 349, y: 251 },
-    gilly_orbit: { x: 286, y: 251 },
-    gilly_land: { x: 225, y: 251 },
-    gilly_label: { x: 200, y: 254 },
+    gilly_intercept: { x: 280, y: 251 },
+    gilly_orbit: { x: 165, y: 251 },
+    gilly_land: { x: 55, y: 251 },
+    gilly_label: { x: 10, y: 254 },
 
     // Kerbin
-    kerbin_orbit: { x: 467, y: 641 },
-    kerbin_escape: { x: 467, y: 488 },
-    kerbin_label: { x: 459, y: 786 },
+    kerbin_orbit: { x: 493, y: 641 },
+    kerbin_escape: { x: 493, y: 488 },
+    kerbin_label: { x: 480, y: 786 },
 
     // Mun
-    mun_intercept: { x: 393, y: 579 },
-    mun_orbit: { x: 302, y: 579 },
-    mun_land: { x: 225, y: 579 },
-    mun_label: { x: 206, y: 575 },
+    mun_intercept: { x: 360, y: 579 },
+    mun_orbit: { x: 195, y: 579 },
+    mun_land: { x: 55, y: 579 },
+    mun_label: { x: 20, y: 575 },
 
     // Minmus
-    minmus_intercept: { x: 534, y: 580 },
-    minmus_orbit: { x: 620, y: 579 },
-    minmus_land: { x: 713, y: 579 },
-    minmus_label: { x: 708, y: 615 },
+    minmus_intercept: { x: 615, y: 580 },
+    minmus_orbit: { x: 770, y: 579 },
+    minmus_land: { x: 940, y: 579 },
+    minmus_label: { x: 930, y: 615 },
 
     // Duna
-    duna_intercept: { x: 355, y: 171 },
-    duna_orbit: { x: 288, y: 171 },
-    duna_land: { x: 225, y: 171 },
-    duna_label: { x: 203, y: 175 },
+    duna_intercept: { x: 290, y: 171 },
+    duna_orbit: { x: 170, y: 171 },
+    duna_land: { x: 55, y: 171 },
+    duna_label: { x: 15, y: 175 },
 
     // Ike
-    ike_intercept: { x: 355, y: 125 },
-    ike_orbit: { x: 308, y: 82 },
-    ike_land: { x: 225, y: 82 },
-    ike_label: { x: 206, y: 90 },
+    ike_intercept: { x: 290, y: 125 },
+    ike_orbit: { x: 205, y: 82 },
+    ike_land: { x: 55, y: 82 },
+    ike_label: { x: 20, y: 90 },
 
     // Dres
-    dres_intercept: { x: 454, y: 189 },
-    dres_orbit: { x: 327, y: 26 },
-    dres_land: { x: 225, y: 26 },
-    dres_label: { x: 203, y: 36 },
+    dres_intercept: { x: 470, y: 189 },
+    dres_orbit: { x: 240, y: 26 },
+    dres_land: { x: 55, y: 26 },
+    dres_label: { x: 15, y: 36 },
 
     // Jool
-    jool_intercept: { x: 598, y: 256 },
-    jool_orbit: { x: 697, y: 297 },
-    jool_land: { x: 705, y: 388 },
-    jool_label: { x: 702, y: 432 },
+    jool_intercept: { x: 730, y: 256 },
+    jool_orbit: { x: 910, y: 297 },
+    jool_land: { x: 925, y: 388 },
+    jool_label: { x: 920, y: 432 },
 
     // Laythe
-    laythe_intercept: { x: 644, y: 203 },
-    laythe_orbit: { x: 722, y: 110 },
-    laythe_land: { x: 730, y: 32 },
-    laythe_label: { x: 719, y: 10 },
+    laythe_intercept: { x: 815, y: 203 },
+    laythe_orbit: { x: 955, y: 110 },
+    laythe_land: { x: 970, y: 32 },
+    laythe_label: { x: 950, y: 10 },
 
     // Vall
-    vall_intercept: { x: 620, y: 159 },
-    vall_orbit: { x: 664, y: 105 },
-    vall_land: { x: 672, y: 32 },
-    vall_label: { x: 667, y: 10 },
+    vall_intercept: { x: 770, y: 159 },
+    vall_orbit: { x: 850, y: 105 },
+    vall_land: { x: 865, y: 32 },
+    vall_label: { x: 855, y: 10 },
 
     // Tylo
-    tylo_intercept: { x: 595, y: 192 },
-    tylo_orbit: { x: 595, y: 109 },
-    tylo_land: { x: 595, y: 32 },
-    tylo_label: { x: 589, y: 10 },
+    tylo_intercept: { x: 725, y: 192 },
+    tylo_orbit: { x: 725, y: 109 },
+    tylo_land: { x: 725, y: 32 },
+    tylo_label: { x: 715, y: 10 },
 
     // Bop
-    bop_intercept: { x: 570, y: 153 },
-    bop_orbit: { x: 537, y: 107 },
-    bop_land: { x: 531, y: 32 },
-    bop_label: { x: 526, y: 10 },
+    bop_intercept: { x: 680, y: 153 },
+    bop_orbit: { x: 620, y: 107 },
+    bop_land: { x: 610, y: 32 },
+    bop_label: { x: 600, y: 10 },
 
     // Pol
-    pol_intercept: { x: 553, y: 203 },
-    pol_orbit: { x: 471, y: 108 },
-    pol_land: { x: 468, y: 32 },
-    pol_label: { x: 462, y: 10 },
+    pol_intercept: { x: 650, y: 203 },
+    pol_orbit: { x: 500, y: 108 },
+    pol_land: { x: 495, y: 32 },
+    pol_label: { x: 485, y: 10 },
 
     // Eeloo
-    eeloo_intercept: { x: 584, y: 490 },
-    eeloo_orbit: { x: 650, y: 490 },
-    eeloo_land: { x: 724, y: 490 },
-    eeloo_label: { x: 719, y: 527 },
+    eeloo_intercept: { x: 705, y: 490 },
+    eeloo_orbit: { x: 825, y: 490 },
+    eeloo_land: { x: 960, y: 490 },
+    eeloo_label: { x: 950, y: 527 },
 };
 
 // Node radius
@@ -171,7 +171,7 @@ function setActiveNode(bodyId, nodeKey) {
 
 function _buildSVG(systemData) {
     const svg = _el('svg', {
-        viewBox: '200 -5 530 760',
+        viewBox: '260 -5 420 760',
         preserveAspectRatio: 'xMidYMid meet',
         class: 'dv-map',
     });
