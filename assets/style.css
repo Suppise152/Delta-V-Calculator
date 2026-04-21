@@ -28,8 +28,8 @@
     --right-w: 66.67%;
 
     /* right panel split */
-    --map-h: 65%;
-    --controls-h: 35%;
+    --map-h: 60%;
+    --controls-h: 40%;
 }
 
 /* ─── RESET ───────────────────────────────────────────────────── */
@@ -123,7 +123,6 @@ body {
     padding: 10px 12px 6px;
 }
 
-/* kill flex behaviour for SVG */
 .map-container svg {
     position: absolute;
     inset: 0;
@@ -157,7 +156,7 @@ body {
 
 /* ─── TOGGLE BOXES (left half of controls bar) ────────────────── */
 .toggle-boxes {
-    flex: 0 0 50%;
+    flex: 0 0 35%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -212,9 +211,32 @@ body {
     color: var(--text-primary);
 }
 
+/* ─── MAP CONTROLS (middle quarter of controls bar) ────────────────── */
+.map-controls {
+    flex: 0 0 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px 16px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    border-right: 1px solid var(--border-sep);
+}
+
+.map-controls-title {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    color: var(--text);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
 /* ─── RESULTS PANEL (right half of controls bar) ─────────────── */
 .results-panel {
-    flex: 0 0 50%;
+    flex: 0 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
