@@ -28,8 +28,8 @@
     --right-w: 66.67%;
 
     /* right panel split */
-    --map-h: 60%;
-    --controls-h: 40%;
+    --map-h: 65%;
+    --controls-h: 35%;
 }
 
 /* ─── RESET ───────────────────────────────────────────────────── */
@@ -118,16 +118,17 @@ body {
 .map-container {
     flex: 1 1 0;
     min-height: 0;
-    position: relative;
     overflow: hidden;
     padding: 10px 12px 6px;
+    display: flex;
+    flex-direction: column;
 }
 
-.map-container svg {
-    position: absolute;
-    inset: 0;
+.map-container svg,
+.dv-map {
+    flex: 1 1 0;
     width: 100%;
-    height: 100%;
+    min-height: 0;
     display: block;
 }
 
@@ -156,7 +157,7 @@ body {
 
 /* ─── TOGGLE BOXES (left half of controls bar) ────────────────── */
 .toggle-boxes {
-    flex: 0 0 35%;
+    flex: 0 0 50%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -211,32 +212,9 @@ body {
     color: var(--text-primary);
 }
 
-/* ─── MAP CONTROLS (middle quarter of controls bar) ────────────────── */
-.map-controls {
-    flex: 0 0 10%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 10px 16px;
-    font-family: var(--font-ui);
-    font-size: 13px;
-    border-right: 1px solid var(--border-sep);
-}
-
-.map-controls-title {
-    font-family: var(--font-ui);
-    font-size: 11px;
-    color: var(--text);
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
 /* ─── RESULTS PANEL (right half of controls bar) ─────────────── */
 .results-panel {
-    flex: 0 0 auto;
+    flex: 0 0 50%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -414,30 +392,84 @@ body {
     fill: #8a8a98;
 }
 
-/* paths */
+/* ─── MAP PATHS ───────────────────────────────────────────────── */
 .map-path {
     fill: none;
     opacity: 1;
     transition: opacity 0.2s ease;
 }
 
+/* Dim all paths when a selection is active */
 .dv-map.has-selection .map-path {
-    opacity: 0.3;
+    opacity: 0.25;
 }
 
+/* Outbound path — forward flowing dashes */
 .dv-map.has-selection .map-path.is-active {
     opacity: 1;
-}
-
-.map-path.is-active {
     stroke-dasharray: 7 10;
-    animation: flow 1s linear infinite;
+    animation: flow-forward 1s linear infinite;
 }
 
-@keyframes flow {
+/* Reverse outbound path */
+.dv-map.has-selection .map-path.is-active.is-reverse {
+    animation: flow-return 1s linear infinite;
+}
+
+/* Return path — reverse flowing dashes, slightly lower opacity to distinguish */
+.dv-map.has-selection .map-path.is-return {
+    opacity: 0.65;
+    stroke-dasharray: 7 10;
+    animation: flow-return 1s linear infinite;
+}
+
+/* Reverse return path */
+.dv-map.has-selection .map-path.is-return.is-reverse {
+    animation: flow-forward 1s linear infinite;
+}
+
+/* When both outbound and return are active on the same segment */
+.dv-map.has-selection .map-path.is-active.is-return {
+    opacity: 1;
+    stroke-dasharray: 7 10;
+    animation: flow-forward 1s linear infinite, flow-return 1s linear infinite 0.5s;
+}
+
+@keyframes flow-forward {
     to {
         stroke-dashoffset: -14;
     }
+}
+
+@keyframes flow-return {
+    to {
+        stroke-dashoffset: 14;
+    }
+}
+
+/* ─── INTERPLANETARY HUB NODE ─────────────────────────────────── */
+.map-node--hub circle {
+    fill: #22222e;
+    stroke-width: 2;
+}
+
+.map-node--hub text {
+    fill: #c8c8d4;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    pointer-events: none;
+    letter-spacing: 0.05em;
+}
+
+.map-node--hub:hover circle {
+    fill: #2e2e3e;
+    filter: brightness(1.15);
+}
+
+/* Hub is highlighted when it's part of the active route */
+.dv-map.has-selection .map-node--hub.is-route circle {
+    fill: #3a3a50;
+    stroke-width: 2.5;
 }
 
 /* ─── FOOTER ──────────────────────────────────────────────────── */

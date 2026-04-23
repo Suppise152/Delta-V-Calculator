@@ -1,71 +1,117 @@
 /**
  * map.js — SVG map renderer
- * Reads system JSON, builds SVG entirely from data.
+ * Fully data-driven. No hardcoded body references.
+ *
+ * Point A / Point B architecture:
+ *   pointA — origin (defaults to 'interplanetary', set to 'kerbin'+'orbit' when LKO active)
+ *   pointB — destination (set by node click)
+ *
+ * For v2.0, pointA.body is always 'interplanetary' or 'kerbin'.
+ * v2.1 will allow any body as pointA.
  */
 
+// ─── Node positions (ViewBox: 0 -25 1450 810) ─────────────────────────────────
 const NODE_POSITIONS = {
+    // ── Interplanetary hub ──────────────────────────────────────────────────
+    interplanetary: { x: 493, y: 488 },  // central hub, replaces kerbin_escape
+
+    // ── Kerbol ──────────────────────────────────────────────────────────────
     kerbol_orbit: { x: 215, y: 490 },
     kerbol_land: { x: 55, y: 490 },
     kerbol_label: { x: 10, y: 488 },
+
+    // ── Moho ────────────────────────────────────────────────────────────────
     moho_intercept: { x: 325, y: 401 },
     moho_orbit: { x: 185, y: 401 },
     moho_land: { x: 55, y: 401 },
     moho_label: { x: 15, y: 401 },
+
+    // ── Eve ─────────────────────────────────────────────────────────────────
     eve_intercept: { x: 360, y: 333 },
     eve_orbit: { x: 200, y: 333 },
     eve_land: { x: 55, y: 333 },
     eve_label: { x: 25, y: 333 },
+
+    // ── Gilly ───────────────────────────────────────────────────────────────
     gilly_intercept: { x: 280, y: 251 },
     gilly_orbit: { x: 165, y: 251 },
     gilly_land: { x: 55, y: 251 },
     gilly_label: { x: 10, y: 254 },
+
+    // ── Kerbin ──────────────────────────────────────────────────────────────
+    // Branch runs downward from interplanetary hub
+    kerbin_flyby: { x: 493, y: 570 },
     kerbin_orbit: { x: 493, y: 641 },
-    kerbin_escape: { x: 493, y: 488 },
-    kerbin_label: { x: 480, y: 786 },
+    kerbin_land: { x: 493, y: 712 },
+    kerbin_label: { x: 505, y: 736 },
+
+    // ── Mun ─────────────────────────────────────────────────────────────────
     mun_intercept: { x: 360, y: 579 },
     mun_orbit: { x: 195, y: 579 },
     mun_land: { x: 55, y: 579 },
     mun_label: { x: 20, y: 575 },
+
+    // ── Minmus ──────────────────────────────────────────────────────────────
     minmus_intercept: { x: 615, y: 580 },
     minmus_orbit: { x: 770, y: 579 },
     minmus_land: { x: 940, y: 579 },
     minmus_label: { x: 930, y: 615 },
+
+    // ── Duna ────────────────────────────────────────────────────────────────
     duna_intercept: { x: 290, y: 171 },
     duna_orbit: { x: 170, y: 171 },
     duna_land: { x: 55, y: 171 },
     duna_label: { x: 15, y: 175 },
+
+    // ── Ike ─────────────────────────────────────────────────────────────────
     ike_intercept: { x: 290, y: 125 },
     ike_orbit: { x: 205, y: 82 },
     ike_land: { x: 55, y: 82 },
     ike_label: { x: 20, y: 90 },
+
+    // ── Dres ────────────────────────────────────────────────────────────────
     dres_intercept: { x: 470, y: 189 },
     dres_orbit: { x: 240, y: 26 },
     dres_land: { x: 55, y: 26 },
     dres_label: { x: 15, y: 36 },
+
+    // ── Jool ────────────────────────────────────────────────────────────────
     jool_intercept: { x: 730, y: 256 },
     jool_orbit: { x: 880, y: 286 },
     jool_land: { x: 920, y: 376 },
     jool_label: { x: 920, y: 432 },
+
+    // ── Laythe ──────────────────────────────────────────────────────────────
     laythe_intercept: { x: 815, y: 203 },
     laythe_orbit: { x: 955, y: 110 },
     laythe_land: { x: 970, y: 32 },
     laythe_label: { x: 950, y: 10 },
+
+    // ── Vall ────────────────────────────────────────────────────────────────
     vall_intercept: { x: 770, y: 159 },
     vall_orbit: { x: 850, y: 105 },
     vall_land: { x: 865, y: 32 },
     vall_label: { x: 855, y: 10 },
+
+    // ── Tylo ────────────────────────────────────────────────────────────────
     tylo_intercept: { x: 725, y: 192 },
     tylo_orbit: { x: 725, y: 109 },
     tylo_land: { x: 725, y: 32 },
     tylo_label: { x: 715, y: 10 },
+
+    // ── Bop ─────────────────────────────────────────────────────────────────
     bop_intercept: { x: 680, y: 153 },
     bop_orbit: { x: 620, y: 107 },
     bop_land: { x: 610, y: 32 },
     bop_label: { x: 600, y: 10 },
+
+    // ── Pol ─────────────────────────────────────────────────────────────────
     pol_intercept: { x: 650, y: 203 },
     pol_orbit: { x: 500, y: 108 },
     pol_land: { x: 495, y: 32 },
     pol_label: { x: 485, y: 10 },
+
+    // ── Eeloo ───────────────────────────────────────────────────────────────
     eeloo_intercept: { x: 705, y: 490 },
     eeloo_orbit: { x: 825, y: 490 },
     eeloo_land: { x: 960, y: 490 },
@@ -73,28 +119,35 @@ const NODE_POSITIONS = {
 };
 
 const NODE_R = 20;
+const NODE_R_HUB = 30;   // interplanetary hub is larger
 const PATH_STROKE_W = 15;
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
+// ─── Module state ─────────────────────────────────────────────────────────────
 let _bodies = null;
-let _activePath = null;
-let _activeNodeEl = null;
+let _systemMeta = null;
 let _mapSvgEl = null;
-let _activeRouteNodes = null;
+
+let _pointA = { body: 'duna', node: 'land' };
+let _pointB = { body: null, node: null };
+
+// Active display elements (cleared on each redraw)
+let _activePaths = [];   // outbound path elements
+let _returnPaths = [];   // return path elements (round trip)
+let _activeNodes = [];   // all nodes on the active route
+let _activeNodeEl = null; // the selected terminal node (pointB)
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
 function initMap(systemData) {
     _bodies = {};
+    _systemMeta = systemData.meta;
     systemData.bodies.forEach(b => { _bodies[b.id] = b; });
 
     const container = document.getElementById('map-container');
-
-    // Remove placeholder without destroying the container element
     const placeholder = document.getElementById('map-placeholder');
     if (placeholder) placeholder.remove();
 
-    // Remove any previously injected SVG (pack switching)
     const existing = container.querySelector('svg');
     if (existing) existing.remove();
 
@@ -103,25 +156,66 @@ function initMap(systemData) {
     _mapSvgEl = svg;
 }
 
-function setActiveNode(bodyId, nodeKey) {
-    _clearActive();
+/**
+ * Set pointA — the origin of the route.
+ * Called by ui.js when LKO checkbox changes or in v2.1 when user picks a custom origin.
+ * @param {string} bodyId  — 'interplanetary' or a body id
+ * @param {string|null} nodeKey
+ */
+function setPointA(bodyId, nodeKey) {
+    _pointA = { body: bodyId, node: nodeKey };
+    // Redraw if we already have a destination
+    if (_pointB.body) refreshMapDisplay();
+}
 
-    const nodeEl = document.getElementById(`node_${bodyId}_${nodeKey}`);
-    if (nodeEl) {
-        nodeEl.classList.add('is-active');
-        _activeNodeEl = nodeEl;
-    }
+/**
+ * Set pointB — the destination. Called when user clicks a node.
+ * @param {string} bodyId
+ * @param {string} nodeKey
+ */
+function setPointB(bodyId, nodeKey) {
+    _pointB = { body: bodyId, node: nodeKey };
+    refreshMapDisplay();
+}
+
+/**
+ * Refresh the map display — re-evaluates pointA/pointB plus current toggle states.
+ * Called by ui.js whenever toggles change.
+ */
+function refreshMapDisplay() {
+    _clearActive();
+    if (!_pointB.body) return;
+
+    const roundTrip = document.getElementById('toggle1')?.checked ?? false;
+    const returnOnly = document.getElementById('toggle4')?.checked ?? false;
 
     if (_mapSvgEl) _mapSvgEl.classList.add('has-selection');
 
-    _activatePath(bodyId, nodeKey);
+    // Highlight selected terminal node
+    const termEl = document.getElementById(`node_${_pointB.body}_${_pointB.node}`);
+    if (termEl) {
+        termEl.classList.add('is-active');
+        _activeNodeEl = termEl;
+    }
+
+    if (returnOnly) {
+        // Return only: animate path from pointB back to pointA (reverse direction)
+        _buildReturnPath(_pointB.body, _pointB.node);
+    } else {
+        // Outbound path always drawn (one-way or round trip)
+        _buildOutboundPath(_pointB.body, _pointB.node);
+        if (roundTrip) {
+            // Round trip: also draw the return path
+            _buildReturnPath(_pointB.body, _pointB.node);
+        }
+    }
 }
 
 // ─── SVG Construction ─────────────────────────────────────────────────────────
 
 function _buildSVG(systemData) {
     const svg = _el('svg', {
-        viewBox: '0 -25 1450 810',
+        viewBox: '0 -25 1000 810',
         preserveAspectRatio: 'xMidYMid meet',
         class: 'dv-map',
     });
@@ -132,12 +226,44 @@ function _buildSVG(systemData) {
     const nodesGroup = _el('g', { class: 'map-nodes', id: 'map-nodes' });
     svg.appendChild(nodesGroup);
 
+    // Draw bodies
     systemData.bodies.forEach(body => {
         _drawBodyPaths(pathsGroup, body);
         _drawBodyNodes(nodesGroup, body);
     });
 
+    // Draw interplanetary hub last so it sits on top
+    _drawHubNode(nodesGroup, systemData.meta);
+
     return svg;
+}
+
+// ─── Hub Node ─────────────────────────────────────────────────────────────────
+
+function _drawHubNode(group, meta) {
+    const pos = NODE_POSITIONS['interplanetary'];
+    if (!pos) return;
+    const colour = meta.interplanetaryNode?.mapColour || '#c8c8d4';
+
+    const nodeGroup = _el('g', {
+        id: 'node_interplanetary',
+        class: 'map-node map-node--hub',
+    });
+
+    nodeGroup.appendChild(_el('circle', {
+        cx: pos.x, cy: pos.y, r: NODE_R_HUB,
+        stroke: colour, 'stroke-width': 2,
+    }));
+
+    const txt = _el('text', {
+        x: pos.x, y: pos.y,
+        'text-anchor': 'middle',
+        'dominant-baseline': 'central',
+    });
+    txt.textContent = 'IPS';
+    nodeGroup.appendChild(txt);
+
+    group.appendChild(nodeGroup);
 }
 
 // ─── Path Drawing ─────────────────────────────────────────────────────────────
@@ -146,6 +272,7 @@ function _drawBodyPaths(group, body) {
     const nodeKeys = Object.keys(body.nodes).filter(k => k !== 'comment');
     const colour = body.mapColour || '#888888';
 
+    // Branch segments between consecutive nodes
     for (let i = 0; i < nodeKeys.length - 1; i++) {
         const fromPos = NODE_POSITIONS[`${body.id}_${nodeKeys[i]}`];
         const toPos = NODE_POSITIONS[`${body.id}_${nodeKeys[i + 1]}`];
@@ -165,24 +292,27 @@ function _drawBodyPaths(group, body) {
 }
 
 function _drawTrunkLine(group, body, colour) {
-    if (body.id === 'kerbol') return;
-
     const nodeKeys = Object.keys(body.nodes).filter(k => k !== 'comment');
-    const firstKey = body.id === 'kerbin' ? 'escape' : nodeKeys[0];
+    // Kerbin's first node toward the hub is 'flyby'
+    const firstKey = nodeKeys[0];
     const firstPos = NODE_POSITIONS[`${body.id}_${firstKey}`];
     if (!firstPos) return;
 
     let originPos = null;
     let strokeColour = colour;
 
-    if (body.id === 'kerbin') {
-        originPos = NODE_POSITIONS['kerbol_orbit'];
-        strokeColour = (_bodies.kerbol && _bodies.kerbol.mapColour) || colour;
+    if (body.id === 'kerbin' || body.id === 'kerbol') {
+        // Kerbin/Kerbol trunk: from interplanetary hub down to respective flyby
+        originPos = NODE_POSITIONS['interplanetary'];
+        strokeColour = colour;
     } else if (body.parent === 'kerbol') {
-        originPos = NODE_POSITIONS['kerbin_escape'];
+        // All interplanetary bodies: trunk from interplanetary hub
+        originPos = NODE_POSITIONS['interplanetary'];
     } else if (body.parent === 'kerbin') {
+        // Kerbin moons: trunk from kerbin_orbit
         originPos = NODE_POSITIONS['kerbin_orbit'];
     } else if (_bodies[body.parent]) {
+        // Moons of other planets: trunk from parent's first node
         const pKeys = Object.keys(_bodies[body.parent].nodes).filter(k => k !== 'comment');
         if (pKeys[0]) originPos = NODE_POSITIONS[`${body.parent}_${pKeys[0]}`];
     }
@@ -205,6 +335,7 @@ function _drawBodyNodes(group, body) {
     const nodeKeys = Object.keys(body.nodes).filter(k => k !== 'comment');
     const colour = body.mapColour || '#888888';
 
+    // Body label
     const labelPos = NODE_POSITIONS[`${body.id}_label`];
     if (labelPos) {
         const label = _el('text', {
@@ -218,6 +349,7 @@ function _drawBodyNodes(group, body) {
         group.appendChild(label);
     }
 
+    // Nodes
     nodeKeys.forEach(key => {
         const pos = NODE_POSITIONS[`${body.id}_${key}`];
         if (!pos) return;
@@ -250,73 +382,156 @@ function _drawBodyNodes(group, body) {
     });
 }
 
-// ─── Active State ─────────────────────────────────────────────────────────────
+// ─── Active Path Building ─────────────────────────────────────────────────────
 
-function _clearActive() {
-    if (_mapSvgEl) _mapSvgEl.classList.remove('has-selection');
-
-    if (_activeRouteNodes) {
-        _activeRouteNodes.forEach(el => el.classList.remove('is-route'));
-        _activeRouteNodes = null;
-    }
-    if (_activeNodeEl) {
-        _activeNodeEl.classList.remove('is-active');
-        _activeNodeEl = null;
-    }
-    if (_activePath) {
-        _activePath.forEach(el => el.classList.remove('is-active'));
-        _activePath = null;
-    }
-}
-
-function _activatePath(bodyId, nodeKey) {
-    const activated = [];
+/**
+ * Build and animate the outbound path from pointA to pointB.
+ * Collects all path segments and nodes along the route.
+ */
+function _buildOutboundPath(bodyId, nodeKey) {
+    const segments = [];
     const routeNodes = [];
 
-    if (bodyId === 'kerbol') {
-        const spine = document.getElementById('trunk_kerbin');
-        if (spine) { spine.classList.add('is-active'); activated.push(spine); }
-    }
+    _collectPathSegments(bodyId, nodeKey, segments, routeNodes);
 
-    _activatePathChain(bodyId, nodeKey, activated, routeNodes);
-    _activePath = activated;
-    _activeRouteNodes = routeNodes;
+    segments.forEach(({ el, reverse }) => {
+        el.classList.add('is-active');
+        if (reverse) el.classList.add('is-reverse');
+        _activePaths.push(el);
+    });
+    routeNodes.forEach(el => {
+        el.classList.add('is-route');
+        _activeNodes.push(el);
+    });
+
+    // Also highlight the interplanetary hub as part of the route when the route passes through IPS
+    const hub = document.getElementById('node_interplanetary');
+    if (hub && !_activeNodes.includes(hub)) {
+        const isInterplanetaryDestination = _pointB.body === 'kerbol' || _bodies[_pointB.body]?.parent === 'kerbol';
+        if (_pointA.body === 'interplanetary' || isInterplanetaryDestination) {
+            hub.classList.add('is-route');
+            _activeNodes.push(hub);
+        }
+    }
 }
 
-function _activatePathChain(bodyId, nodeKey, activated, routeNodes) {
+/**
+ * Build and animate the return path from pointB back to pointA.
+ * Uses the same segments but with reversed animation direction.
+ */
+function _buildReturnPath(bodyId, nodeKey) {
+    const segments = [];
+    const routeNodes = [];
+
+    _collectPathSegments(bodyId, nodeKey, segments, routeNodes);
+
+    segments.forEach(({ el, reverse }) => {
+        el.classList.add('is-return');
+        // For return path, reverse the direction
+        if (!reverse) el.classList.add('is-reverse');
+        _returnPaths.push(el);
+    });
+    routeNodes.forEach(el => {
+        if (!_activeNodes.includes(el)) {
+            el.classList.add('is-route');
+            _activeNodes.push(el);
+        }
+    });
+
+    // Hub for return too
+    const hub = document.getElementById('node_interplanetary');
+    if (hub && !_activeNodes.includes(hub)) {
+        const isInterplanetaryDestination = _pointB.body === 'kerbol' || _bodies[_pointB.body]?.parent === 'kerbol';
+        if (_pointA.body === 'interplanetary' || isInterplanetaryDestination) {
+            hub.classList.add('is-route');
+            _activeNodes.push(hub);
+        }
+    }
+}
+
+/**
+ * Recursively collect all path segment elements and node elements
+ * from pointA up to the given bodyId/nodeKey.
+ */
+function _collectPathSegments(bodyId, nodeKey, segments, routeNodes) {
     const body = _bodies[bodyId];
     if (!body) return;
 
-    const parent = _parentTargetNode(body);
-    if (parent) _activatePathChain(parent.bodyId, parent.nodeKey, activated, routeNodes);
+    // Recurse into parent chain first (so segments are ordered origin → destination)
+    const parentTarget = _parentTargetNode(body);
+
+    // Stop recursion when we've reached pointA
+    const reachedPointA = (
+        (_pointA.body === 'interplanetary' && parentTarget === null) ||
+        (_pointA.body === bodyId && _pointA.node === nodeKey) ||
+        (_pointA.body === 'kerbin' && _pointA.node === 'orbit' && bodyId === 'kerbin' && nodeKey === 'orbit')
+    );
+
+    if (parentTarget && !reachedPointA) {
+        _collectPathSegments(parentTarget.bodyId, parentTarget.nodeKey, segments, routeNodes);
+    }
 
     const nodeKeys = Object.keys(body.nodes).filter(k => k !== 'comment');
     const targetIndex = nodeKeys.indexOf(nodeKey);
     if (targetIndex === -1) return;
 
-    for (let i = 0; i <= targetIndex; i++) {
+    // Determine start index: if on pointA body, start from pointA node, else from first node
+    let startIndex = 0;
+    if (_pointA.body === bodyId && _pointA.node) {
+        const pointAIndex = nodeKeys.indexOf(_pointA.node);
+        if (pointAIndex !== -1) startIndex = pointAIndex;
+    }
+
+    // Collect node elements between startIndex and targetIndex regardless of direction
+    const rangeStart = Math.min(startIndex, targetIndex);
+    const rangeEnd = Math.max(startIndex, targetIndex);
+    for (let i = rangeStart; i <= rangeEnd; i++) {
         const el = document.getElementById(`node_${bodyId}_${nodeKeys[i]}`);
-        if (el && !routeNodes.includes(el)) {
-            el.classList.add('is-route');
-            routeNodes.push(el);
-        }
+        if (el && !routeNodes.includes(el)) routeNodes.push(el);
     }
 
-    if (bodyId !== 'kerbin') {
+    // Collect trunk segment if body has a parent (connects to IPS), but not for same-body paths
+    if (body.parent && _pointA.body !== bodyId) {
         const trunk = document.getElementById(`trunk_${bodyId}`);
-        if (trunk && !activated.includes(trunk)) {
-            trunk.classList.add('is-active');
-            activated.push(trunk);
+        if (trunk && !segments.some(s => s.el === trunk)) {
+            const reverseTrunk = (startIndex > targetIndex && targetIndex === 0 && _pointA.body === bodyId);
+            segments.push({ el: trunk, reverse: reverseTrunk });
         }
     }
 
-    for (let i = 0; i < targetIndex; i++) {
-        const seg = document.getElementById(`path_${bodyId}_${nodeKeys[i]}_${nodeKeys[i + 1]}`);
-        if (seg && !activated.includes(seg)) {
-            seg.classList.add('is-active');
-            activated.push(seg);
-        }
+    // Special case for Kerbol trunk (central body, no parent but has trunk)
+    if (body.id === 'kerbol') {
+        const trunk = document.getElementById(`trunk_${bodyId}`);
+        if (trunk && !segments.some(s => s.el === trunk)) segments.push({ el: trunk, reverse: false });
     }
+
+    // Collect branch segments between the two node indices regardless of direction
+    for (let i = rangeStart; i < rangeEnd; i++) {
+        const seg = document.getElementById(`path_${bodyId}_${nodeKeys[i]}_${nodeKeys[i + 1]}`);
+        if (seg && !segments.some(s => s.el === seg)) segments.push({ el: seg, reverse: startIndex > targetIndex });
+    }
+
+    // Special case: include Kerbin trunk when targeting flyby (interplanetary node)
+    if (body.id === 'kerbin' && targetIndex === 0) {
+        const trunk = document.getElementById(`trunk_${bodyId}`);
+        if (trunk && !segments.some(s => s.el === trunk)) segments.push({ el: trunk, reverse: true });
+    }
+}
+
+// ─── Clear Active State ───────────────────────────────────────────────────────
+
+function _clearActive() {
+    if (_mapSvgEl) _mapSvgEl.classList.remove('has-selection');
+
+    _activePaths.forEach(el => el.classList.remove('is-active'));
+    _returnPaths.forEach(el => el.classList.remove('is-return'));
+    _activeNodes.forEach(el => el.classList.remove('is-route'));
+    if (_activeNodeEl) _activeNodeEl.classList.remove('is-active');
+
+    _activePaths = [];
+    _returnPaths = [];
+    _activeNodes = [];
+    _activeNodeEl = null;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -328,17 +543,38 @@ function _el(tag, attrs = {}) {
 }
 
 function _nodeLabel(key) {
-    return { intercept: 'Fly-by', orbit: 'Orbit', land: 'Land', escape: 'Escape' }[key] || key;
+    return {
+        intercept: 'Fly-by',
+        flyby: 'Fly-by',
+        orbit: 'Orbit',
+        land: 'Land',
+        escape: 'Escape',
+    }[key] || key;
 }
 
+/**
+ * Returns the "parent" route target for a body — the node in the
+ * chain between this body and interplanetary space.
+ * Returns null if the body IS the origin (interplanetary or pointA).
+ */
 function _parentTargetNode(body) {
-    if (!body.parent || body.id === 'kerbin') return null;
-    if (body.parent === 'kerbol') return { bodyId: 'kerbin', nodeKey: 'escape' };
+    if (!body.parent) {
+        if (body.id === 'kerbol') return { bodyId: 'kerbin', nodeKey: 'flyby' };
+        return null;
+    }
+    if (body.id === 'kerbin') return null;
+    if (body.parent === 'kerbol') return { bodyId: 'kerbin', nodeKey: 'flyby' };
     if (body.parent === 'kerbin') return { bodyId: 'kerbin', nodeKey: 'orbit' };
     return { bodyId: body.parent, nodeKey: 'intercept' };
 }
 
 function _shouldGlowTerminalNode(body, nodeKey) {
     if (!body.surface?.canAerobrake) return false;
-    return body.id === 'kerbin' ? nodeKey === 'orbit' : nodeKey === 'land';
+    if (body.id === 'kerbin') return nodeKey === 'orbit';
+    return nodeKey === 'land';
+}
+
+// Legacy compatibility — called by ui.js before full state.js is wired
+function setActiveNode(bodyId, nodeKey) {
+    setPointB(bodyId, nodeKey);
 }

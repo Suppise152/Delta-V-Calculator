@@ -4,15 +4,27 @@
     "pack": "stock",
     "centralBody": "kerbol",
     "originBody": "kerbin",
-    "comment": "Transfer dV and phase angles are calculated dynamically from orbital parameters. Surface/node costs are hardcoded from established dV maps. Node costs are INCREMENTAL - each value is the cost of the next step deeper, not cumulative. Aerobrake savings are derived directly from node values by the calculator - no separate saving values stored here."
+    "comment": "Transfer dV and phase angles are calculated dynamically from orbital parameters. Surface/node costs are hardcoded from established dV maps. Node costs are INCREMENTAL - each value is the cost of the next step deeper, not cumulative. Aerobrake savings are derived directly from node values by the calculator - no separate saving values stored here.",
+    "interplanetaryNode": {
+      "id": "interplanetary",
+      "label": "Interplanetary Space",
+      "mapColour": "#c8c8d4"
+    }
   },
   "bodies": [
-
     {
       "id": "kerbol",
       "label": "Kerbol",
       "parent": null,
-      "moons": ["moho", "eve", "kerbin", "duna", "dres", "jool", "eeloo"],
+      "moons": [
+        "moho",
+        "eve",
+        "kerbin",
+        "duna",
+        "dres",
+        "jool",
+        "eeloo"
+      ],
       "mapColour": "#FFD700",
       "orbit": {
         "sma": 0,
@@ -31,7 +43,6 @@
       },
       "comment": "Kerbol has orbit/land instead of intercept/orbit/land. No transfer angles as central body."
     },
-
     {
       "id": "moho",
       "label": "Moho",
@@ -57,12 +68,13 @@
         "land": 870
       }
     },
-
     {
       "id": "eve",
       "label": "Eve",
       "parent": "kerbol",
-      "moons": ["gilly"],
+      "moons": [
+        "gilly"
+      ],
       "mapColour": "#9B59B6",
       "orbit": {
         "sma": 9832684544,
@@ -84,7 +96,6 @@
       },
       "comment": "canAerobrake: aerobrakeIntercept zeroes nodes.intercept. aerobrakeOrbit zeroes nodes.intercept + nodes.orbit. Surface descent also zeroed when either aerobrake active."
     },
-
     {
       "id": "gilly",
       "label": "Gilly",
@@ -113,12 +124,14 @@
       "transferAngleDiagram": "eve",
       "comment": "parentAerobrake: when aerobrakeIntercept is active, zeroes nodes.intercept via Eve atmosphere. Calculator reads saving from eve.nodes.intercept."
     },
-
     {
       "id": "kerbin",
       "label": "Kerbin",
       "parent": "kerbol",
-      "moons": ["mun", "minmus"],
+      "moons": [
+        "mun",
+        "minmus"
+      ],
       "mapColour": "#4A90D9",
       "orbit": {
         "sma": 13599840256,
@@ -134,12 +147,13 @@
         "dvToLand": 3400
       },
       "nodes": {
-        "orbit": 3400,
-        "escape": 950
+        "flyby": 3400,
+        "orbit": 950,
+        "land": 3400,
+        "comment": "flyby = intercept/LKO cost, orbit = 950m/s insertion to LKO, land = surface to LKO. Matches v1 values reorganised into standard node structure."
       },
       "comment": "Origin body in v2.0. Has orbit/escape instead of intercept/orbit/land. canAerobrake handles return aerobraking - zeroes nodes.orbit on intercept return, or full capture cost on LO return."
     },
-
     {
       "id": "mun",
       "label": "Mun",
@@ -171,7 +185,6 @@
         "comment": "Fixed 90 degree phase angle - suborbital transfer. No departure angle needed."
       }
     },
-
     {
       "id": "minmus",
       "label": "Minmus",
@@ -203,12 +216,13 @@
         "comment": "Fixed 90 degree phase angle - suborbital transfer. No departure angle needed."
       }
     },
-
     {
       "id": "duna",
       "label": "Duna",
       "parent": "kerbol",
-      "moons": ["ike"],
+      "moons": [
+        "ike"
+      ],
       "mapColour": "#C1440E",
       "orbit": {
         "sma": 20726155264,
@@ -229,7 +243,6 @@
         "land": 1450
       }
     },
-
     {
       "id": "ike",
       "label": "Ike",
@@ -258,7 +271,6 @@
       "transferAngleDiagram": "duna",
       "comment": "parentAerobrake: when aerobrakeIntercept active, zeroes nodes.intercept via Duna atmosphere."
     },
-
     {
       "id": "dres",
       "label": "Dres",
@@ -284,12 +296,17 @@
         "land": 430
       }
     },
-
     {
       "id": "jool",
       "label": "Jool",
       "parent": "kerbol",
-      "moons": ["laythe", "vall", "tylo", "bop", "pol"],
+      "moons": [
+        "laythe",
+        "vall",
+        "tylo",
+        "bop",
+        "pol"
+      ],
       "mapColour": "#5B8C3E",
       "orbit": {
         "sma": 68773560320,
@@ -311,7 +328,6 @@
       },
       "comment": "Landing on Jool is not physically possible but node value preserved from v1 for completeness."
     },
-
     {
       "id": "laythe",
       "label": "Laythe",
@@ -340,7 +356,6 @@
       "transferAngleDiagram": "jool",
       "comment": "canAerobrake: own atmosphere handles orbit/surface aerobraking. parentAerobrake: Jool atmosphere zeroes nodes.intercept on capture."
     },
-
     {
       "id": "vall",
       "label": "Vall",
@@ -368,7 +383,6 @@
       "parentAerobrake": "jool",
       "transferAngleDiagram": "jool"
     },
-
     {
       "id": "tylo",
       "label": "Tylo",
@@ -396,7 +410,6 @@
       "parentAerobrake": "jool",
       "transferAngleDiagram": "jool"
     },
-
     {
       "id": "bop",
       "label": "Bop",
@@ -424,7 +437,6 @@
       "parentAerobrake": "jool",
       "transferAngleDiagram": "jool"
     },
-
     {
       "id": "pol",
       "label": "Pol",
@@ -452,7 +464,6 @@
       "parentAerobrake": "jool",
       "transferAngleDiagram": "jool"
     },
-
     {
       "id": "eeloo",
       "label": "Eeloo",
@@ -478,9 +489,7 @@
         "land": 620
       }
     }
-
   ],
-
   "transferConfig": {
     "originBody": "kerbin",
     "lkoAltitude": 80000,
