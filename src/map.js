@@ -164,6 +164,41 @@ function initMap(systemData) {
  */
 function setPointA(bodyId, nodeKey) {
     _pointA = { body: bodyId, node: nodeKey };
+    // Update trunk positions for moons based on new point A
+    for (const body of Object.values(_bodies)) {
+        if (body.parent) {
+            const trunk = document.getElementById(`trunk_${body.id}`);
+            if (trunk) {
+                let originPos = null;
+                if (body.parent === _pointA.body) {
+                    // Use orbit of parent
+                    const parentBody = _bodies[body.parent];
+                    if (parentBody) {
+                        const parentNodes = Object.keys(parentBody.nodes).filter(k => k !== 'comment');
+                        const orbitIndex = parentNodes.indexOf('orbit');
+                        if (orbitIndex !== -1) {
+                            originPos = NODE_POSITIONS[`${body.parent}_${parentNodes[orbitIndex]}`];
+                        }
+                    }
+                } else if (body.parent === 'kerbol') {
+                    originPos = NODE_POSITIONS['interplanetary'];
+                } else {
+                    // Use first node of parent
+                    const pBody = _bodies[body.parent];
+                    if (pBody) {
+                        const pNodes = Object.keys(pBody.nodes).filter(k => k !== 'comment');
+                        if (pNodes[0]) {
+                            originPos = NODE_POSITIONS[`${body.parent}_${pNodes[0]}`];
+                        }
+                    }
+                }
+                if (originPos) {
+                    trunk.setAttribute('x1', originPos.x);
+                    trunk.setAttribute('y1', originPos.y);
+                }
+            }
+        }
+    }
     // Redraw if we already have a destination
     if (_pointB.body) refreshMapDisplay();
 }
@@ -301,20 +336,31 @@ function _drawTrunkLine(group, body, colour) {
     let originPos = null;
     let strokeColour = colour;
 
-    if (body.id === 'kerbin' || body.id === 'kerbol') {
-        // Kerbin/Kerbol trunk: from interplanetary hub down to respective flyby
+    if (body.id === 'kerbol') {
         originPos = NODE_POSITIONS['interplanetary'];
         strokeColour = colour;
+    } else if (body.parent === _pointA.body) {
+        // Use orbit of parent
+        const parentBody = _bodies[body.parent];
+        if (parentBody) {
+            const parentNodes = Object.keys(parentBody.nodes).filter(k => k !== 'comment');
+            const orbitIndex = parentNodes.indexOf('orbit');
+            if (orbitIndex !== -1) {
+                originPos = NODE_POSITIONS[`${body.parent}_${parentNodes[orbitIndex]}`];
+            }
+        }
     } else if (body.parent === 'kerbol') {
         // All interplanetary bodies: trunk from interplanetary hub
         originPos = NODE_POSITIONS['interplanetary'];
-    } else if (body.parent === 'kerbin') {
-        // Kerbin moons: trunk from kerbin_orbit
-        originPos = NODE_POSITIONS['kerbin_orbit'];
-    } else if (_bodies[body.parent]) {
-        // Moons of other planets: trunk from parent's first node
-        const pKeys = Object.keys(_bodies[body.parent].nodes).filter(k => k !== 'comment');
-        if (pKeys[0]) originPos = NODE_POSITIONS[`${body.parent}_${pKeys[0]}`];
+    } else {
+        // Use first node of parent
+        const pBody = _bodies[body.parent];
+        if (pBody) {
+            const pNodes = Object.keys(pBody.nodes).filter(k => k !== 'comment');
+            if (pNodes[0]) {
+                originPos = NODE_POSITIONS[`${body.parent}_${pNodes[0]}`];
+            }
+        }
     }
 
     if (!originPos) return;
@@ -407,8 +453,9 @@ function _buildOutboundPath(bodyId, nodeKey) {
     // Also highlight the interplanetary hub as part of the route when the route passes through IPS
     const hub = document.getElementById('node_interplanetary');
     if (hub && !_activeNodes.includes(hub)) {
-        const isInterplanetaryDestination = _pointB.body === 'kerbol' || _bodies[_pointB.body]?.parent === 'kerbol';
-        if (_pointA.body === 'interplanetary' || isInterplanetaryDestination) {
+        const passesThroughIPS = _pointA.body === 'interplanetary' || _pointB.body === 'interplanetary' ||
+            _pointA.body === 'kerbol' || _pointB.body === 'kerbol';
+        if (passesThroughIPS) {
             hub.classList.add('is-route');
             _activeNodes.push(hub);
         }
@@ -441,8 +488,9 @@ function _buildReturnPath(bodyId, nodeKey) {
     // Hub for return too
     const hub = document.getElementById('node_interplanetary');
     if (hub && !_activeNodes.includes(hub)) {
-        const isInterplanetaryDestination = _pointB.body === 'kerbol' || _bodies[_pointB.body]?.parent === 'kerbol';
-        if (_pointA.body === 'interplanetary' || isInterplanetaryDestination) {
+        const passesThroughIPS = _pointA.body === 'interplanetary' || _pointB.body === 'interplanetary' ||
+            _pointA.body === 'kerbol' || _pointB.body === 'kerbol';
+        if (passesThroughIPS) {
             hub.classList.add('is-route');
             _activeNodes.push(hub);
         }
@@ -463,8 +511,7 @@ function _collectPathSegments(bodyId, nodeKey, segments, routeNodes) {
     // Stop recursion when we've reached pointA
     const reachedPointA = (
         (_pointA.body === 'interplanetary' && parentTarget === null) ||
-        (_pointA.body === bodyId && _pointA.node === nodeKey) ||
-        (_pointA.body === 'kerbin' && _pointA.node === 'orbit' && bodyId === 'kerbin' && nodeKey === 'orbit')
+        (_pointA.body === bodyId && _pointA.node === nodeKey)
     );
 
     if (parentTarget && !reachedPointA) {
@@ -490,19 +537,46 @@ function _collectPathSegments(bodyId, nodeKey, segments, routeNodes) {
         if (el && !routeNodes.includes(el)) routeNodes.push(el);
     }
 
-    // Collect trunk segment if body has a parent (connects to IPS), but not for same-body paths
-    if (body.parent && _pointA.body !== bodyId) {
-        const trunk = document.getElementById(`trunk_${bodyId}`);
-        if (trunk && !segments.some(s => s.el === trunk)) {
-            const reverseTrunk = (startIndex > targetIndex && targetIndex === 0 && _pointA.body === bodyId);
-            segments.push({ el: trunk, reverse: reverseTrunk });
-        }
-    }
-
     // Special case for Kerbol trunk (central body, no parent but has trunk)
     if (body.id === 'kerbol') {
         const trunk = document.getElementById(`trunk_${bodyId}`);
         if (trunk && !segments.some(s => s.el === trunk)) segments.push({ el: trunk, reverse: false });
+    }
+
+    // Collect trunk segment if body has a parent (connects to IPS)
+    // Only collect if the trunk's starting node (first node, index 0) is in our collection range
+    if (body.parent) {
+        const trunk = document.getElementById(`trunk_${bodyId}`);
+        if (trunk && !segments.some(s => s.el === trunk)) {
+            // Trunk starts from first node (index 0), so only collect if range includes it
+            if (rangeStart === 0) {
+                const reverseTrunk = (startIndex > targetIndex && targetIndex === 0 && _pointA.body === bodyId);
+                segments.push({ el: trunk, reverse: reverseTrunk });
+            }
+        }
+    }
+
+    // If pointB is a moon and we're currently on its parent planet, also collect the parent's intercept/flyby
+    // BUT: only do this if pointA is NOT on the parent body itself (to avoid extra paths when starting from the parent)
+    if (_pointB.body !== bodyId && _bodies[_pointB.body]?.parent === bodyId && _pointA.body !== bodyId) {
+        const parentNodeKeys = Object.keys(body.nodes).filter(k => k !== 'comment');
+        const interceptIndex = parentNodeKeys.indexOf('intercept');
+        if (interceptIndex !== -1) {
+            // Collect nodes from startIndex to intercept
+            const rangeStart = Math.min(startIndex, interceptIndex);
+            const rangeEnd = Math.max(startIndex, interceptIndex);
+            for (let i = rangeStart; i <= rangeEnd; i++) {
+                const el = document.getElementById(`node_${bodyId}_${parentNodeKeys[i]}`);
+                if (el && !routeNodes.includes(el)) routeNodes.push(el);
+            }
+            // Collect path segments from startIndex to intercept
+            for (let i = rangeStart; i < rangeEnd; i++) {
+                const seg = document.getElementById(`path_${bodyId}_${parentNodeKeys[i]}_${parentNodeKeys[i + 1]}`);
+                if (seg && !segments.some(s => s.el === seg)) {
+                    segments.push({ el: seg, reverse: startIndex > interceptIndex });
+                }
+            }
+        }
     }
 
     // Collect branch segments between the two node indices regardless of direction
@@ -511,10 +585,36 @@ function _collectPathSegments(bodyId, nodeKey, segments, routeNodes) {
         if (seg && !segments.some(s => s.el === seg)) segments.push({ el: seg, reverse: startIndex > targetIndex });
     }
 
-    // Special case: include Kerbin trunk when targeting flyby (interplanetary node)
-    if (body.id === 'kerbin' && targetIndex === 0) {
-        const trunk = document.getElementById(`trunk_${bodyId}`);
-        if (trunk && !segments.some(s => s.el === trunk)) segments.push({ el: trunk, reverse: true });
+
+    // If point A is on a different body (and pointB is not a direct child of pointA),
+    // collect the path from point A upward to IPS
+    const pointBParent = _bodies[_pointB.body]?.parent;
+    const shouldCollectPointAPaths = _pointA.body !== 'interplanetary' &&
+        _pointA.body !== bodyId &&
+        pointBParent !== _pointA.body;
+
+    if (shouldCollectPointAPaths) {
+        const aBody = _bodies[_pointA.body];
+        if (aBody) {
+            const nodeKeys = Object.keys(aBody.nodes).filter(k => k !== 'comment');
+            const aIndex = nodeKeys.indexOf(_pointA.node);
+            const interIndex = 0; // assume first node connects to IPS
+            const rangeStart = Math.min(aIndex, interIndex);
+            const rangeEnd = Math.max(aIndex, interIndex);
+            for (let i = rangeStart; i <= rangeEnd; i++) {
+                const el = document.getElementById(`node_${_pointA.body}_${nodeKeys[i]}`);
+                if (el && !routeNodes.includes(el)) routeNodes.push(el);
+            }
+            for (let i = rangeStart; i < rangeEnd; i++) {
+                const seg = document.getElementById(`path_${_pointA.body}_${nodeKeys[i]}_${nodeKeys[i + 1]}`);
+                if (seg && !segments.some(s => s.el === seg)) segments.push({ el: seg, reverse: aIndex > interIndex });
+            }
+            // Include trunk for A body
+            if (aBody.parent) {
+                const trunk = document.getElementById(`trunk_${_pointA.body}`);
+                if (trunk && !segments.some(s => s.el === trunk)) segments.push({ el: trunk, reverse: aIndex !== interIndex });
+            }
+        }
     }
 }
 
@@ -558,19 +658,29 @@ function _nodeLabel(key) {
  * Returns null if the body IS the origin (interplanetary or pointA).
  */
 function _parentTargetNode(body) {
-    if (!body.parent) {
-        if (body.id === 'kerbol') return { bodyId: 'kerbin', nodeKey: 'flyby' };
-        return null;
+    if (!body.parent) return null;
+    if (body.parent === 'kerbol') return null;
+
+    // For moons (parent's parent is kerbol), return the parent's orbit node if parent is pointA,
+    // otherwise return the first node (flyby) for interplanetary connections
+    if (_bodies[body.parent]?.parent === 'kerbol') {
+        if (body.parent === _pointA.body) {
+            return { bodyId: body.parent, nodeKey: 'orbit' };
+        } else {
+            const parentNodeKeys = Object.keys(_bodies[body.parent].nodes).filter(k => k !== 'comment');
+            const firstNodeKey = parentNodeKeys[0];
+            if (firstNodeKey) {
+                return { bodyId: body.parent, nodeKey: firstNodeKey };
+            }
+            return null;
+        }
     }
-    if (body.id === 'kerbin') return null;
-    if (body.parent === 'kerbol') return { bodyId: 'kerbin', nodeKey: 'flyby' };
-    if (body.parent === 'kerbin') return { bodyId: 'kerbin', nodeKey: 'orbit' };
+
     return { bodyId: body.parent, nodeKey: 'intercept' };
 }
 
 function _shouldGlowTerminalNode(body, nodeKey) {
     if (!body.surface?.canAerobrake) return false;
-    if (body.id === 'kerbin') return nodeKey === 'orbit';
     return nodeKey === 'land';
 }
 
