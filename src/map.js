@@ -440,9 +440,10 @@ function _buildOutboundPath(bodyId, nodeKey) {
 
     _collectPathSegments(bodyId, nodeKey, segments, routeNodes);
 
-    segments.forEach(({ el, reverse }) => {
+    segments.forEach(({ el, reverse }, index) => {
         el.classList.add('is-active');
         if (reverse) el.classList.add('is-reverse');
+        el.style.setProperty('--flow-delay', `${-(index * 0.12)}s`);
         _activePaths.push(el);
     });
     routeNodes.forEach(el => {
@@ -472,10 +473,11 @@ function _buildReturnPath(bodyId, nodeKey) {
 
     _collectPathSegments(bodyId, nodeKey, segments, routeNodes);
 
-    segments.forEach(({ el, reverse }) => {
+    segments.forEach(({ el, reverse }, index) => {
         el.classList.add('is-return');
-        // For return path, reverse the direction
-        if (!reverse) el.classList.add('is-reverse');
+        // For return path, reverse the direction only when the outbound segment itself was reversed.
+        if (reverse) el.classList.add('is-reverse');
+        el.style.setProperty('--flow-delay', `${-(index * 0.12)}s`);
         _returnPaths.push(el);
     });
     routeNodes.forEach(el => {
@@ -623,8 +625,16 @@ function _collectPathSegments(bodyId, nodeKey, segments, routeNodes) {
 function _clearActive() {
     if (_mapSvgEl) _mapSvgEl.classList.remove('has-selection');
 
-    _activePaths.forEach(el => el.classList.remove('is-active'));
-    _returnPaths.forEach(el => el.classList.remove('is-return'));
+    _activePaths.forEach(el => {
+        el.classList.remove('is-active');
+        el.classList.remove('is-reverse');
+        el.style.removeProperty('--flow-delay');
+    });
+    _returnPaths.forEach(el => {
+        el.classList.remove('is-return');
+        el.classList.remove('is-reverse');
+        el.style.removeProperty('--flow-delay');
+    });
     _activeNodes.forEach(el => el.classList.remove('is-route'));
     if (_activeNodeEl) _activeNodeEl.classList.remove('is-active');
 

@@ -409,11 +409,13 @@ body {
     opacity: 1;
     stroke-dasharray: 7 10;
     animation: flow-forward 1s linear infinite;
+    animation-delay: var(--flow-delay, 0s);
 }
 
 /* Reverse outbound path */
 .dv-map.has-selection .map-path.is-active.is-reverse {
     animation: flow-return 1s linear infinite;
+    animation-delay: var(--flow-delay, 0s);
 }
 
 /* Return path — reverse flowing dashes, slightly lower opacity to distinguish */
@@ -421,11 +423,18 @@ body {
     opacity: 0.65;
     stroke-dasharray: 7 10;
     animation: flow-return 1s linear infinite;
+    animation-delay: var(--flow-delay, 0s);
+}
+
+/* Return-only paths should be fully opaque */
+.dv-map.has-selection .map-path.is-return:not(.is-active) {
+    opacity: 1;
 }
 
 /* Reverse return path */
 .dv-map.has-selection .map-path.is-return.is-reverse {
     animation: flow-forward 1s linear infinite;
+    animation-delay: var(--flow-delay, 0s);
 }
 
 /* When both outbound and return are active on the same segment */
@@ -433,17 +442,34 @@ body {
     opacity: 1;
     stroke-dasharray: 7 10;
     animation: flow-forward 1s linear infinite, flow-return 1s linear infinite 0.5s;
+    animation-delay: var(--flow-delay, 0s), calc(var(--flow-delay, 0s) + 0.5s);
+}
+
+/* When both outbound and return are active and the segment is reversed for outbound */
+.dv-map.has-selection .map-path.is-active.is-return.is-reverse {
+    opacity: 1;
+    stroke-dasharray: 7 10;
+    animation: flow-return 1s linear infinite, flow-forward 1s linear infinite 0.5s;
+    animation-delay: var(--flow-delay, 0s), calc(var(--flow-delay, 0s) + 0.5s);
 }
 
 @keyframes flow-forward {
+    from {
+        stroke-dashoffset: 0;
+    }
+
     to {
-        stroke-dashoffset: -14;
+        stroke-dashoffset: -17;
     }
 }
 
 @keyframes flow-return {
+    from {
+        stroke-dashoffset: 0;
+    }
+
     to {
-        stroke-dashoffset: 14;
+        stroke-dashoffset: 17;
     }
 }
 
