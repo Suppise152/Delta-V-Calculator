@@ -589,6 +589,8 @@ function _spawnOverlays(segmentIds, pathsGroup, direction, isRoundTrip = false) 
 
         const overlay = base.cloneNode(false);
         overlay.removeAttribute('id');
+        overlay.classList.remove('map-path');
+        overlay.classList.remove('map-trunk');
         overlay.classList.add('map-path-overlay');
         overlay.classList.add(direction === 'forward' ? 'is-active' : 'is-return');
 

@@ -442,7 +442,7 @@ body {
 
 /* Return B→A — slightly reduced opacity so direction is distinguishable */
 .map-path-overlay.is-return {
-    opacity: 0.75;
+    opacity: 1.0;
 }
 
 .map-path-overlay.flow-forward {
