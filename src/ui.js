@@ -86,7 +86,7 @@ function handleToggleChange(id) {
             if (t7.checked) {
                 setPointA('kerbin', 'orbit');
             } else {
-                setPointA('interplanetary', null);
+                setPointA('kerbin', 'land');
             }
             break;
 

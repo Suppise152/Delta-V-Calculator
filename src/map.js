@@ -128,7 +128,7 @@ let _bodies = null;
 let _systemMeta = null;
 let _mapSvgEl = null;
 
-let _pointA = { body: 'duna', node: 'land' };
+let _pointA = { body: 'kerbin', node: 'land' };
 let _pointB = { body: null, node: null };
 
 // Active display elements (cleared on each redraw)
