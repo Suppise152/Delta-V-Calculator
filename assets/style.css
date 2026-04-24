@@ -28,8 +28,8 @@
     --right-w: 70%;
 
     /* right panel split */
-    --map-h: 62%;
-    --controls-h: 38%;
+    --map-h: 55%;
+    --controls-h: 45%;
 }
 
 /* ─── RESET ───────────────────────────────────────────────────── */
@@ -150,14 +150,14 @@ body {
     flex: 0 0 auto;
     display: flex;
     gap: 0;
-    border-top: 1px solid var(--border-sep);
+    border-top: 2px solid var(--accent);
     min-height: 0;
     overflow: hidden;
 }
 
 /* ─── TOGGLE BOXES (left half of controls bar) ────────────────── */
 .toggle-boxes {
-    flex: 0 0 50%;
+    flex: 0 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -165,7 +165,6 @@ body {
     padding: 10px 16px 12px;
     font-family: var(--font-ui);
     font-size: 13px;
-    border-right: 1px solid var(--border-sep);
 }
 
 .toggle-label {
@@ -187,8 +186,16 @@ body {
 }
 
 .toggle-label--sm {
-    font-size: 12px;
-    color: var(--text-muted);
+    font-size: 13px;
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+}
+
+/* ─── TOGGLE GROUP SEPARATOR ─────────────────────────────────── */
+.toggle-group-separator {
+    height: 1px;
+    background: var(--border-sep);
+    margin: 4px 0;
 }
 
 /* ─── SLIDER ──────────────────────────────────────────────────── */
@@ -212,15 +219,38 @@ body {
     color: var(--text-primary);
 }
 
+/* ─── MAP CONTROLS ──────────────────────────────────────────── */
+.map-controls {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 10px 16px 12px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    border-left: 1px solid var(--border-sep);
+    border-right: 1px solid var(--border-sep);
+}
+
+.map-controls-title {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+
 /* ─── RESULTS PANEL (right half of controls bar) ─────────────── */
 .results-panel {
-    flex: 0 0 50%;
+    flex: 1 1 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 10px;
     padding: 10px 16px 12px;
     overflow: hidden;
+    border-left: 1px solid var(--border-sep);
 }
 
 .result-group {
@@ -564,6 +594,26 @@ body {
         padding: 12px;
     }
 
+    .toggle-group-separator {
+        height: 1px;
+        background: var(--border-sep);
+        margin: 6px 0;
+    }
+
+    .map-controls {
+        flex: none;
+        border-left: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border-sep);
+        font-size: 16px;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .map-controls-title {
+        font-size: 13px;
+    }
+
     .toggle-label input[type="checkbox"] {
         width: 17px;
         height: 17px;
@@ -573,6 +623,7 @@ body {
         flex: none;
         padding: 12px;
         gap: 12px;
+        border-left: none;
     }
 
     .result-display {
