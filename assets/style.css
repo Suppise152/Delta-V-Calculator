@@ -24,12 +24,12 @@
     --font-title: 'Oswald', sans-serif;
 
     --banner-h: 17%;
-    --left-w: 33.33%;
-    --right-w: 66.67%;
+    --left-w: 30%;
+    --right-w: 70%;
 
     /* right panel split */
-    --map-h: 65%;
-    --controls-h: 35%;
+    --map-h: 62%;
+    --controls-h: 38%;
 }
 
 /* ─── RESET ───────────────────────────────────────────────────── */

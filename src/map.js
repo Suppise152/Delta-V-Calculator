@@ -390,9 +390,62 @@ function _collectRoute(segmentIds, routeNodeIds) {
     const pA = _pointA;
     const pB = _pointB;
 
+    // Special case: pointB is IPS itself — collect trunk from pointA to IPS
+    if (pB.body === 'interplanetary') {
+        const aBody = _bodies[pA.body];
+        const aKeys = aBody ? Object.keys(aBody.nodes).filter(k => k !== 'comment') : [];
+        const aIdx = aKeys.indexOf(pA.node);
+
+        // Nodes on pointA body from node[0] (IPS-proximal) to node[aIdx]
+        for (let i = 0; i <= aIdx; i++) {
+            routeNodeIds.push(`node_${pA.body}_${aKeys[i]}`);
+        }
+        // Branch segments from node[0] to node[aIdx]
+        for (let i = 0; i < aIdx; i++) {
+            segmentIds.push({
+                id: `path_${pA.body}_${aKeys[i]}_${aKeys[i + 1]}`,
+                sameDirection: false,
+            });
+        }
+        // Trunk of pointA body (pointA → IPS)
+        segmentIds.push({ id: `trunk_${pA.body}`, sameDirection: false });
+
+        // If pointA is a moon, also include the walk from its planet to IPS
+        const aPlanet = aBody?.parent;
+        if (aPlanet && aPlanet !== _centralBody) {
+            const planetBody = _bodies[aPlanet];
+            const planetKeys = planetBody ? Object.keys(planetBody.nodes).filter(k => k !== 'comment') : [];
+            const orbitKey = planetKeys.includes('orbit') ? 'orbit' : planetKeys[0];
+            const orbitIdx = planetKeys.indexOf(orbitKey);
+            for (let i = 0; i <= orbitIdx; i++) {
+                routeNodeIds.push(`node_${aPlanet}_${planetKeys[i]}`);
+            }
+            for (let i = 0; i < orbitIdx; i++) {
+                segmentIds.push({
+                    id: `path_${aPlanet}_${planetKeys[i]}_${planetKeys[i + 1]}`,
+                    sameDirection: false,
+                });
+            }
+            segmentIds.push({ id: `trunk_${aPlanet}`, sameDirection: false });
+        }
+
+        // Add IPS hub itself
+        routeNodeIds.push('node_interplanetary');
+        return;
+    }
+
     // Same-body route is just the branch path between two nodes
     if (pA.body === pB.body) {
         _collectBodyPath(pA.body, pA.node, pB.node, segmentIds, routeNodeIds);
+
+        // If pointB is an interplanetary node (flyby/intercept), also include trunk to IPS
+        const aBody = _bodies[pA.body];
+        const aKeys = aBody ? Object.keys(aBody.nodes).filter(k => k !== 'comment') : [];
+        const flywayNodes = ['flyby', 'intercept'];
+        if (flywayNodes.includes(pB.node)) {
+            segmentIds.push({ id: `trunk_${pA.body}`, sameDirection: false });
+            routeNodeIds.push('node_interplanetary');
+        }
         return;
     }
 
