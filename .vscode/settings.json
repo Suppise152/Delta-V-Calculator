@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^node --check src/map\\.js$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

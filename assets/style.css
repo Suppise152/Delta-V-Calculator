@@ -393,64 +393,64 @@ body {
 }
 
 /* ─── MAP PATHS ───────────────────────────────────────────────── */
+
+/* Static base paths — always present */
 .map-path {
     fill: none;
     opacity: 1;
     transition: opacity 0.2s ease;
+    pointer-events: none;
 }
 
-/* Dim all paths when a selection is active */
+/* Dim base paths when a selection is active */
 .dv-map.has-selection .map-path {
     opacity: 0.25;
 }
 
-/* Outbound path — forward flowing dashes */
-.dv-map.has-selection .map-path.is-active {
-    opacity: 1;
-    stroke-dasharray: 7 10;
-    animation: flow-forward 1s linear infinite;
-    animation-delay: var(--flow-delay, 0s);
-}
-
-/* Reverse outbound path */
-.dv-map.has-selection .map-path.is-active.is-reverse {
-    animation: flow-return 1s linear infinite;
-    animation-delay: var(--flow-delay, 0s);
-}
-
-/* Return path — reverse flowing dashes, slightly lower opacity to distinguish */
-.dv-map.has-selection .map-path.is-return {
-    opacity: 0.65;
-    stroke-dasharray: 7 10;
-    animation: flow-return 1s linear infinite;
-    animation-delay: var(--flow-delay, 0s);
-}
-
-/* Return-only paths should be fully opaque */
-.dv-map.has-selection .map-path.is-return:not(.is-active) {
+/* Selected route base paths should stay fully visible */
+.dv-map.has-selection .map-path.is-route {
     opacity: 1;
 }
 
-/* Reverse return path */
-.dv-map.has-selection .map-path.is-return.is-reverse {
-    animation: flow-forward 1s linear infinite;
-    animation-delay: var(--flow-delay, 0s);
+/* ─── ANIMATED OVERLAYS ───────────────────────────────────────── */
+/*
+ * Overlays are SVG <line> elements cloned from base paths and appended
+ * by map.js. _clearActive() removes them from the DOM entirely —
+ * no stale class state possible.
+ *
+ * One-way:    one overlay per segment, full stroke-width, one direction.
+ * Round trip: two overlays per segment, each at half stroke-width,
+ *             flowing in opposite directions simultaneously.
+ *             The half-width makes the two streams visually distinct lanes.
+ *
+ * Jitter fix: explicit from/to keyframes + per-segment animation-delay
+ *             staggering prevents all segments resetting simultaneously.
+ */
+
+.map-path-overlay {
+    fill: none;
+    pointer-events: none;
+    stroke-dasharray: 7 10;
+    /* Overlays are always fully visible — they sit above the dimmed base paths */
+    opacity: 1;
 }
 
-/* When both outbound and return are active on the same segment */
-.dv-map.has-selection .map-path.is-active.is-return {
+/* Outbound A→B */
+.map-path-overlay.is-active {
     opacity: 1;
-    stroke-dasharray: 7 10;
-    animation: flow-forward 1s linear infinite, flow-return 1s linear infinite 0.5s;
-    animation-delay: var(--flow-delay, 0s), calc(var(--flow-delay, 0s) + 0.5s);
 }
 
-/* When both outbound and return are active and the segment is reversed for outbound */
-.dv-map.has-selection .map-path.is-active.is-return.is-reverse {
-    opacity: 1;
-    stroke-dasharray: 7 10;
-    animation: flow-return 1s linear infinite, flow-forward 1s linear infinite 0.5s;
-    animation-delay: var(--flow-delay, 0s), calc(var(--flow-delay, 0s) + 0.5s);
+/* Return B→A — slightly reduced opacity so direction is distinguishable */
+.map-path-overlay.is-return {
+    opacity: 0.75;
+}
+
+.map-path-overlay.flow-forward {
+    animation: flow-forward 0.9s linear infinite;
+}
+
+.map-path-overlay.flow-return {
+    animation: flow-return 0.9s linear infinite;
 }
 
 @keyframes flow-forward {
