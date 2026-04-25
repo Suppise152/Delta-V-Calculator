@@ -11,12 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
     initSlider();
 });
 
+let _originBodyId = null;
+
 // ─── Pack Loading ─────────────────────────────────────────────────────────────
 
 async function loadPack(packId) {
     try {
         const res = await fetch(`data/${packId}.json`);
         const data = await res.json();
+        _originBodyId = data.meta?.originBody ?? null;
         initMap(data);
     } catch (e) {
         console.error('Failed to load pack:', packId, e);
@@ -69,24 +72,17 @@ function handleToggleChange(id) {
         case 'toggle4': // return only
             if (t4.checked) {
                 t1.checked = false;
-                // Disable arrival aerobrakes — irrelevant for return only
-                document.getElementById('toggle2').checked = false;
-                document.getElementById('toggle2').disabled = true;
-                document.getElementById('toggle3').checked = false;
-                document.getElementById('toggle3').disabled = true;
-            } else {
-                document.getElementById('toggle2').disabled = false;
-                document.getElementById('toggle3').disabled = false;
             }
             refreshMapDisplay();
             break;
 
         case 'toggle7': // calculate from LKO
-            // Shifts pointA between interplanetary hub and kerbin_orbit
+            // Shifts pointA between the configured origin body's surface/orbit
+            if (!_originBodyId) break;
             if (t7.checked) {
-                setPointA('kerbin', 'orbit');
+                setPointA(_originBodyId, 'orbit');
             } else {
-                setPointA('kerbin', 'land');
+                setPointA(_originBodyId, 'land');
             }
             break;
 
@@ -94,24 +90,28 @@ function handleToggleChange(id) {
             if (document.getElementById('toggle2').checked) {
                 document.getElementById('toggle3').checked = false;
             }
+            refreshMapDisplay();
             break;
 
         case 'toggle3': // aerobrake intercept arrival
             if (document.getElementById('toggle3').checked) {
                 document.getElementById('toggle2').checked = false;
             }
+            refreshMapDisplay();
             break;
 
         case 'toggle5': // aerobrake low orbit return
             if (document.getElementById('toggle5').checked) {
                 document.getElementById('toggle6').checked = false;
             }
+            refreshMapDisplay();
             break;
 
         case 'toggle6': // aerobrake intercept return
             if (document.getElementById('toggle6').checked) {
                 document.getElementById('toggle5').checked = false;
             }
+            refreshMapDisplay();
             break;
 
         case 'toggle8': // breakdown dropdown

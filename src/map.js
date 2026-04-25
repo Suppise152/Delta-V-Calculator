@@ -1,21 +1,4 @@
-/**
- * map.js — SVG map renderer
- * Fully data-driven. No body-specific logic anywhere.
- *
- * Trunk drawing rules (purely from JSON structure):
- *   - Bodies whose parent === centralBody (the star): trunk from IPS
- *   - Bodies whose parent is a direct child of the star (i.e. a planet moon): trunk from parent orbit node
- *   - Bodies with no parent (the star itself): no trunk
- *   - The centralBody's own direct children (planets) that connect to IPS: trunk from IPS
- *
- * Route collection:
- *   A single recursive walk builds the full segment list from pointA → IPS → pointB.
- *   The recursion climbs the parent chain of pointB until it either hits IPS
- *   or the same body as pointA, then collects segments on the way back down.
- *   pointA segments are prepended so the full list is always IPS-outward ordered.
- */
-
-// ─── Node positions (ViewBox: 0 -25 1000 810) ────────────────────────────────
+// ─── Node positions ────────────────────────────────
 const NODE_POSITIONS = {
     interplanetary: { x: 493, y: 488 },
 
@@ -107,6 +90,8 @@ const NODE_POSITIONS = {
 const NODE_R = 20;
 const NODE_R_HUB = 30;
 const PATH_STROKE_W = 15;
+const INDICATOR_HEIGHT = 18;
+const INDICATOR_WIDTH = PATH_STROKE_W;
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 // ─── Module state ─────────────────────────────────────────────────────────────
@@ -120,8 +105,7 @@ let _pointA = { body: null, node: null };
 let _pointB = { body: null, node: null };
 
 let _overlayEls = [];
-let _routeNodeEls = [];
-let _activeNodeEl = null;
+let _routeNodeEls = []; let _routePathEls = []; let _activeNodeEl = null;
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
@@ -165,10 +149,15 @@ function setPointB(bodyId, nodeKey) {
 
 function refreshMapDisplay() {
     _clearActive();
-    if (!_pointB.body) return;
 
     const roundTrip = document.getElementById('toggle1')?.checked ?? false;
     const returnOnly = document.getElementById('toggle4')?.checked ?? false;
+
+    if (!_pointB.body) {
+        const allNodes = _collectAerobrakeNodeIds();
+        _activateAerobrakeIndicators(allNodes, allNodes, roundTrip, returnOnly);
+        return;
+    }
 
     if (_mapSvgEl) _mapSvgEl.classList.add('has-selection');
 
@@ -177,9 +166,11 @@ function refreshMapDisplay() {
     if (termEl) { termEl.classList.add('is-active'); _activeNodeEl = termEl; }
 
     // Collect full route: ordered array of segment IDs from pointA → pointB
-    const segmentIds = [];
-    const routeNodeIds = [];
-    _collectRoute(segmentIds, routeNodeIds);
+    const routeData = _collectRoute();
+    const segmentIds = routeData.segmentIds;
+    const routeNodeIds = routeData.routeNodeIds;
+    const aNodes = routeData.aNodes;
+    const bNodes = routeData.bNodes;
 
     // Mark route nodes
     routeNodeIds.forEach(id => {
@@ -202,6 +193,9 @@ function refreshMapDisplay() {
     } else {
         _spawnOverlays(segmentIds, pathsGroup, 'forward');
     }
+
+    // Handle aerobrake indicators
+    _activateAerobrakeIndicators(aNodes, bNodes, roundTrip, returnOnly);
 }
 
 // ─── SVG Construction ─────────────────────────────────────────────────────────
@@ -217,9 +211,12 @@ function _buildSVG(systemData) {
     svg.appendChild(pathsGroup);
     const nodesGroup = _el('g', { class: 'map-nodes', id: 'map-nodes' });
     svg.appendChild(nodesGroup);
+    const indicatorsGroup = _el('g', { class: 'aerobrake-indicators', id: 'aerobrake-indicators' });
+    svg.appendChild(indicatorsGroup);
 
     systemData.bodies.forEach(body => {
         _drawBodyPaths(pathsGroup, body);
+        _drawAerobrakeIndicators(indicatorsGroup, body);
         _drawBodyNodes(nodesGroup, body);
     });
 
@@ -239,9 +236,6 @@ function _drawHubNode(group, meta) {
 }
 
 // ─── Path Drawing ─────────────────────────────────────────────────────────────
-// All trunks drawn IPS-outward: origin → first node of body.
-// Branch segments also drawn IPS-outward: node[0] → node[1] → ... → node[n]
-// (node[0] is always the IPS-proximal end, node[n] is surface/most-distal)
 
 function _drawBodyPaths(group, body) {
     const nodeKeys = Object.keys(body.nodes).filter(k => k !== 'comment');
@@ -306,6 +300,97 @@ function _drawTrunkLine(group, body, colour) {
     }));
 }
 
+// ─── Aerobrake Indicators ─────────────────────────────────────────────────────
+
+function _drawAerobrakeIndicators(group, body) {
+    if (!body.surface?.canAerobrake) return;
+
+    const nodeKeys = Object.keys(body.nodes).filter(k => k !== 'comment');
+
+    nodeKeys.forEach((nodeKey, i) => {
+        if (!['flyby', 'intercept', 'orbit', 'land'].includes(nodeKey)) return;
+
+        const pos = NODE_POSITIONS[`${body.id}_${nodeKey}`];
+        if (!pos) return;
+
+        // Anchor first-node indicators to the trunk-facing segment so they
+        // sit on the IPS side of the node. Deeper nodes use the previous
+        // branch segment.
+        let dirX, dirY;
+        if (i === 0) {
+            const trunkStart = _getTrunkStart(body);
+            if (!trunkStart) return;
+            dirX = pos.x - trunkStart.x;
+            dirY = pos.y - trunkStart.y;
+        } else {
+            const prevPos = NODE_POSITIONS[`${body.id}_${nodeKeys[i - 1]}`];
+            if (!prevPos) return;
+            dirX = pos.x - prevPos.x;
+            dirY = pos.y - prevPos.y;
+        }
+
+        const len = Math.sqrt(dirX * dirX + dirY * dirY);
+        if (len === 0) return;
+
+        dirX /= len;
+        dirY /= len;
+
+        const tipOffset = NODE_R + 1;
+        const tipX = pos.x - dirX * tipOffset;
+        const tipY = pos.y - dirY * tipOffset;
+        const baseX = tipX - dirX * INDICATOR_HEIGHT;
+        const baseY = tipY - dirY * INDICATOR_HEIGHT;
+
+        // Perpendicular vector
+        const perpX = -dirY * (INDICATOR_WIDTH / 2);
+        const perpY = dirX * (INDICATOR_WIDTH / 2);
+
+        // Triangle points: tip, base left, base right
+        const points = [
+            tipX, tipY,
+            baseX + perpX, baseY + perpY,
+            baseX - perpX, baseY - perpY
+        ].join(' ');
+
+        const poly = _el('polygon', {
+            points: points,
+            fill: 'white',
+            class: 'aerobrake-indicator',
+            id: `indicator_${body.id}_${nodeKey}`
+        });
+
+        group.appendChild(poly);
+    });
+}
+
+function _getTrunkStart(body) {
+    let originPos = null;
+
+    if (!body.parent) {
+        originPos = NODE_POSITIONS['interplanetary'];
+    } else if (body.parent === _centralBody) {
+        originPos = NODE_POSITIONS['interplanetary'];
+    } else {
+        const parentBody = _bodies[body.parent];
+        const parentKeys = parentBody ? Object.keys(parentBody.nodes).filter(k => k !== 'comment') : [];
+        const orbitKey = parentKeys.includes('orbit') ? 'orbit' : parentKeys[0];
+
+        if (body.parent === _pointA.body) {
+            originPos = NODE_POSITIONS[`${body.parent}_${orbitKey}`];
+        } else {
+            const flybyKey = parentKeys.includes('flyby') ? 'flyby' : null;
+            const interceptKey = parentKeys.includes('intercept') ? 'intercept' : null;
+            const parentKey = flybyKey || interceptKey || orbitKey;
+
+            if (parentKey) {
+                originPos = NODE_POSITIONS[`${body.parent}_${parentKey}`];
+            }
+        }
+    }
+
+    return originPos;
+}
+
 // ─── Node Drawing ─────────────────────────────────────────────────────────────
 
 function _drawBodyNodes(group, body) {
@@ -348,20 +433,6 @@ function _drawBodyNodes(group, body) {
 
 // ─── Route Collection ─────────────────────────────────────────────────────────
 
-/**
- * Build the full ordered segment list from pointA to pointB.
- *
- * Strategy: recursively walk the parent chain of pointB up to IPS,
- * then prepend the pointA branch segments. This gives a single
- * IPS-outward ordered list regardless of where pointA or pointB sit.
- *
- * Cases handled:
- *   1. Same body (pointA and pointB on same branch) — no IPS traversal
- *   2. Same top-level body (e.g. pointA=kerbin_land, pointB=mun_land) — through orbit node
- *   3. Different top-level bodies — through IPS
- *   4. Moon to moon of same planet — through planet orbit node
- *   5. Moon to moon of different planet — through IPS
- */
 function _collectBodyPath(bodyId, fromNode, toNode, segmentIds, routeNodeIds) {
     const body = _bodies[bodyId];
     if (!body) return;
@@ -386,9 +457,13 @@ function _collectBodyPath(bodyId, fromNode, toNode, segmentIds, routeNodeIds) {
     }
 }
 
-function _collectRoute(segmentIds, routeNodeIds) {
+function _collectRoute() {
     const pA = _pointA;
     const pB = _pointB;
+    const segmentIds = [];
+    const routeNodeIds = [];
+    const aNodes = [];
+    const bNodes = [];
 
     // Special case: pointB is IPS itself — collect trunk from pointA to IPS
     if (pB.body === 'interplanetary') {
@@ -398,7 +473,9 @@ function _collectRoute(segmentIds, routeNodeIds) {
 
         // Nodes on pointA body from node[0] (IPS-proximal) to node[aIdx]
         for (let i = 0; i <= aIdx; i++) {
-            routeNodeIds.push(`node_${pA.body}_${aKeys[i]}`);
+            const id = `node_${pA.body}_${aKeys[i]}`;
+            routeNodeIds.push(id);
+            aNodes.push(id);
         }
         // Branch segments from node[0] to node[aIdx]
         for (let i = 0; i < aIdx; i++) {
@@ -418,7 +495,9 @@ function _collectRoute(segmentIds, routeNodeIds) {
             const orbitKey = planetKeys.includes('orbit') ? 'orbit' : planetKeys[0];
             const orbitIdx = planetKeys.indexOf(orbitKey);
             for (let i = 0; i <= orbitIdx; i++) {
-                routeNodeIds.push(`node_${aPlanet}_${planetKeys[i]}`);
+                const id = `node_${aPlanet}_${planetKeys[i]}`;
+                routeNodeIds.push(id);
+                aNodes.push(id);
             }
             for (let i = 0; i < orbitIdx; i++) {
                 segmentIds.push({
@@ -431,7 +510,8 @@ function _collectRoute(segmentIds, routeNodeIds) {
 
         // Add IPS hub itself
         routeNodeIds.push('node_interplanetary');
-        return;
+        bNodes.push('node_interplanetary');
+        return { segmentIds, routeNodeIds, aNodes, bNodes };
     }
 
     // Same-body route is just the branch path between two nodes
@@ -446,7 +526,10 @@ function _collectRoute(segmentIds, routeNodeIds) {
             segmentIds.push({ id: `trunk_${pA.body}`, sameDirection: false });
             routeNodeIds.push('node_interplanetary');
         }
-        return;
+        // For same body, aNodes and bNodes are the same
+        aNodes.push(...routeNodeIds);
+        bNodes.push(...routeNodeIds);
+        return { segmentIds, routeNodeIds, aNodes, bNodes };
     }
 
     // Find the lowest common ancestor (LCA) between pointA and pointB bodies
@@ -464,12 +547,10 @@ function _collectRoute(segmentIds, routeNodeIds) {
     // ── Collect B-side: IPS/LCA → pointB ──────────────────────────────────
     // Walk from pointB body upward to LCA, collecting in reverse, then flip
     const bSegs = [];
-    const bNodes = [];
     _walkToAncestor(pB.body, pB.node, lca, bSegs, bNodes);
 
     // ── Collect A-side: pointA → IPS/LCA ──────────────────────────────────
     const aSegs = [];
-    const aNodes = [];
 
     if (pA.body !== lca) {
         const aBody = _bodies[pA.body];
@@ -535,6 +616,7 @@ function _collectRoute(segmentIds, routeNodeIds) {
     for (const id of [...aNodes, ...bNodes]) {
         if (!routeNodeIds.includes(id)) routeNodeIds.push(id);
     }
+    return { segmentIds, routeNodeIds, aNodes, bNodes };
 }
 
 /**
@@ -586,8 +668,6 @@ function _walkToAncestor(bodyId, nodeKey, ancestor, segs, nodes) {
 /**
  * Returns the chain of ancestor body IDs from bodyId up to and including
  * the central body's direct children (planets).
- * ['duna', 'kerbol'] for an interplanetary body
- * ['ike', 'duna', 'kerbol'] for a moon
  */
 function _ancestorChain(bodyId) {
     const chain = [];
@@ -602,8 +682,6 @@ function _ancestorChain(bodyId) {
 }
 
 function _routePassesThroughIPS() {
-    // Route passes through IPS when pointA and pointB are on different
-    // top-level bodies (direct children of the central star)
     const aTop = _topLevelBody(_pointA.body);
     const bTop = _topLevelBody(_pointB.body);
     return aTop !== bTop;
@@ -640,10 +718,16 @@ function _spawnOverlays(segmentIds, pathsGroup, direction, isRoundTrip = false) 
         const base = document.getElementById(segment.id);
         if (!base) return;
 
+        if (!base.classList.contains('is-route')) {
+            base.classList.add('is-route');
+            _routePathEls.push(base);
+        }
+
         const overlay = base.cloneNode(false);
         overlay.removeAttribute('id');
         overlay.classList.remove('map-path');
         overlay.classList.remove('map-trunk');
+        overlay.classList.remove('is-route');
         overlay.classList.add('map-path-overlay');
         overlay.classList.add(direction === 'forward' ? 'is-active' : 'is-return');
 
@@ -694,10 +778,91 @@ function _clearActive() {
     _overlayEls = [];
     _routeNodeEls.forEach(el => el.classList.remove('is-route'));
     _routeNodeEls = [];
+    _routePathEls.forEach(el => el.classList.remove('is-route'));
+    _routePathEls = [];
+    document.querySelectorAll('.map-path.is-route').forEach(el => el.classList.remove('is-route'));
     if (_activeNodeEl) { _activeNodeEl.classList.remove('is-active'); _activeNodeEl = null; }
+    // Clear aerobrake indicators
+    const indicators = document.querySelectorAll('.aerobrake-indicator');
+    indicators.forEach(el => el.classList.remove('is-active'));
+}
+
+function _activateAerobrakeIndicators(aNodes, bNodes, roundTrip, returnOnly) {
+    const aerobrakeArrivalOrbit = document.getElementById('toggle2')?.checked ?? false;
+    const aerobrakeArrivalIntercept = document.getElementById('toggle3')?.checked ?? false;
+    const aerobrakeReturnOrbit = document.getElementById('toggle5')?.checked ?? false;
+    const aerobrakeReturnIntercept = document.getElementById('toggle6')?.checked ?? false;
+
+    const activeIndicators = [];
+
+    // Arrival (B side)
+    if (!returnOnly) {
+        if (aerobrakeArrivalIntercept) {
+            // all indicators on B branch
+            bNodes.forEach(nodeId => {
+                const parts = nodeId.split('_');
+                const nodeKey = parts[2];
+                if (['flyby', 'intercept', 'orbit', 'land'].includes(nodeKey)) {
+                    activeIndicators.push(`indicator_${parts[1]}_${nodeKey}`);
+                }
+            });
+        } else if (aerobrakeArrivalOrbit) {
+            // only land on B branch
+            bNodes.forEach(nodeId => {
+                const parts = nodeId.split('_');
+                const nodeKey = parts[2];
+                if (nodeKey === 'land') {
+                    activeIndicators.push(`indicator_${parts[1]}_${nodeKey}`);
+                }
+            });
+        }
+    }
+
+    // Origin / return (A side)
+    if (roundTrip || returnOnly) {
+        if (aerobrakeReturnIntercept) {
+            // all indicators on A branch
+            aNodes.forEach(nodeId => {
+                const parts = nodeId.split('_');
+                const nodeKey = parts[2];
+                if (['flyby', 'intercept', 'orbit', 'land'].includes(nodeKey)) {
+                    activeIndicators.push(`indicator_${parts[1]}_${nodeKey}`);
+                }
+            });
+        } else if (aerobrakeReturnOrbit) {
+            // only land on A branch
+            aNodes.forEach(nodeId => {
+                const parts = nodeId.split('_');
+                const nodeKey = parts[2];
+                if (nodeKey === 'land') {
+                    activeIndicators.push(`indicator_${parts[1]}_${nodeKey}`);
+                }
+            });
+        }
+    }
+
+    // Activate the indicators
+    activeIndicators.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('is-active');
+    });
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function _collectAerobrakeNodeIds() {
+    const nodeIds = [];
+
+    Object.values(_bodies || {}).forEach(body => {
+        if (!body?.surface?.canAerobrake) return;
+
+        Object.keys(body.nodes)
+            .filter(key => key !== 'comment' && ['flyby', 'intercept', 'orbit', 'land'].includes(key))
+            .forEach(key => nodeIds.push(`node_${body.id}_${key}`));
+    });
+
+    return nodeIds;
+}
 
 function _el(tag, attrs = {}) {
     const el = document.createElementNS(SVG_NS, tag);
