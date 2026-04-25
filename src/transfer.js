@@ -156,12 +156,11 @@ function _buildTransferDiagramSvg(transferModel, mode, bodies) {
     const fixedPhaseAngle = -45;
     const transferStartRadius = isDepart ? fromRadius : toRadius;
     const transferEndRadius = isDepart ? toRadius : fromRadius;
-    const bodyAPosition = _polarPoint(center, fromRadius, isDepart ? 0 : fixedPhaseAngle);
-    const bodyBPosition = _polarPoint(center, toRadius, isDepart ? fixedPhaseAngle : 0);
-    const interceptPoint = {
-        x: center.x - transferEndRadius,
-        y: center.y,
-    };
+    const transferStartAngle = isDepart ? 0 : fixedPhaseAngle;
+    const transferEndAngle = 180;
+    const bodyAPosition = _polarPoint(center, fromRadius, 0);
+    const bodyBPosition = _polarPoint(center, toRadius, fixedPhaseAngle);
+    const interceptPoint = _polarPoint(center, transferEndRadius, transferStartAngle + 180);
 
     svg.appendChild(_svgNode('circle', {
         cx: center.x,
@@ -177,7 +176,7 @@ function _buildTransferDiagramSvg(transferModel, mode, bodies) {
     }));
 
     svg.appendChild(_svgNode('path', {
-        d: _buildTransferArcPath(center, transferStartRadius, transferEndRadius, mode),
+        d: _buildTransferArcPath(center, transferStartRadius, transferEndRadius, transferStartAngle, transferEndAngle),
         class: 'transfer-trajectory',
     }));
 
@@ -219,18 +218,20 @@ function _resolveOrbitRadii() {
     return { inner: 48, outer: 78 };
 }
 
-function _buildTransferArcPath(center, startRadius, endRadius, mode) {
+function _buildTransferArcPath(center, startRadius, endRadius, startAngleDeg, endAngleDeg) {
     const a = (startRadius + endRadius) / 2;
     const b = Math.sqrt(startRadius * endRadius);
     const offsetX = (startRadius - endRadius) / 2;
-    const arcSign = mode === 'depart' ? -1 : 1;
     const steps = 40;
     const points = [];
+    const rotation = (startAngleDeg * Math.PI) / 180;
 
     for (let i = 0; i <= steps; i += 1) {
         const t = (Math.PI * i) / steps;
-        const x = center.x + offsetX + a * Math.cos(t);
-        const y = center.y + arcSign * b * Math.sin(t);
+        const baseX = offsetX + a * Math.cos(t);
+        const baseY = -b * Math.sin(t);
+        const x = center.x + (baseX * Math.cos(rotation)) - (baseY * Math.sin(rotation));
+        const y = center.y + (baseX * Math.sin(rotation)) + (baseY * Math.cos(rotation));
         points.push(`${x.toFixed(2)} ${y.toFixed(2)}`);
     }
 
