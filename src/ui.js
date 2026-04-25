@@ -1,10 +1,7 @@
 /**
- * ui.js — bootstraps the app, wires DOM to map module.
- * Calculator logic is stubbed — results display placeholder values.
- * Toggle wiring for map display (round trip, return only, LKO) is fully active.
+ * ui.js bootstraps the app and wires the main DOM interactions.
+ * Calculator outputs remain placeholders until the backend is connected.
  */
-
-// ─── Boot ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
     loadPack('stock');
@@ -13,14 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let _originBodyId = null;
 
-// ─── Pack Loading ─────────────────────────────────────────────────────────────
-
 async function loadPack(packId) {
     try {
         const res = await fetch(`data/${packId}.json`);
         const data = await res.json();
         _originBodyId = data.meta?.originBody ?? null;
         initMap(data);
+        if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
     } catch (e) {
         console.error('Failed to load pack:', packId, e);
         const c = document.getElementById('map-container');
@@ -28,18 +24,11 @@ async function loadPack(packId) {
     }
 }
 
-// ─── Node Click (called by map.js) ───────────────────────────────────────────
-
 function onNodeClick(bodyId, nodeKey) {
     setPointB(bodyId, nodeKey);
-
-    // Stub: clear display until calculator is wired
     document.getElementById('dV_display').value = '—';
-    document.getElementById('arrival_angle').value = '—';
-    document.getElementById('departure_angle').value = '—';
+    if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
 }
-
-// ─── Slider ───────────────────────────────────────────────────────────────────
 
 function initSlider() {
     const slider = document.getElementById('slider');
@@ -55,66 +44,67 @@ function handleSliderChange(slider) {
     document.getElementById('slider-value').textContent = labels[slider.value] || labels[0];
 }
 
-// ─── Toggle handling ──────────────────────────────────────────────────────────
-
 function handleToggleChange(id) {
-    const t1 = document.getElementById('toggle1'); // round trip
-    const t4 = document.getElementById('toggle4'); // return only
-    const t7 = document.getElementById('toggle7'); // from LKO
+    const t1 = document.getElementById('toggle1');
+    const t4 = document.getElementById('toggle4');
+    const t7 = document.getElementById('toggle7');
 
     switch (id) {
-
-        case 'toggle1': // round trip
+        case 'toggle1':
             if (t1.checked) t4.checked = false;
             refreshMapDisplay();
+            _refreshTransferUi();
             break;
 
-        case 'toggle4': // return only
-            if (t4.checked) {
-                t1.checked = false;
-            }
+        case 'toggle4':
+            if (t4.checked) t1.checked = false;
             refreshMapDisplay();
+            _refreshTransferUi();
             break;
 
-        case 'toggle7': // calculate from LKO
-            // Shifts pointA between the configured origin body's surface/orbit
+        case 'toggle7':
             if (!_originBodyId) break;
             if (t7.checked) {
                 setPointA(_originBodyId, 'orbit');
             } else {
                 setPointA(_originBodyId, 'land');
             }
+            _refreshTransferUi();
             break;
 
-        case 'toggle2': // aerobrake low orbit arrival
+        case 'toggle2':
             if (document.getElementById('toggle2').checked) {
                 document.getElementById('toggle3').checked = false;
             }
             refreshMapDisplay();
+            _refreshTransferUi();
             break;
 
-        case 'toggle3': // aerobrake intercept arrival
+        case 'toggle3':
             if (document.getElementById('toggle3').checked) {
                 document.getElementById('toggle2').checked = false;
             }
             refreshMapDisplay();
+            _refreshTransferUi();
             break;
 
-        case 'toggle5': // aerobrake low orbit return
+        case 'toggle5':
             if (document.getElementById('toggle5').checked) {
                 document.getElementById('toggle6').checked = false;
             }
             refreshMapDisplay();
+            _refreshTransferUi();
             break;
 
-        case 'toggle6': // aerobrake intercept return
+        case 'toggle6':
             if (document.getElementById('toggle6').checked) {
                 document.getElementById('toggle5').checked = false;
             }
             refreshMapDisplay();
+            _refreshTransferUi();
             break;
 
-        case 'toggle8': // breakdown dropdown
+        case 'toggle8': {
             const dropdown = document.getElementById('dv-dropdown');
             const checkbox = document.getElementById('toggle8');
             if (checkbox.checked) {
@@ -123,5 +113,10 @@ function handleToggleChange(id) {
                 dropdown.classList.remove('is-open');
             }
             break;
+        }
     }
+}
+
+function _refreshTransferUi() {
+    if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
 }

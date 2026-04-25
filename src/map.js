@@ -884,3 +884,10 @@ function setActiveNode(bodyId, nodeKey) { setPointB(bodyId, nodeKey); }
 
 // Allow ui.js to read the loaded pack metadata without reaching into private state
 function getSystemMeta() { return _systemMeta; }
+function getBodies() { return _bodies; }
+function getSelectedPoints() {
+    return {
+        pointA: { ..._pointA },
+        pointB: { ..._pointB },
+    };
+}

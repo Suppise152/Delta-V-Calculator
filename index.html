@@ -14,16 +14,13 @@
 
 <body>
 
-    <!-- ══════════════════════════════════════════ BANNER -->
     <header class="banner">
         <img class="banner-img banner-img--desktop" src="assets/images/banner.png" alt="Suppise Aerospace">
         <img class="banner-img banner-img--mobile" src="assets/images/banner-mobile.png" alt="Suppise Aerospace">
     </header>
 
-    <!-- ══════════════════════════════════════════ CONTENT -->
     <main class="content">
 
-        <!-- LEFT PANEL — hidden on mobile -->
         <aside class="panel-left">
             <h2>How to Use this Site</h2>
             <p>
@@ -52,20 +49,16 @@
             </p>
         </aside>
 
-        <!-- RIGHT PANEL -->
         <section class="panel-right">
 
-            <!-- MAP: full width, fills top portion -->
             <div class="map-container" id="map-container">
                 <div class="map-placeholder" id="map-placeholder">
-                    <span>Map loading…</span>
+                    <span>Map loading...</span>
                 </div>
             </div>
 
-            <!-- CONTROLS BAR: full width, bottom portion -->
             <div class="controls-bar">
 
-                <!-- LEFT: checkboxes + slider -->
                 <div class="toggle-boxes">
                     <label class="toggle-label">
                         <input type="checkbox" id="toggle1" onchange="handleToggleChange('toggle1')">
@@ -118,7 +111,6 @@
                     </label>
                 </div>
 
-                <!-- RIGHT: ΔV result + transfer windows -->
                 <div class="results-panel">
 
                     <div class="result-group">
@@ -134,15 +126,15 @@
                     </div>
 
                     <div class="transfer-row">
-                        <div class="transfer-block">
+                        <div class="transfer-block" id="transfer-block-arrive">
                             <div class="result-label">Transfer Window to Target</div>
                             <input type="text" class="result-display result-display--angle" id="arrival_angle" readonly placeholder="—">
-                            <div class="phase-diagram" id="phase-arrive"></div>
+                            <div class="phase-diagram is-empty" id="phase-arrive"></div>
                         </div>
-                        <div class="transfer-block">
+                        <div class="transfer-block" id="transfer-block-depart">
                             <div class="result-label">Transfer Window from Target</div>
                             <input type="text" class="result-display result-display--angle" id="departure_angle" readonly placeholder="—">
-                            <div class="phase-diagram" id="phase-depart"></div>
+                            <div class="phase-diagram is-empty" id="phase-depart"></div>
                         </div>
                     </div>
 
