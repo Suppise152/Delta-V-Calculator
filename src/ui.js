@@ -4,18 +4,47 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    initMapVersionControls();
     loadPack('stock');
     initSlider();
 });
 
 let _originBodyId = null;
+let _loadedDataPackId = null;
+let _loadedSystemData = null;
+let _activePackId = 'stock';
+
+const PACK_CONFIG = {
+    stock: { dataPackId: 'stock', mapId: 'stock' },
+    opm: { dataPackId: 'stock', mapId: 'opm' },
+    rss: { dataPackId: 'stock', mapId: 'rss' },
+};
+
+function initMapVersionControls() {
+    _setActivePackToggle(_activePackId);
+}
 
 async function loadPack(packId) {
+    const config = PACK_CONFIG[packId] || PACK_CONFIG.stock;
+
     try {
-        const res = await fetch(`data/${packId}.json`);
+        if (_loadedSystemData && _loadedDataPackId === config.dataPackId) {
+            _activePackId = packId;
+            _originBodyId = _loadedSystemData.meta?.originBody ?? null;
+            setMapLayout(config.mapId);
+            _setActivePackToggle(packId);
+            if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
+            return;
+        }
+
+        const res = await fetch(`data/${config.dataPackId}.json`);
         const data = await res.json();
+        _loadedDataPackId = config.dataPackId;
+        _loadedSystemData = data;
+        _activePackId = packId;
         _originBodyId = data.meta?.originBody ?? null;
-        initMap(data);
+        initMap(data, { mapId: config.mapId });
+        _setActivePackToggle(packId);
         if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
     } catch (e) {
         console.error('Failed to load pack:', packId, e);
@@ -38,33 +67,37 @@ function initSlider() {
 
 function handleSliderChange(slider) {
     const labels = [
-        '+ 0% Redundancy', '+ 10% Redundancy', '+ 15% Redundancy',
-        '+ 25% Redundancy', '+ 35% Redundancy', '+ 50% Redundancy',
+        '+ 0% Redundancy', '+ 5% Redundancy', '+ 10% Redundancy', '+ 15% Redundancy', '+ 20% Redundancy',
+        '+ 25% Redundancy', '+ 30% Redundancy', '+ 35% Redundancy', '+ 40% Redundancy', '+ 45% Redundancy', '+ 50% Redundancy',
     ];
     document.getElementById('slider-value').textContent = labels[slider.value] || labels[0];
 }
 
 function handleToggleChange(id) {
-    const t1 = document.getElementById('toggle1');
-    const t4 = document.getElementById('toggle4');
-    const t7 = document.getElementById('toggle7');
+    const roundTripToggle = document.getElementById('roundTripToggle');
+    const returnOnlyToggle = document.getElementById('returnOnlyToggle');
+    const aeroLowOrbitDestToggle = document.getElementById('aeroLowOrbitDest');
+    const aeroInterceptDestToggle = document.getElementById('aeroInterceptDest');
+    const aeroLowOrbitOriginToggle = document.getElementById('aeroLowOrbitOrigin');
+    const aeroInterceptOriginToggle = document.getElementById('aeroInterceptOrigin');
+    const fromLOToggle = document.getElementById('fromLO');
 
     switch (id) {
-        case 'toggle1':
-            if (t1.checked) t4.checked = false;
+        case 'roundTripToggle':
+            if (roundTripToggle.checked) returnOnlyToggle.checked = false;
             refreshMapDisplay();
             _refreshTransferUi();
             break;
 
-        case 'toggle4':
-            if (t4.checked) t1.checked = false;
+        case 'returnOnlyToggle':
+            if (returnOnlyToggle.checked) roundTripToggle.checked = false;
             refreshMapDisplay();
             _refreshTransferUi();
             break;
 
-        case 'toggle7':
+        case 'fromLO':
             if (!_originBodyId) break;
-            if (t7.checked) {
+            if (fromLOToggle.checked) {
                 setPointA(_originBodyId, 'orbit');
             } else {
                 setPointA(_originBodyId, 'land');
@@ -72,33 +105,33 @@ function handleToggleChange(id) {
             _refreshTransferUi();
             break;
 
-        case 'toggle2':
-            if (document.getElementById('toggle2').checked) {
-                document.getElementById('toggle3').checked = false;
+        case 'aeroLowOrbitDest':
+            if (aeroLowOrbitDestToggle.checked) {
+                aeroInterceptDestToggle.checked = false;
             }
             refreshMapDisplay();
             _refreshTransferUi();
             break;
 
-        case 'toggle3':
-            if (document.getElementById('toggle3').checked) {
-                document.getElementById('toggle2').checked = false;
+        case 'aeroInterceptDest':
+            if (aeroInterceptDestToggle.checked) {
+                aeroLowOrbitDestToggle.checked = false;
             }
             refreshMapDisplay();
             _refreshTransferUi();
             break;
 
-        case 'toggle5':
-            if (document.getElementById('toggle5').checked) {
-                document.getElementById('toggle6').checked = false;
+        case 'aeroLowOrbitOrigin':
+            if (aeroLowOrbitOriginToggle.checked) {
+                aeroInterceptOriginToggle.checked = false;
             }
             refreshMapDisplay();
             _refreshTransferUi();
             break;
 
-        case 'toggle6':
-            if (document.getElementById('toggle6').checked) {
-                document.getElementById('toggle5').checked = false;
+        case 'aeroInterceptOrigin':
+            if (aeroInterceptOriginToggle.checked) {
+                aeroLowOrbitOriginToggle.checked = false;
             }
             refreshMapDisplay();
             _refreshTransferUi();
@@ -115,6 +148,36 @@ function handleToggleChange(id) {
             break;
         }
     }
+}
+
+function handleMapPackChange(packId) {
+    const stockCheck = document.getElementById('stockCheck');
+    const opmCheck = document.getElementById('opmCheck');
+    const rssCheck = document.getElementById('rssCheck');
+
+    if (packId === 'stock') {
+        stockCheck.checked = true;
+        opmCheck.checked = false;
+        rssCheck.checked = false;
+    } else if (packId === 'opm') {
+        stockCheck.checked = false;
+        opmCheck.checked = true;
+        rssCheck.checked = false;
+    } else if (packId === 'rss') {
+        stockCheck.checked = false;
+        opmCheck.checked = false;
+        rssCheck.checked = true;
+    }
+    if (packId === _activePackId) return;
+
+    loadPack(packId);
+}
+
+function _setActivePackToggle(activePackId) {
+    Object.keys(PACK_CONFIG).forEach(packId => {
+        const input = document.getElementById(packId);
+        if (input) input.checked = packId === activePackId;
+    });
 }
 
 function _refreshTransferUi() {
