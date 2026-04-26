@@ -1,0 +1,310 @@
+{
+  "meta": {
+    "name": "Real Solar System",
+    "pack": "rss",
+    "centralBody": "sol",
+    "originBody": "earth",
+    "interplanetaryNode": {
+      "id": "interplanetary",
+      "label": "Interplanetary Space",
+      "mapColour": "#c8c8d4"
+    }
+  },
+  "bodies": [
+    {
+      "id": "sol",
+      "label": "Sol",
+      "parent": null,
+      "moons": ["mercury","venus","earth","mars","ceres","jupiter","saturn","uranus","neptune","pluto"],
+      "mapColour": "#FFD700",
+      "orbit": { "sma": 0, "eccentricity": 0, "inclination": 0 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 619000, "dvToLand": null },
+      "nodes": { "orbit": 619000, "land": null }
+    },
+    {
+      "id": "mercury",
+      "label": "Mercury",
+      "parent": "sol",
+      "moons": [],
+      "mapColour": "#A0906A",
+      "orbit": { "sma": 57909050000, "eccentricity": 0.2056, "inclination": 7.0, "longitudeOfAscendingNode": 48.33, "argumentOfPeriapsis": 29.12, "siderealPeriod": 7600530 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 3100, "dvToLand": 3100 },
+      "nodes": { "intercept": 5900, "orbit": 3800, "land": 3100 }
+    },
+    {
+      "id": "venus",
+      "label": "Venus",
+      "parent": "sol",
+      "moons": [],
+      "mapColour": "#C8B46E",
+      "orbit": { "sma": 108208000000, "eccentricity": 0.0067, "inclination": 3.39, "longitudeOfAscendingNode": 76.68, "argumentOfPeriapsis": 54.88, "siderealPeriod": 19414149 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 10400, "dvToLand": 10400 },
+      "nodes": { "intercept": 640, "orbit": 3200, "land": 10400 }
+    },
+    {
+      "id": "earth",
+      "label": "Earth",
+      "parent": "sol",
+      "moons": ["moon"],
+      "mapColour": "#4A90D9",
+      "orbit": { "sma": 149598023000, "eccentricity": 0.0167, "inclination": 0.00005, "longitudeOfAscendingNode": 174.87, "argumentOfPeriapsis": 288.08, "siderealPeriod": 31558149 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 9400, "dvToLand": 9400 },
+      "nodes": { "flyby": 9400, "orbit": 3200, "land": 9400 }
+    },
+    {
+      "id": "moon",
+      "label": "Moon",
+      "parent": "earth",
+      "moons": [],
+      "mapColour": "#C8C8C8",
+      "orbit": { "sma": 384400000, "eccentricity": 0.0549, "inclination": 5.145, "siderealPeriod": 2360592 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 1870, "dvToLand": 1870 },
+      "nodes": { "intercept": 860, "orbit": 980, "land": 1870 },
+      "baseTransferCost": 3200,
+      "phaseAngles": { "arrive": 90, "depart": null }
+    },
+    {
+      "id": "mars",
+      "label": "Mars",
+      "parent": "sol",
+      "moons": ["phobos","deimos"],
+      "mapColour": "#C1440E",
+      "orbit": { "sma": 227936640000, "eccentricity": 0.0934, "inclination": 1.85, "longitudeOfAscendingNode": 49.56, "argumentOfPeriapsis": 286.5, "siderealPeriod": 59354294 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 3800, "dvToLand": 3800 },
+      "nodes": { "intercept": 900, "orbit": 1000, "land": 3800 }
+    },
+    {
+      "id": "phobos",
+      "label": "Phobos",
+      "parent": "mars",
+      "moons": [],
+      "mapColour": "#8B7355",
+      "orbit": { "sma": 9376000, "eccentricity": 0.0151, "inclination": 1.093, "siderealPeriod": 27554 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 15, "dvToLand": 15 },
+      "nodes": { "intercept": 250, "orbit": 80, "land": 15 },
+      "parentAerobrake": "mars",
+      "transferAngleDiagram": "mars"
+    },
+    {
+      "id": "deimos",
+      "label": "Deimos",
+      "parent": "mars",
+      "moons": [],
+      "mapColour": "#9B8B6B",
+      "orbit": { "sma": 23460000, "eccentricity": 0.0002, "inclination": 1.791, "siderealPeriod": 109123 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 7, "dvToLand": 7 },
+      "nodes": { "intercept": 480, "orbit": 40, "land": 7 },
+      "parentAerobrake": "mars",
+      "transferAngleDiagram": "mars"
+    },
+    {
+      "id": "ceres",
+      "label": "Ceres",
+      "parent": "sol",
+      "moons": [],
+      "mapColour": "#9A9060",
+      "orbit": { "sma": 413700000000, "eccentricity": 0.0758, "inclination": 10.59, "longitudeOfAscendingNode": 80.33, "argumentOfPeriapsis": 73.59, "siderealPeriod": 144895564 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 510, "dvToLand": 510 },
+      "nodes": { "intercept": 2520, "orbit": 1280, "land": 510 }
+    },
+    {
+      "id": "jupiter",
+      "label": "Jupiter",
+      "parent": "sol",
+      "moons": ["io","europa","ganymede","callisto"],
+      "mapColour": "#C8A06A",
+      "orbit": { "sma": 778547200000, "eccentricity": 0.0489, "inclination": 1.304, "longitudeOfAscendingNode": 100.46, "argumentOfPeriapsis": 275.07, "siderealPeriod": 374335776 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 60000, "dvToLand": null },
+      "nodes": { "intercept": 1200, "orbit": 16700, "land": 60000 }
+    },
+    {
+      "id": "io",
+      "label": "Io",
+      "parent": "jupiter",
+      "moons": [],
+      "mapColour": "#C8B840",
+      "orbit": { "sma": 421600000, "eccentricity": 0.0041, "inclination": 0.05, "siderealPeriod": 152854 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 1820, "dvToLand": 1820 },
+      "nodes": { "intercept": 4700, "orbit": 2440, "land": 1820 },
+      "parentAerobrake": "jupiter",
+      "transferAngleDiagram": "jupiter"
+    },
+    {
+      "id": "europa",
+      "label": "Europa",
+      "parent": "jupiter",
+      "moons": [],
+      "mapColour": "#C8B8A0",
+      "orbit": { "sma": 671100000, "eccentricity": 0.009, "inclination": 0.47, "siderealPeriod": 307056 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 1380, "dvToLand": 1380 },
+      "nodes": { "intercept": 3630, "orbit": 2020, "land": 1380 },
+      "parentAerobrake": "jupiter",
+      "transferAngleDiagram": "jupiter"
+    },
+    {
+      "id": "ganymede",
+      "label": "Ganymede",
+      "parent": "jupiter",
+      "moons": [],
+      "mapColour": "#8A9878",
+      "orbit": { "sma": 1070400000, "eccentricity": 0.0013, "inclination": 0.2, "siderealPeriod": 618048 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 1780, "dvToLand": 1780 },
+      "nodes": { "intercept": 2820, "orbit": 1980, "land": 1780 },
+      "parentAerobrake": "jupiter",
+      "transferAngleDiagram": "jupiter"
+    },
+    {
+      "id": "callisto",
+      "label": "Callisto",
+      "parent": "jupiter",
+      "moons": [],
+      "mapColour": "#7A7060",
+      "orbit": { "sma": 1882700000, "eccentricity": 0.0074, "inclination": 0.28, "siderealPeriod": 1442027 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 1490, "dvToLand": 1490 },
+      "nodes": { "intercept": 2200, "orbit": 1820, "land": 1490 },
+      "parentAerobrake": "jupiter",
+      "transferAngleDiagram": "jupiter"
+    },
+    {
+      "id": "saturn",
+      "label": "Saturn",
+      "parent": "sol",
+      "moons": ["titan","enceladus","dione","rhea"],
+      "mapColour": "#C8AA6E",
+      "orbit": { "sma": 1433449370000, "eccentricity": 0.0565, "inclination": 2.485, "longitudeOfAscendingNode": 113.66, "argumentOfPeriapsis": 339.39, "siderealPeriod": 929292362 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 35000, "dvToLand": null },
+      "nodes": { "intercept": 1000, "orbit": 10000, "land": 35000 }
+    },
+    {
+      "id": "titan",
+      "label": "Titan",
+      "parent": "saturn",
+      "moons": [],
+      "mapColour": "#C8900A",
+      "orbit": { "sma": 1221870000, "eccentricity": 0.0288, "inclination": 0.35, "siderealPeriod": 1377648 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 2640, "dvToLand": 2640 },
+      "nodes": { "intercept": 1680, "orbit": 2400, "land": 2640 },
+      "parentAerobrake": "saturn",
+      "transferAngleDiagram": "saturn"
+    },
+    {
+      "id": "enceladus",
+      "label": "Enceladus",
+      "parent": "saturn",
+      "moons": [],
+      "mapColour": "#E8E8F0",
+      "orbit": { "sma": 238020000, "eccentricity": 0.0047, "inclination": 0.02, "siderealPeriod": 118386 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 240, "dvToLand": 240 },
+      "nodes": { "intercept": 1360, "orbit": 490, "land": 240 },
+      "parentAerobrake": "saturn",
+      "transferAngleDiagram": "saturn"
+    },
+    {
+      "id": "dione",
+      "label": "Dione",
+      "parent": "saturn",
+      "moons": [],
+      "mapColour": "#C0C8D0",
+      "orbit": { "sma": 377396000, "eccentricity": 0.0022, "inclination": 0.02, "siderealPeriod": 236124 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 700, "dvToLand": 700 },
+      "nodes": { "intercept": 1490, "orbit": 810, "land": 700 },
+      "parentAerobrake": "saturn",
+      "transferAngleDiagram": "saturn"
+    },
+    {
+      "id": "rhea",
+      "label": "Rhea",
+      "parent": "saturn",
+      "moons": [],
+      "mapColour": "#D0D0C8",
+      "orbit": { "sma": 527108000, "eccentricity": 0.001, "inclination": 0.35, "siderealPeriod": 390611 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 770, "dvToLand": 770 },
+      "nodes": { "intercept": 1560, "orbit": 900, "land": 770 },
+      "parentAerobrake": "saturn",
+      "transferAngleDiagram": "saturn"
+    },
+    {
+      "id": "uranus",
+      "label": "Uranus",
+      "parent": "sol",
+      "moons": ["titania","oberon"],
+      "mapColour": "#7ABCCC",
+      "orbit": { "sma": 2870671400000, "eccentricity": 0.0463, "inclination": 0.773, "longitudeOfAscendingNode": 74.01, "argumentOfPeriapsis": 96.54, "siderealPeriod": 2651370019 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 15000, "dvToLand": null },
+      "nodes": { "intercept": 1400, "orbit": 6500, "land": 15000 }
+    },
+    {
+      "id": "titania",
+      "label": "Titania",
+      "parent": "uranus",
+      "moons": [],
+      "mapColour": "#A8B8C0",
+      "orbit": { "sma": 435910000, "eccentricity": 0.0011, "inclination": 0.08, "siderealPeriod": 752218 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 770, "dvToLand": 770 },
+      "nodes": { "intercept": 1160, "orbit": 860, "land": 770 },
+      "parentAerobrake": "uranus",
+      "transferAngleDiagram": "uranus"
+    },
+    {
+      "id": "oberon",
+      "label": "Oberon",
+      "parent": "uranus",
+      "moons": [],
+      "mapColour": "#B0A898",
+      "orbit": { "sma": 583520000, "eccentricity": 0.0014, "inclination": 0.07, "siderealPeriod": 1163216 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 680, "dvToLand": 680 },
+      "nodes": { "intercept": 1090, "orbit": 790, "land": 680 },
+      "parentAerobrake": "uranus",
+      "transferAngleDiagram": "uranus"
+    },
+    {
+      "id": "neptune",
+      "label": "Neptune",
+      "parent": "sol",
+      "moons": ["triton"],
+      "mapColour": "#3A5ABF",
+      "orbit": { "sma": 4498396441000, "eccentricity": 0.0113, "inclination": 1.77, "longitudeOfAscendingNode": 131.78, "argumentOfPeriapsis": 265.65, "siderealPeriod": 5200418592 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 16000, "dvToLand": null },
+      "nodes": { "intercept": 1700, "orbit": 7100, "land": 16000 }
+    },
+    {
+      "id": "triton",
+      "label": "Triton",
+      "parent": "neptune",
+      "moons": [],
+      "mapColour": "#C0D0D8",
+      "orbit": { "sma": 354759000, "eccentricity": 0.000016, "inclination": 157.0, "siderealPeriod": 507772 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 1390, "dvToLand": 1390 },
+      "nodes": { "intercept": 940, "orbit": 1700, "land": 1390 },
+      "parentAerobrake": "neptune",
+      "transferAngleDiagram": "neptune"
+    },
+    {
+      "id": "pluto",
+      "label": "Pluto",
+      "parent": "sol",
+      "moons": ["charon"],
+      "mapColour": "#D4C8B8",
+      "orbit": { "sma": 5906440628000, "eccentricity": 0.2488, "inclination": 17.14, "longitudeOfAscendingNode": 110.3, "argumentOfPeriapsis": 113.83, "siderealPeriod": 7816608000 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 900, "dvToLand": 900 },
+      "nodes": { "intercept": 2200, "orbit": 1600, "land": 900 }
+    },
+    {
+      "id": "charon",
+      "label": "Charon",
+      "parent": "pluto",
+      "moons": [],
+      "mapColour": "#B8B0A8",
+      "orbit": { "sma": 17536000, "eccentricity": 0.0002, "inclination": 0.001, "siderealPeriod": 551857 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 580, "dvToLand": 580 },
+      "nodes": { "intercept": 300, "orbit": 380, "land": 580 },
+      "transferAngleDiagram": "pluto"
+    }
+  ],
+  "transferConfig": {
+    "originBody": "earth",
+    "leoAltitude": 200000,
+    "leoVelocity": 7784,
+    "ejectionDV": 3200
+  }
+}

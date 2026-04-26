@@ -1,0 +1,380 @@
+{
+  "meta": {
+    "name": "Kerbol System + Outer Planets",
+    "pack": "opm",
+    "centralBody": "kerbol",
+    "originBody": "kerbin",
+    "interplanetaryNode": {
+      "id": "interplanetary",
+      "label": "Interplanetary Space",
+      "mapColour": "#c8c8d4"
+    }
+  },
+  "bodies": [
+    {
+      "id": "kerbol",
+      "label": "Kerbol",
+      "parent": null,
+      "moons": ["moho","eve","kerbin","duna","dres","jool","sarnus","urlum","neidon","plock","eeloo"],
+      "mapColour": "#FFD700",
+      "orbit": { "sma": 0, "eccentricity": 0, "inclination": 0 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 19700, "dvToLand": null },
+      "nodes": { "orbit": 19700, "land": 67000 }
+    },
+    {
+      "id": "moho",
+      "label": "Moho",
+      "parent": "kerbol",
+      "moons": [],
+      "mapColour": "#A0522D",
+      "orbit": { "sma": 5263138304, "eccentricity": 0.2, "inclination": 7.0, "longitudeOfAscendingNode": 70.0, "argumentOfPeriapsis": 15.0, "siderealPeriod": 2215754 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 870, "dvToLand": 870 },
+      "nodes": { "intercept": 3280, "orbit": 2410, "land": 870 }
+    },
+    {
+      "id": "eve",
+      "label": "Eve",
+      "parent": "kerbol",
+      "moons": ["gilly"],
+      "mapColour": "#9B59B6",
+      "orbit": { "sma": 9832684544, "eccentricity": 0.01, "inclination": 2.1, "longitudeOfAscendingNode": 15.0, "argumentOfPeriapsis": 0.0, "siderealPeriod": 5657995 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 8000, "dvToLand": 8000 },
+      "nodes": { "intercept": 520, "orbit": 1410, "land": 8000 }
+    },
+    {
+      "id": "gilly",
+      "label": "Gilly",
+      "parent": "eve",
+      "moons": [],
+      "mapColour": "#8B7355",
+      "orbit": { "sma": 31500000, "eccentricity": 0.55, "inclination": 12.0, "longitudeOfAscendingNode": 80.0, "argumentOfPeriapsis": 10.0, "siderealPeriod": 388587 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 30, "dvToLand": 30 },
+      "nodes": { "intercept": 660, "orbit": 410, "land": 30 },
+      "parentAerobrake": "eve",
+      "transferAngleDiagram": "eve"
+    },
+    {
+      "id": "kerbin",
+      "label": "Kerbin",
+      "parent": "kerbol",
+      "moons": ["mun","minmus"],
+      "mapColour": "#4A90D9",
+      "orbit": { "sma": 13599840256, "eccentricity": 0.0, "inclination": 0.0, "longitudeOfAscendingNode": 0.0, "argumentOfPeriapsis": 0.0, "siderealPeriod": 9203545 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 3400, "dvToLand": 3400 },
+      "nodes": { "flyby": 3400, "orbit": 950, "land": 3400 }
+    },
+    {
+      "id": "mun",
+      "label": "Mun",
+      "parent": "kerbin",
+      "moons": [],
+      "mapColour": "#AAAAAA",
+      "orbit": { "sma": 12000000, "eccentricity": 0.0, "inclination": 0.0, "siderealPeriod": 138984 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 580, "dvToLand": 580 },
+      "nodes": { "intercept": 860, "orbit": 310, "land": 580 },
+      "baseTransferCost": 3400,
+      "phaseAngles": { "arrive": 90, "depart": null }
+    },
+    {
+      "id": "minmus",
+      "label": "Minmus",
+      "parent": "kerbin",
+      "moons": [],
+      "mapColour": "#88CCAA",
+      "orbit": { "sma": 47000000, "eccentricity": 0.0, "inclination": 6.0, "longitudeOfAscendingNode": 78.0, "argumentOfPeriapsis": 38.0, "siderealPeriod": 1077311 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 180, "dvToLand": 180 },
+      "nodes": { "intercept": 1170, "orbit": 160, "land": 180 },
+      "baseTransferCost": 3400,
+      "phaseAngles": { "arrive": 90, "depart": null }
+    },
+    {
+      "id": "duna",
+      "label": "Duna",
+      "parent": "kerbol",
+      "moons": ["ike"],
+      "mapColour": "#C1440E",
+      "orbit": { "sma": 20726155264, "eccentricity": 0.051, "inclination": 0.06, "longitudeOfAscendingNode": 135.5, "argumentOfPeriapsis": 0.0, "siderealPeriod": 17315400 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 1450, "dvToLand": 1450 },
+      "nodes": { "intercept": 140, "orbit": 610, "land": 1450 }
+    },
+    {
+      "id": "ike",
+      "label": "Ike",
+      "parent": "duna",
+      "moons": [],
+      "mapColour": "#888888",
+      "orbit": { "sma": 3200000, "eccentricity": 0.03, "inclination": 0.2, "siderealPeriod": 65518 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 390, "dvToLand": 390 },
+      "nodes": { "intercept": 420, "orbit": 180, "land": 390 },
+      "parentAerobrake": "duna",
+      "transferAngleDiagram": "duna"
+    },
+    {
+      "id": "dres",
+      "label": "Dres",
+      "parent": "kerbol",
+      "moons": [],
+      "mapColour": "#9B9B7A",
+      "orbit": { "sma": 40839348203, "eccentricity": 0.145, "inclination": 5.0, "longitudeOfAscendingNode": 280.0, "argumentOfPeriapsis": 90.0, "siderealPeriod": 47893063 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 430, "dvToLand": 430 },
+      "nodes": { "intercept": 1620, "orbit": 1290, "land": 430 }
+    },
+    {
+      "id": "jool",
+      "label": "Jool",
+      "parent": "kerbol",
+      "moons": ["laythe","vall","tylo","bop","pol"],
+      "mapColour": "#5B8C3E",
+      "orbit": { "sma": 68773560320, "eccentricity": 0.05, "inclination": 1.304, "longitudeOfAscendingNode": 52.0, "argumentOfPeriapsis": 0.0, "siderealPeriod": 104661432 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 14000, "dvToLand": 14000 },
+      "nodes": { "intercept": 1250, "orbit": 2970, "land": 14000 }
+    },
+    {
+      "id": "laythe",
+      "label": "Laythe",
+      "parent": "jool",
+      "moons": [],
+      "mapColour": "#4A7FA5",
+      "orbit": { "sma": 27184000, "eccentricity": 0.0, "inclination": 0.0, "siderealPeriod": 52981 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 2900, "dvToLand": 2900 },
+      "nodes": { "intercept": 2340, "orbit": 1070, "land": 2900 },
+      "parentAerobrake": "jool",
+      "transferAngleDiagram": "jool"
+    },
+    {
+      "id": "vall",
+      "label": "Vall",
+      "parent": "jool",
+      "moons": [],
+      "mapColour": "#7EB8C9",
+      "orbit": { "sma": 43152000, "eccentricity": 0.0, "inclination": 0.0, "siderealPeriod": 105962 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 860, "dvToLand": 860 },
+      "nodes": { "intercept": 2030, "orbit": 910, "land": 860 },
+      "parentAerobrake": "jool",
+      "transferAngleDiagram": "jool"
+    },
+    {
+      "id": "tylo",
+      "label": "Tylo",
+      "parent": "jool",
+      "moons": [],
+      "mapColour": "#C8B89A",
+      "orbit": { "sma": 68500000, "eccentricity": 0.0, "inclination": 0.025, "siderealPeriod": 211926 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 2270, "dvToLand": 2270 },
+      "nodes": { "intercept": 1810, "orbit": 1100, "land": 2270 },
+      "parentAerobrake": "jool",
+      "transferAngleDiagram": "jool"
+    },
+    {
+      "id": "bop",
+      "label": "Bop",
+      "parent": "jool",
+      "moons": [],
+      "mapColour": "#8B7D6B",
+      "orbit": { "sma": 128500000, "eccentricity": 0.235, "inclination": 15.0, "longitudeOfAscendingNode": 10.0, "argumentOfPeriapsis": 25.0, "siderealPeriod": 544507 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 230, "dvToLand": 230 },
+      "nodes": { "intercept": 4070, "orbit": 900, "land": 230 },
+      "parentAerobrake": "jool",
+      "transferAngleDiagram": "jool"
+    },
+    {
+      "id": "pol",
+      "label": "Pol",
+      "parent": "jool",
+      "moons": [],
+      "mapColour": "#C8B45A",
+      "orbit": { "sma": 179890000, "eccentricity": 0.171, "inclination": 4.25, "longitudeOfAscendingNode": 2.0, "argumentOfPeriapsis": 15.0, "siderealPeriod": 901903 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 130, "dvToLand": 130 },
+      "nodes": { "intercept": 2270, "orbit": 820, "land": 130 },
+      "parentAerobrake": "jool",
+      "transferAngleDiagram": "jool"
+    },
+    {
+      "id": "sarnus",
+      "label": "Sarnus",
+      "parent": "kerbol",
+      "moons": ["hale","ovok","slate","tekto"],
+      "mapColour": "#C8A96E",
+      "orbit": { "sma": 125000000000, "eccentricity": 0.057, "inclination": 2.02, "longitudeOfAscendingNode": 184.0, "argumentOfPeriapsis": 0.0, "siderealPeriod": 246664698 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 15000, "dvToLand": 15000 },
+      "nodes": { "intercept": 1400, "orbit": 3800, "land": 15000 }
+    },
+    {
+      "id": "hale",
+      "label": "Hale",
+      "parent": "sarnus",
+      "moons": [],
+      "mapColour": "#A09080",
+      "orbit": { "sma": 9993800, "eccentricity": 0.01, "inclination": 0.4, "siderealPeriod": 11512 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 25, "dvToLand": 25 },
+      "nodes": { "intercept": 540, "orbit": 130, "land": 25 },
+      "parentAerobrake": "sarnus",
+      "transferAngleDiagram": "sarnus"
+    },
+    {
+      "id": "ovok",
+      "label": "Ovok",
+      "parent": "sarnus",
+      "moons": [],
+      "mapColour": "#B8A898",
+      "orbit": { "sma": 19650000, "eccentricity": 0.02, "inclination": 0.6, "siderealPeriod": 31984 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 40, "dvToLand": 40 },
+      "nodes": { "intercept": 720, "orbit": 200, "land": 40 },
+      "parentAerobrake": "sarnus",
+      "transferAngleDiagram": "sarnus"
+    },
+    {
+      "id": "slate",
+      "label": "Slate",
+      "parent": "sarnus",
+      "moons": [],
+      "mapColour": "#7A8A7A",
+      "orbit": { "sma": 52000000, "eccentricity": 0.0, "inclination": 0.5, "siderealPeriod": 174094 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 1700, "dvToLand": 1700 },
+      "nodes": { "intercept": 1690, "orbit": 930, "land": 1700 },
+      "parentAerobrake": "sarnus",
+      "transferAngleDiagram": "sarnus"
+    },
+    {
+      "id": "tekto",
+      "label": "Tekto",
+      "parent": "sarnus",
+      "moons": [],
+      "mapColour": "#7A9A6A",
+      "orbit": { "sma": 97000000, "eccentricity": 0.02, "inclination": 3.5, "siderealPeriod": 444043 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 1150, "dvToLand": 1150 },
+      "nodes": { "intercept": 1200, "orbit": 570, "land": 1150 },
+      "parentAerobrake": "sarnus",
+      "transferAngleDiagram": "sarnus"
+    },
+    {
+      "id": "urlum",
+      "label": "Urlum",
+      "parent": "kerbol",
+      "moons": ["polta","priax","wal"],
+      "mapColour": "#7ABCCC",
+      "orbit": { "sma": 250000000000, "eccentricity": 0.046, "inclination": 0.64, "longitudeOfAscendingNode": 2.0, "argumentOfPeriapsis": 0.0, "siderealPeriod": 694210000 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 9000, "dvToLand": 9000 },
+      "nodes": { "intercept": 1780, "orbit": 2600, "land": 9000 }
+    },
+    {
+      "id": "polta",
+      "label": "Polta",
+      "parent": "urlum",
+      "moons": [],
+      "mapColour": "#8AACAC",
+      "orbit": { "sma": 27300000, "eccentricity": 0.0, "inclination": 0.4, "siderealPeriod": 266155 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 180, "dvToLand": 180 },
+      "nodes": { "intercept": 780, "orbit": 370, "land": 180 },
+      "parentAerobrake": "urlum",
+      "transferAngleDiagram": "urlum"
+    },
+    {
+      "id": "priax",
+      "label": "Priax",
+      "parent": "urlum",
+      "moons": [],
+      "mapColour": "#9A8C7C",
+      "orbit": { "sma": 27300000, "eccentricity": 0.0, "inclination": 0.4, "siderealPeriod": 266155 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 220, "dvToLand": 220 },
+      "nodes": { "intercept": 780, "orbit": 430, "land": 220 },
+      "parentAerobrake": "urlum",
+      "transferAngleDiagram": "urlum"
+    },
+    {
+      "id": "wal",
+      "label": "Wal",
+      "parent": "urlum",
+      "moons": ["tal"],
+      "mapColour": "#A08868",
+      "orbit": { "sma": 90300000, "eccentricity": 0.03, "inclination": 0.6, "siderealPeriod": 1267800 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 630, "dvToLand": 630 },
+      "nodes": { "intercept": 1380, "orbit": 700, "land": 630 },
+      "parentAerobrake": "urlum",
+      "transferAngleDiagram": "urlum"
+    },
+    {
+      "id": "tal",
+      "label": "Tal",
+      "parent": "wal",
+      "moons": [],
+      "mapColour": "#887858",
+      "orbit": { "sma": 2244000, "eccentricity": 0.0, "inclination": 0.2, "siderealPeriod": 34210 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 25, "dvToLand": 25 },
+      "nodes": { "intercept": 270, "orbit": 130, "land": 25 },
+      "transferAngleDiagram": "urlum"
+    },
+    {
+      "id": "neidon",
+      "label": "Neidon",
+      "parent": "kerbol",
+      "moons": ["thatmo","nissee"],
+      "mapColour": "#3A5ABF",
+      "orbit": { "sma": 409000000000, "eccentricity": 0.018, "inclination": 1.27, "longitudeOfAscendingNode": 260.0, "argumentOfPeriapsis": 0.0, "siderealPeriod": 1459186000 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 10000, "dvToLand": 10000 },
+      "nodes": { "intercept": 2000, "orbit": 2750, "land": 10000 }
+    },
+    {
+      "id": "thatmo",
+      "label": "Thatmo",
+      "parent": "neidon",
+      "moons": [],
+      "mapColour": "#8090A0",
+      "orbit": { "sma": 31500000, "eccentricity": 0.04, "inclination": 15.0, "siderealPeriod": 630920 },
+      "surface": { "canAerobrake": true, "dvToOrbit": 440, "dvToLand": 440 },
+      "nodes": { "intercept": 810, "orbit": 400, "land": 440 },
+      "parentAerobrake": "neidon",
+      "transferAngleDiagram": "neidon"
+    },
+    {
+      "id": "nissee",
+      "label": "Nissee",
+      "parent": "neidon",
+      "moons": [],
+      "mapColour": "#B0A090",
+      "orbit": { "sma": 165000000, "eccentricity": 0.72, "inclination": 40.0, "siderealPeriod": 16460000 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 30, "dvToLand": 30 },
+      "nodes": { "intercept": 1120, "orbit": 150, "land": 30 },
+      "parentAerobrake": "neidon",
+      "transferAngleDiagram": "neidon"
+    },
+    {
+      "id": "plock",
+      "label": "Plock",
+      "parent": "kerbol",
+      "moons": ["karen"],
+      "mapColour": "#D4C8B8",
+      "orbit": { "sma": 535833600000, "eccentricity": 0.21, "inclination": 6.15, "longitudeOfAscendingNode": 50.0, "argumentOfPeriapsis": 260.0, "siderealPeriod": 2166417600 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 260, "dvToLand": 260 },
+      "nodes": { "intercept": 2310, "orbit": 1200, "land": 260 }
+    },
+    {
+      "id": "karen",
+      "label": "Karen",
+      "parent": "plock",
+      "moons": [],
+      "mapColour": "#B8B0A8",
+      "orbit": { "sma": 2850000, "eccentricity": 0.0, "inclination": 0.0, "siderealPeriod": 2864730 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 65, "dvToLand": 65 },
+      "nodes": { "intercept": 170, "orbit": 85, "land": 65 },
+      "transferAngleDiagram": "plock"
+    },
+    {
+      "id": "eeloo",
+      "label": "Eeloo",
+      "parent": "kerbol",
+      "moons": [],
+      "mapColour": "#C8D8E8",
+      "orbit": { "sma": 90118820000, "eccentricity": 0.26, "inclination": 6.15, "longitudeOfAscendingNode": 50.0, "argumentOfPeriapsis": 260.0, "siderealPeriod": 156992048 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 620, "dvToLand": 620 },
+      "nodes": { "intercept": 2470, "orbit": 1370, "land": 620 }
+    }
+  ],
+  "transferConfig": {
+    "originBody": "kerbin",
+    "lkoAltitude": 80000,
+    "lkoVelocity": 2246,
+    "ejectionDV": 4350,
+    "kerbinMoonBaseCost": 3400
+  }
+}

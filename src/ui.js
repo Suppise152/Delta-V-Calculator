@@ -16,8 +16,8 @@ let _activePackId = 'stock';
 
 const PACK_CONFIG = {
     stock: { dataPackId: 'stock', mapId: 'stock' },
-    opm: { dataPackId: 'stock', mapId: 'opm' },
-    rss: { dataPackId: 'stock', mapId: 'rss' },
+    opm: { dataPackId: 'ops', mapId: 'opm' },
+    rss: { dataPackId: 'rss', mapId: 'rss' },
 };
 
 function initMapVersionControls() {
@@ -175,7 +175,7 @@ function handleMapPackChange(packId) {
 
 function _setActivePackToggle(activePackId) {
     Object.keys(PACK_CONFIG).forEach(packId => {
-        const input = document.getElementById(packId);
+        const input = document.getElementById(`${packId}Check`);
         if (input) input.checked = packId === activePackId;
     });
 }
