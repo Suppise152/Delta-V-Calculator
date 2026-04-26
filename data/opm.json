@@ -15,7 +15,7 @@
       "id": "kerbol",
       "label": "Kerbol",
       "parent": null,
-      "moons": ["moho","eve","kerbin","duna","dres","jool","sarnus","urlum","neidon","plock","eeloo"],
+      "moons": ["moho","eve","kerbin","duna","dres","jool","sarnus","urlum","neidon","plock"],
       "mapColour": "#FFD700",
       "orbit": { "sma": 0, "eccentricity": 0, "inclination": 0 },
       "surface": { "canAerobrake": false, "dvToOrbit": 19700, "dvToLand": null },
@@ -193,7 +193,7 @@
       "id": "sarnus",
       "label": "Sarnus",
       "parent": "kerbol",
-      "moons": ["hale","ovok","slate","tekto"],
+      "moons": ["hale","ovok","slate","tekto","eeloo"],
       "mapColour": "#C8A96E",
       "orbit": { "sma": 125000000000, "eccentricity": 0.057, "inclination": 2.02, "longitudeOfAscendingNode": 184.0, "argumentOfPeriapsis": 0.0, "siderealPeriod": 246664698 },
       "surface": { "canAerobrake": true, "dvToOrbit": 15000, "dvToLand": 15000 },
@@ -222,6 +222,16 @@
       "nodes": { "intercept": 720, "orbit": 200, "land": 40 },
       "parentAerobrake": "sarnus",
       "transferAngleDiagram": "sarnus"
+    },
+    {
+      "id": "eeloo",
+      "label": "Eeloo",
+      "parent": "sarnus",
+      "moons": [],
+      "mapColour": "#C8D8E8",
+      "orbit": { "sma": 90118820000, "eccentricity": 0.26, "inclination": 6.15, "longitudeOfAscendingNode": 50.0, "argumentOfPeriapsis": 260.0, "siderealPeriod": 156992048 },
+      "surface": { "canAerobrake": false, "dvToOrbit": 620, "dvToLand": 620 },
+      "nodes": { "intercept": 2470, "orbit": 1370, "land": 620 }
     },
     {
       "id": "slate",
@@ -358,16 +368,6 @@
       "surface": { "canAerobrake": false, "dvToOrbit": 65, "dvToLand": 65 },
       "nodes": { "intercept": 170, "orbit": 85, "land": 65 },
       "transferAngleDiagram": "plock"
-    },
-    {
-      "id": "eeloo",
-      "label": "Eeloo",
-      "parent": "kerbol",
-      "moons": [],
-      "mapColour": "#C8D8E8",
-      "orbit": { "sma": 90118820000, "eccentricity": 0.26, "inclination": 6.15, "longitudeOfAscendingNode": 50.0, "argumentOfPeriapsis": 260.0, "siderealPeriod": 156992048 },
-      "surface": { "canAerobrake": false, "dvToOrbit": 620, "dvToLand": 620 },
-      "nodes": { "intercept": 2470, "orbit": 1370, "land": 620 }
     }
   ],
   "transferConfig": {

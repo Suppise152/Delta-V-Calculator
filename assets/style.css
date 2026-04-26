@@ -531,7 +531,7 @@ body {
 .map-path-overlay {
     fill: none;
     pointer-events: none;
-    stroke-dasharray: 7 10;
+    stroke-dasharray: 12 15;
     stroke-opacity: 1;
     /* Overlays are always fully visible — they sit above the dimmed base paths */
     opacity: 1;
@@ -548,11 +548,11 @@ body {
 }
 
 .map-path-overlay.flow-forward {
-    animation: flow-forward 0.9s linear infinite;
+    animation: flow-forward 0.7s linear infinite;
 }
 
 .map-path-overlay.flow-return {
-    animation: flow-return 0.9s linear infinite;
+    animation: flow-return 0.7s linear infinite;
 }
 
 @keyframes flow-forward {
@@ -561,7 +561,7 @@ body {
     }
 
     to {
-        stroke-dashoffset: -17;
+        stroke-dashoffset: -27;
     }
 }
 
@@ -571,7 +571,7 @@ body {
     }
 
     to {
-        stroke-dashoffset: 17;
+        stroke-dashoffset: 27;
     }
 }
 

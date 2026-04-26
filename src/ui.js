@@ -16,7 +16,7 @@ let _activePackId = 'stock';
 
 const PACK_CONFIG = {
     stock: { dataPackId: 'stock', mapId: 'stock' },
-    opm: { dataPackId: 'ops', mapId: 'opm' },
+    opm: { dataPackId: 'opm', mapId: 'opm' },
     rss: { dataPackId: 'rss', mapId: 'rss' },
 };
 

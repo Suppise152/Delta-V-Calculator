@@ -18,8 +18,8 @@ function refreshTransferDisplay() {
 
     if (!arriveBlock || !departBlock || !arriveAngle || !departAngle || !arriveDiagram || !departDiagram) return;
 
-    const roundTrip = document.getElementById('toggle1')?.checked ?? false;
-    const returnOnly = document.getElementById('toggle4')?.checked ?? false;
+    const roundTrip = document.getElementById('roundTripToggle')?.checked ?? false;
+    const returnOnly = document.getElementById('returnOnlyToggle')?.checked ?? false;
 
     if (!bodies || !selection?.pointA?.body || !selection?.pointB?.body || !meta?.centralBody) {
         _clearTransferBlock(arriveAngle, arriveDiagram);
