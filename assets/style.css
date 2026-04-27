@@ -78,7 +78,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    overflow: hidden;
+    overflow: visible;
     position: relative;
 }
 
@@ -236,7 +236,7 @@ body {
     border-top: 5px solid var(--accent);
     min-height: 0;
     padding: 10px 16px 12px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* ─── TOGGLE BOXES (left half of controls bar) ────────────────── */
@@ -688,7 +688,7 @@ body {
 /* ─── FOOTER ──────────────────────────────────────────────────── */
 .site-footer {
     position: absolute;
-    bottom: 0;
+    bottom: 5px;
     right: 10px;
     font-family: var(--font-ui);
     pointer-events: none;
@@ -696,8 +696,8 @@ body {
 }
 
 #version-info {
-    font-size: clamp(0.8rem, 0.9vw, 1rem);
-    color: var(--text-muted);
+    font-size: 10px;
+    color: rgb(198, 213, 234);
 }
 
 /* ═══════════════════════════════════════════════════════════════
