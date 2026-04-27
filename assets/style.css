@@ -42,8 +42,8 @@
     --banner-logo-wrapper-width: 17vh;
     --banner-logo-wrapper-height: 17vh;
     --banner-logo-wrapper-padding: 10px;
-    --banner-logo-backdrop-size: 90%;
-    --banner-logo-image-padding: 15px;
+    --banner-logo-backdrop-size: 95%;
+    --banner-logo-image-padding: 8%;
     --banner-title-font-size: clamp(5rem, 10vh, 10rem);
     --dash-length: clamp(20px, 1vw, 24px);
     --dash-gap: clamp(22px, 1.2vw, 28px);
