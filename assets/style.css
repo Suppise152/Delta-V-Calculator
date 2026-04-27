@@ -37,7 +37,14 @@
     --font-size-ui-large: clamp(1.25rem, 1.8vw, 2rem);
     --checkbox-size: clamp(12px, 0.65vw, 16px);
     --toggle-vertical-gap: clamp(0.1rem, 0.9vw, 0.3rem);
-    --text-line-height: 0.15;
+    --banner-logo-width: 17vh;
+    --banner-logo-height: 17vh;
+    --banner-logo-wrapper-width: 17vh;
+    --banner-logo-wrapper-height: 17vh;
+    --banner-logo-wrapper-padding: 10px;
+    --banner-logo-backdrop-size: 90%;
+    --banner-logo-image-padding: 15px;
+    --banner-title-font-size: clamp(5rem, 10vh, 10rem);
     --dash-length: clamp(20px, 1vw, 24px);
     --dash-gap: clamp(22px, 1.2vw, 28px);
 }
@@ -67,22 +74,60 @@ body {
 .banner {
     flex: 0 0 auto;
     height: 17vh;
-    background-color: var(--accent);
-    position: relative;
+    background: #3b8ccf;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     overflow: hidden;
+    position: relative;
 }
 
-.banner-img {
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
+    max-width: 1200px;
+    padding: 0 20px;
 }
 
-.banner-img--mobile {
-    display: none;
+.banner-logo-wrapper {
+    background-image: url('images/logoBackdrop.png');
+    background-size: var(--banner-logo-backdrop-size);
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--banner-logo-wrapper-width);
+    height: var(--banner-logo-wrapper-height);
+    padding: var(--banner-logo-wrapper-padding);
+}
+
+.banner-logo {
+    width: var(--banner-logo-width);
+    height: var(--banner-logo-height);
+    object-fit: contain;
+    padding: var(--banner-logo-image-padding);
+}
+
+.banner-copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.banner-title {
+    font-family: var(--font-title);
+    font-size: var(--banner-title-font-size);
+    color: white;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 0.25rem 0.5rem;
+    white-space: nowrap;
 }
 
 /* ─── CONTENT ─────────────────────────────────────────────────── */
@@ -642,8 +687,8 @@ body {
 
 /* ─── FOOTER ──────────────────────────────────────────────────── */
 .site-footer {
-    position: fixed;
-    bottom: 10px;
+    position: absolute;
+    bottom: 0;
     right: 10px;
     font-family: var(--font-ui);
     pointer-events: none;
