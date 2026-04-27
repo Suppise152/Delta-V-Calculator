@@ -4,6 +4,10 @@ const TRANSFER_FIXED_ANGLE = 45;
 const TRANSFER_BODY_A_COLOUR = '#4A90D9';
 const TRANSFER_BODY_B_COLOUR = '#E53528';
 
+// center body radius in phase diagrams; reduce this to make the central sun smaller.
+const TRANSFER_CENTER_BODY_RADIUS = 12;
+const TRANSFER_KERBOL_CENTER_BODY_RADIUS = 20;
+
 function refreshTransferDisplay() {
     const bodies = typeof getBodies === 'function' ? getBodies() : null;
     const selection = typeof getSelectedPoints === 'function' ? getSelectedPoints() : null;
@@ -190,7 +194,7 @@ function _buildTransferDiagramSvg(transferModel, mode, bodies) {
     svg.appendChild(_svgNode('circle', {
         cx: center.x,
         cy: center.y,
-        r: transferModel.centerBodyId === 'kerbol' ? 26 : 22,
+        r: transferModel.centerBodyId === 'kerbol' ? TRANSFER_KERBOL_CENTER_BODY_RADIUS : TRANSFER_CENTER_BODY_RADIUS,
         fill: `url(#transfer-core-${mode})`,
         class: 'transfer-center-body',
     }));

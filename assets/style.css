@@ -323,7 +323,7 @@ body {
 }
 
 .result-display--angle {
-    font-size: clamp(1.2rem, 1.7vw, 2rem);
+    font-size: clamp(1.1rem, 1.7vw, 1.2rem);
     width: 100px;
 }
 
@@ -342,7 +342,8 @@ body {
 .transfer-block {
     display: flex;
     flex-direction: column;
-    flex: 0 0 clamp(132px, 18vw, 200px);
+    flex: 1 1 clamp(132px, 18vw, 220px);
+    min-width: 132px;
     gap: 6px;
 }
 
@@ -354,10 +355,11 @@ body {
     letter-spacing: 0.08em;
 }
 
-/* Phase diagrams — small, tucked under the angle input */
+/* Phase diagrams — responsive size matching the visible control space */
 .phase-diagram {
-    width: 240px;
-    height: 240px;
+    width: 46%;
+    aspect-ratio: 1;
+    max-width: 46%;
     border-radius: 10px;
     background: radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 62%);
 }
