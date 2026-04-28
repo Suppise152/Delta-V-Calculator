@@ -7,6 +7,15 @@ const TRANSFER_BODY_B_COLOUR = '#E53528';
 // center body radius in phase diagrams; reduce this to make the central sun smaller.
 const TRANSFER_CENTER_BODY_RADIUS = 12;
 const TRANSFER_KERBOL_CENTER_BODY_RADIUS = 20;
+const TRANSFER_BLOCK_IDS = ['transfer-block-arrive', 'transfer-block-depart'];
+const TRANSFER_DIAGRAM_SELECTOR = '.phase-diagram';
+const TRANSFER_LABEL_SELECTOR = '.result-label';
+const TRANSFER_RESULTS_LAYOUT_SELECTOR = '.results-layout';
+const TRANSFER_ROW_SELECTOR = '.transfer-row';
+const TRANSFER_DV_GROUP_SELECTOR = '.result-group--dv';
+const TRANSFER_RESIZE_EVENTS = ['load', 'resize'];
+
+TRANSFER_RESIZE_EVENTS.forEach((eventName) => window.addEventListener(eventName, _syncTransferDiagramSizes));
 
 function refreshTransferDisplay() {
     const bodies = typeof getBodies === 'function' ? getBodies() : null;
@@ -28,6 +37,7 @@ function refreshTransferDisplay() {
     if (!bodies || !selection?.pointA?.body || !selection?.pointB?.body || !meta?.centralBody) {
         _clearTransferBlock(arriveAngle, arriveDiagram);
         _clearTransferBlock(departAngle, departDiagram);
+        _syncTransferDiagramSizes();
         return;
     }
 
@@ -36,6 +46,7 @@ function refreshTransferDisplay() {
     if (!transferModel) {
         _clearTransferBlock(arriveAngle, arriveDiagram);
         _clearTransferBlock(departAngle, departDiagram);
+        _syncTransferDiagramSizes();
         return;
     }
 
@@ -44,6 +55,7 @@ function refreshTransferDisplay() {
 
     _renderTransferBlock(arriveBlock, arriveAngle, arriveDiagram, transferModel, 'depart', showArrive, bodies);
     _renderTransferBlock(departBlock, departAngle, departDiagram, transferModel, 'arrive', showDepart, bodies);
+    _syncTransferDiagramSizes();
 }
 
 function _renderTransferBlock(blockEl, angleEl, diagramEl, transferModel, mode, isVisible, bodies) {
@@ -63,6 +75,77 @@ function _clearTransferBlock(angleEl, diagramEl) {
     angleEl.value = TRANSFER_PLACEHOLDER;
     diagramEl.classList.add('is-empty');
     diagramEl.innerHTML = '';
+}
+
+function _syncTransferDiagramSizes() {
+    window.requestAnimationFrame(() => {
+        const resultsLayoutEl = document.querySelector(TRANSFER_RESULTS_LAYOUT_SELECTOR);
+        const transferRowEl = resultsLayoutEl?.querySelector(TRANSFER_ROW_SELECTOR);
+        const dvGroupEl = resultsLayoutEl?.querySelector(TRANSFER_DV_GROUP_SELECTOR);
+        const transferBlocks = [];
+
+        TRANSFER_BLOCK_IDS.forEach((blockId) => {
+            const blockEl = document.getElementById(blockId);
+            const diagramEl = blockEl?.querySelector(TRANSFER_DIAGRAM_SELECTOR);
+            const angleEl = blockEl?.querySelector('.result-display--angle');
+            const labelEl = blockEl?.querySelector(TRANSFER_LABEL_SELECTOR);
+            if (!blockEl || !diagramEl) return;
+            if (!angleEl) return;
+
+            const blockWidth = blockEl.clientWidth;
+            if (!blockWidth) return;
+
+            const blockRect = blockEl.getBoundingClientRect();
+            const angleRect = angleEl.getBoundingClientRect();
+            const blockStyles = window.getComputedStyle(blockEl);
+            const gap = Number.parseFloat(blockStyles.rowGap || blockStyles.gap || '0') || 0;
+            const availableHeight = Math.floor(Math.max(0, blockRect.bottom - angleRect.bottom - gap));
+            const labelWidth = Math.ceil(labelEl?.scrollWidth ?? 0);
+            const angleWidth = Math.ceil(angleEl.getBoundingClientRect().width);
+            const stackedWidth = Math.max(labelWidth, angleWidth);
+            const horizontalWidth = Math.max(stackedWidth, availableHeight);
+
+            transferBlocks.push({
+                availableHeight,
+                blockEl,
+                diagramEl,
+                horizontalWidth,
+                stackedWidth,
+            });
+        });
+
+        if (!resultsLayoutEl || !transferRowEl || !dvGroupEl || transferBlocks.length !== TRANSFER_BLOCK_IDS.length) return;
+
+        const resultsWidth = resultsLayoutEl.clientWidth;
+        const layoutStyles = window.getComputedStyle(resultsLayoutEl);
+        const transferRowStyles = window.getComputedStyle(transferRowEl);
+        const layoutGap = Number.parseFloat(layoutStyles.columnGap || layoutStyles.gap || '0') || 0;
+        const transferGap = Number.parseFloat(transferRowStyles.columnGap || transferRowStyles.gap || '0') || 0;
+        const pairWidth = transferBlocks.reduce((sum, block) => sum + block.horizontalWidth, 0) + (transferGap * (transferBlocks.length - 1));
+        const dvWidth = Math.ceil(dvGroupEl.getBoundingClientRect().width);
+
+        const nextLayout = resultsWidth >= dvWidth + layoutGap + pairWidth
+            ? 'wide'
+            : resultsWidth >= pairWidth
+                ? 'pair'
+                : 'stacked';
+
+        if (resultsLayoutEl.dataset.layout !== nextLayout) {
+            resultsLayoutEl.dataset.layout = nextLayout;
+            _syncTransferDiagramSizes();
+            return;
+        }
+
+        resultsLayoutEl.dataset.layout = nextLayout;
+
+        transferBlocks.forEach(({ availableHeight, blockEl, diagramEl, horizontalWidth, stackedWidth }) => {
+            const size = nextLayout === 'stacked' ? stackedWidth : availableHeight;
+            const minWidth = nextLayout === 'stacked' ? stackedWidth : horizontalWidth;
+
+            diagramEl.style.setProperty('--phase-diagram-size', `${size}px`);
+            blockEl.style.setProperty('--transfer-block-min-width', `${minWidth}px`);
+        });
+    });
 }
 
 function _buildTransferModel(pointABodyId, pointBBodyId, bodies, centralBodyId) {

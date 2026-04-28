@@ -190,6 +190,24 @@
         border-left: none;
     }
 
+    .results-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .transfer-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        align-items: stretch;
+    }
+
+    .transfer-block {
+        flex: 1 1 132px;
+        min-width: 132px;
+    }
+
     .result-group {
         gap: 2px;
     }

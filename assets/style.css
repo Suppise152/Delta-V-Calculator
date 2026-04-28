@@ -336,10 +336,23 @@ body {
     border-left: 1px solid var(--border-sep);
 }
 
+.results-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    flex: 1 1 0;
+    min-height: 0;
+    align-items: flex-start;
+}
+
 .result-group {
     display: flex;
     flex-direction: column;
     gap: 3px;
+}
+
+.result-group--dv {
+    flex: 0 0 auto;
 }
 
 .result-row {
@@ -379,17 +392,22 @@ body {
 /* ─── TRANSFER ROW ────────────────────────────────────────────── */
 .transfer-row {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 18px;
     align-items: flex-start;
+    min-height: 0;
 }
 
 .transfer-block {
     display: flex;
     flex-direction: column;
-    flex: 1 1 clamp(132px, 18vw, 220px);
-    min-width: 132px;
     gap: 6px;
+    min-height: 0;
+    min-width: var(--transfer-block-min-width, 132px);
+}
+
+.transfer-block .result-label {
+    white-space: nowrap;
 }
 
 .transfer-meta-label {
@@ -402,11 +420,13 @@ body {
 
 /* Phase diagrams — responsive size matching the visible control space */
 .phase-diagram {
-    width: 46%;
-    aspect-ratio: 1;
-    max-width: 46%;
+    width: var(--phase-diagram-size, 110px);
+    height: var(--phase-diagram-size, 110px);
+    max-width: 100%;
     border-radius: 10px;
     background: radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 62%);
+    margin-top: auto;
+    flex: 0 0 auto;
 }
 
 .phase-diagram.is-empty {
@@ -416,6 +436,24 @@ body {
 .phase-diagram svg {
     width: 100%;
     height: 100%;
+}
+
+.results-layout[data-layout="pair"] .transfer-row,
+.results-layout[data-layout="wide"] .transfer-row {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    align-self: stretch;
+}
+
+.results-layout[data-layout="pair"] .transfer-block,
+.results-layout[data-layout="wide"] .transfer-block {
+    flex: 1 1 0;
+}
+
+.results-layout[data-layout="wide"] {
+    flex-direction: row;
+    align-items: stretch;
 }
 
 .transfer-orbit-ring {
