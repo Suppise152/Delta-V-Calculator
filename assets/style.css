@@ -362,10 +362,12 @@ body {
 .result-action {
     align-self: flex-start;
     font-family: var(--font-ui);
-    font-size: var(--font-size-small);
+    font-size: var(--font-size-ui);
+    font-weight: 700;
     color: white;
     background: var(--accent);
     border: 1px solid var(--accent);
+    border-radius: 8px;
     padding: 10px 10px;
     cursor: pointer;
     margin-top: 6px;
@@ -628,14 +630,14 @@ body {
 
 /* Dim base paths when a selection is active */
 .dv-map.has-selection .map-path {
-    opacity: 0.25;
-    stroke-opacity: 0.25;
+    opacity: 0.45;
+    stroke-opacity: 0.45;
 }
 
 /* Keep selected base paths dim so the animated overlay is the only lit layer */
 .dv-map.has-selection .map-path.is-route {
-    opacity: 0.25;
-    stroke-opacity: 0.25;
+    opacity: 0.45;
+    stroke-opacity: 0.45;
 }
 
 /* ─── AEROBRAKE INDICATORS ────────────────────────────────────── */
@@ -648,7 +650,7 @@ body {
 
 /* Dim indicators when a selection is active */
 .dv-map.has-selection .aerobrake-indicator {
-    opacity: 0.25;
+    opacity: 0.40;
 }
 
 /* Active indicators stay fully visible */
