@@ -129,11 +129,12 @@
                         <div class="result-label">Delta V Required</div>
                         <div class="result-row">
                             <input type="text" class="result-display" id="dV_display" readonly placeholder="—">
-                            <label class="toggle-label toggle-label--sm" id="label-toggle8">
-                                <input type="checkbox" id="toggle8" onchange="handleToggleChange('toggle8')">
-                                <span>Breakdown</span>
-                            </label>
                         </div>
+                        <label class="toggle-label toggle-label--sm" id="label-toggle8">
+                            <input type="checkbox" id="toggle8" onchange="handleToggleChange('toggle8')">
+                            <span>Breakdown</span>
+                        </label>
+                        <button type="button" class="result-action" id="clear-selection" onclick="handleClearSelection()">Clear</button>
                         <div class="dropdown" id="dv-dropdown"></div>
                     </div>
 

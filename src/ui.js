@@ -73,6 +73,43 @@ function handleSliderChange(slider) {
     document.getElementById('slider-value').textContent = labels[slider.value] || labels[0];
 }
 
+function handleClearSelection() {
+    [
+        'roundTripToggle',
+        'returnOnlyToggle',
+        'fromLO',
+        'aeroInterceptDest',
+        'aeroLowOrbitDest',
+        'aeroInterceptOrigin',
+        'aeroLowOrbitOrigin',
+        'toggle8',
+    ].forEach((id) => {
+        const input = document.getElementById(id);
+        if (input) input.checked = false;
+    });
+
+    const dropdown = document.getElementById('dv-dropdown');
+    if (dropdown) dropdown.classList.remove('is-open');
+
+    const slider = document.getElementById('slider');
+    if (slider) {
+        slider.value = 0;
+        handleSliderChange(slider);
+    }
+
+    const dVDisplay = document.getElementById('dV_display');
+    if (dVDisplay) dVDisplay.value = dVDisplay.placeholder || '';
+
+    if (typeof resetSelection === 'function') {
+        resetSelection();
+    } else if (_originBodyId && typeof setPointA === 'function' && typeof setPointB === 'function') {
+        setPointA(_originBodyId, 'land');
+        setPointB(null, null);
+    }
+
+    _refreshTransferUi();
+}
+
 function handleToggleChange(id) {
     const roundTripToggle = document.getElementById('roundTripToggle');
     const returnOnlyToggle = document.getElementById('returnOnlyToggle');

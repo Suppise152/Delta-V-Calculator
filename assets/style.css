@@ -355,6 +355,26 @@ body {
     flex: 0 0 auto;
 }
 
+.result-group--dv .result-row {
+    margin-bottom: 6px;
+}
+
+.result-action {
+    align-self: flex-start;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-small);
+    color: white;
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 10px 10px;
+    cursor: pointer;
+    margin-top: 6px;
+}
+
+.result-action:hover {
+    filter: brightness(1.08);
+}
+
 .result-row {
     display: flex;
     align-items: center;

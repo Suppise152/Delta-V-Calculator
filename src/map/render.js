@@ -506,6 +506,12 @@
         refreshMapDisplay();
     }
 
+    function resetSelection() {
+        _pointA = _getDefaultPointA();
+        _pointB = { body: null, node: null };
+        refreshMapDisplay();
+    }
+
     function refreshMapDisplay() {
         renderApi.clearActive({
             mapSvgEl: _mapSvgEl,
@@ -607,6 +613,7 @@
     global.setMapLayout = setMapLayout;
     global.setPointA = setPointA;
     global.setPointB = setPointB;
+    global.resetSelection = resetSelection;
     global.refreshMapDisplay = refreshMapDisplay;
     global.setActiveNode = setActiveNode;
     global.getSystemMeta = getSystemMeta;
