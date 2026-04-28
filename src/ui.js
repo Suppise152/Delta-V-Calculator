@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMapVersionControls();
     loadPack('stock');
     initSlider();
+    _initMobileLayoutSync();
 });
 
 let _originBodyId = null;
@@ -19,6 +20,8 @@ const PACK_CONFIG = {
     opm: { dataPackId: 'opm', mapId: 'opm' },
     rss: { dataPackId: 'rss', mapId: 'rss' },
 };
+const MOBILE_MAP_SCROLL_EXPANSION = 1.5;
+const MOBILE_MAP_VIEWBOX_EXPANSION = 1.18;
 
 function initMapVersionControls() {
     _setActivePackToggle(_activePackId);
@@ -33,6 +36,7 @@ async function loadPack(packId) {
             _originBodyId = _loadedSystemData.meta?.originBody ?? null;
             setMapLayout(config.mapId);
             _setActivePackToggle(packId);
+            _syncMobileMapViewport();
             if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
             return;
         }
@@ -45,6 +49,7 @@ async function loadPack(packId) {
         _originBodyId = data.meta?.originBody ?? null;
         initMap(data, { mapId: config.mapId });
         _setActivePackToggle(packId);
+        _syncMobileMapViewport();
         if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
     } catch (e) {
         console.error('Failed to load pack:', packId, e);
@@ -219,4 +224,84 @@ function _setActivePackToggle(activePackId) {
 
 function _refreshTransferUi() {
     if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
+}
+
+function _initMobileLayoutSync() {
+    ['load', 'resize', 'orientationchange'].forEach((eventName) => {
+        window.addEventListener(eventName, _syncMobileMapViewport);
+    });
+}
+
+function _syncMobileMapViewport() {
+    const mapContainer = document.getElementById('map-container');
+    const mapSvg = mapContainer?.querySelector('.dv-map');
+
+    if (!mapContainer || !mapSvg) return;
+
+    _syncMobileMapViewBox(mapSvg);
+
+    if (!_isMobilePortraitViewport()) {
+        mapSvg.style.removeProperty('--mobile-map-width');
+        return;
+    }
+
+    const activeMapId = typeof getActiveMapId === 'function' ? getActiveMapId() : _activePackId;
+    const baseWidth = _getMobileLayoutContentWidth('stock');
+    const activeWidth = _getMobileLayoutContentWidth(activeMapId);
+    if (!Number.isFinite(baseWidth) || baseWidth <= 0 || !Number.isFinite(activeWidth) || activeWidth <= 0) return;
+
+    const widthRatio = Math.max(1, activeWidth / baseWidth);
+    const targetWidth = Math.ceil(mapContainer.clientWidth * widthRatio * MOBILE_MAP_SCROLL_EXPANSION);
+    mapSvg.style.setProperty('--mobile-map-width', `${targetWidth}px`);
+    _centerMobileMapScroll(mapContainer);
+}
+
+function _isMobilePortraitViewport() {
+    return window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches;
+}
+
+function _getMobileLayoutContentWidth(mapId) {
+    const layout = window.DeltaVMapPositions?.getMapLayout?.(mapId);
+    const positions = layout?.positions ? Object.values(layout.positions) : null;
+    if (!positions?.length) return null;
+
+    const xs = positions.map((pos) => pos.x);
+    return Math.max(...xs) - Math.min(...xs);
+}
+
+function _centerMobileMapScroll(mapContainer) {
+    window.requestAnimationFrame(() => {
+        const maxScrollLeft = mapContainer.scrollWidth - mapContainer.clientWidth;
+        mapContainer.scrollLeft = maxScrollLeft > 0 ? Math.round(maxScrollLeft / 2) : 0;
+    });
+}
+
+function _syncMobileMapViewBox(mapSvg) {
+    const baseViewBox = mapSvg.dataset.baseViewBox || mapSvg.getAttribute('viewBox');
+    if (!baseViewBox) return;
+
+    if (!mapSvg.dataset.baseViewBox) {
+        mapSvg.dataset.baseViewBox = baseViewBox;
+    }
+
+    if (!_isMobilePortraitViewport()) {
+        mapSvg.setAttribute('viewBox', baseViewBox);
+        return;
+    }
+
+    const values = baseViewBox.trim().split(/\s+/).map(Number);
+    if (values.length !== 4 || values.some((value) => !Number.isFinite(value))) return;
+
+    const [x, y, width, height] = values;
+    const expandedWidth = width * MOBILE_MAP_VIEWBOX_EXPANSION;
+    const expandedHeight = height * MOBILE_MAP_VIEWBOX_EXPANSION;
+    const offsetX = (expandedWidth - width) / 2;
+    const offsetY = (expandedHeight - height) / 2;
+
+    mapSvg.setAttribute('viewBox', [
+        (x - offsetX).toFixed(2),
+        (y - offsetY).toFixed(2),
+        expandedWidth.toFixed(2),
+        expandedHeight.toFixed(2),
+    ].join(' '));
 }

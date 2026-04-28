@@ -124,6 +124,15 @@ function _syncTransferDiagramSizes() {
 
         if (transferBlocks.length !== TRANSFER_BLOCK_IDS.length) return;
 
+        if (_isMobilePortraitLayout()) {
+            resultsLayoutEl.dataset.layout = 'stacked';
+            transferBlocks.forEach((block) => {
+                block.diagramEl.style.removeProperty('--phase-diagram-size');
+                block.blockEl.style.setProperty('--transfer-block-min-width', '0px');
+            });
+            return;
+        }
+
         const layoutStyles = window.getComputedStyle(resultsLayoutEl);
         const transferRowStyles = window.getComputedStyle(transferRowEl);
         const layoutGap = Number.parseFloat(layoutStyles.rowGap || layoutStyles.gap || '0') || 0;
@@ -167,6 +176,10 @@ function _syncTransferDiagramSizes() {
             block.blockEl.style.setProperty('--transfer-block-min-width', `${minWidth}px`);
         });
     });
+}
+
+function _isMobilePortraitLayout() {
+    return window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches;
 }
 
 function _buildTransferModel(pointABodyId, pointBBodyId, bodies, centralBodyId) {

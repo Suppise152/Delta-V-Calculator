@@ -367,7 +367,7 @@ body {
     color: white;
     background: var(--accent);
     border: 1px solid var(--accent);
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 10px 10px;
     cursor: pointer;
     margin-top: 6px;
