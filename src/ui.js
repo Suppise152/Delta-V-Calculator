@@ -1,6 +1,6 @@
 /**
  * ui.js bootstraps the app and wires the main DOM interactions.
- * Calculator outputs remain placeholders until the backend is connected.
+ * Calculation logic lives in pure functions under calculator.js.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -37,7 +37,7 @@ async function loadPack(packId) {
             setMapLayout(config.mapId);
             _setActivePackToggle(packId);
             _syncMobileMapViewport();
-            if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
+            _refreshOutputs();
             return;
         }
 
@@ -50,7 +50,7 @@ async function loadPack(packId) {
         initMap(data, { mapId: config.mapId });
         _setActivePackToggle(packId);
         _syncMobileMapViewport();
-        if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
+        _refreshOutputs();
     } catch (e) {
         console.error('Failed to load pack:', packId, e);
         const c = document.getElementById('map-container');
@@ -60,8 +60,7 @@ async function loadPack(packId) {
 
 function onNodeClick(bodyId, nodeKey) {
     setPointB(bodyId, nodeKey);
-    document.getElementById('dV_display').value = '—';
-    if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
+    _refreshOutputs();
 }
 
 function initSlider() {
@@ -76,6 +75,7 @@ function handleSliderChange(slider) {
         '+ 25% Redundancy', '+ 30% Redundancy', '+ 35% Redundancy', '+ 40% Redundancy', '+ 45% Redundancy', '+ 50% Redundancy',
     ];
     document.getElementById('slider-value').textContent = labels[slider.value] || labels[0];
+    _refreshOutputs();
 }
 
 function handleClearSelection() {
@@ -102,6 +102,13 @@ function handleClearSelection() {
         handleSliderChange(slider);
     }
 
+    if (typeof clearCalculationState === 'function') {
+        clearCalculationState();
+    }
+    if (typeof renderBreakdown === 'function') {
+        renderBreakdown([]);
+    }
+
     const dVDisplay = document.getElementById('dV_display');
     if (dVDisplay) dVDisplay.value = dVDisplay.placeholder || '';
 
@@ -112,7 +119,7 @@ function handleClearSelection() {
         setPointB(null, null);
     }
 
-    _refreshTransferUi();
+    _refreshOutputs();
 }
 
 function handleToggleChange(id) {
@@ -128,13 +135,13 @@ function handleToggleChange(id) {
         case 'roundTripToggle':
             if (roundTripToggle.checked) returnOnlyToggle.checked = false;
             refreshMapDisplay();
-            _refreshTransferUi();
+            _refreshOutputs();
             break;
 
         case 'returnOnlyToggle':
             if (returnOnlyToggle.checked) roundTripToggle.checked = false;
             refreshMapDisplay();
-            _refreshTransferUi();
+            _refreshOutputs();
             break;
 
         case 'fromLO':
@@ -144,7 +151,7 @@ function handleToggleChange(id) {
             } else {
                 setPointA(_originBodyId, 'land');
             }
-            _refreshTransferUi();
+            _refreshOutputs();
             break;
 
         case 'aeroLowOrbitDest':
@@ -152,7 +159,7 @@ function handleToggleChange(id) {
                 aeroInterceptDestToggle.checked = false;
             }
             refreshMapDisplay();
-            _refreshTransferUi();
+            _refreshOutputs();
             break;
 
         case 'aeroInterceptDest':
@@ -160,7 +167,7 @@ function handleToggleChange(id) {
                 aeroLowOrbitDestToggle.checked = false;
             }
             refreshMapDisplay();
-            _refreshTransferUi();
+            _refreshOutputs();
             break;
 
         case 'aeroLowOrbitOrigin':
@@ -168,7 +175,7 @@ function handleToggleChange(id) {
                 aeroInterceptOriginToggle.checked = false;
             }
             refreshMapDisplay();
-            _refreshTransferUi();
+            _refreshOutputs();
             break;
 
         case 'aeroInterceptOrigin':
@@ -176,7 +183,7 @@ function handleToggleChange(id) {
                 aeroLowOrbitOriginToggle.checked = false;
             }
             refreshMapDisplay();
-            _refreshTransferUi();
+            _refreshOutputs();
             break;
 
         case 'toggle8': {
@@ -216,7 +223,7 @@ function handleMapPackChange(packId) {
 }
 
 function _setActivePackToggle(activePackId) {
-    Object.keys(PACK_CONFIG).forEach(packId => {
+    Object.keys(PACK_CONFIG).forEach((packId) => {
         const input = document.getElementById(`${packId}Check`);
         if (input) input.checked = packId === activePackId;
     });
@@ -224,6 +231,73 @@ function _setActivePackToggle(activePackId) {
 
 function _refreshTransferUi() {
     if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
+}
+
+function _refreshOutputs() {
+    _refreshCalculationUi();
+    _refreshTransferUi();
+}
+
+function _refreshCalculationUi() {
+    const dVDisplay = document.getElementById('dV_display');
+    const bodies = typeof getBodies === 'function' ? getBodies() : null;
+    const selection = typeof getSelectedPoints === 'function' ? getSelectedPoints() : null;
+    const meta = typeof getSystemMeta === 'function' ? getSystemMeta() : null;
+
+    if (!dVDisplay || !bodies || !selection?.pointA?.body || !selection?.pointB?.body || !meta) {
+        if (typeof clearCalculationState === 'function') {
+            clearCalculationState();
+        }
+        if (typeof renderBreakdown === 'function') {
+            renderBreakdown([]);
+        }
+        if (dVDisplay) {
+            dVDisplay.value = dVDisplay.placeholder || '';
+        }
+        return;
+    }
+
+    const options = _buildCalculationOptions();
+    const result = typeof jscalculate === 'function'
+        ? jscalculate(selection.pointA, selection.pointB, options, bodies, meta)
+        : null;
+
+    if (typeof setCalculationState === 'function') {
+        setCalculationState(result, options);
+    }
+
+    if (!result) {
+        dVDisplay.value = dVDisplay.placeholder || '';
+        if (typeof renderBreakdown === 'function') {
+            renderBreakdown([]);
+        }
+        return;
+    }
+
+    dVDisplay.value = `${result.totalDV.toLocaleString()} m/s`;
+    if (typeof renderBreakdown === 'function') {
+        renderBreakdown(result.breakdown);
+    }
+}
+
+function _buildCalculationOptions() {
+    return {
+        roundTrip: document.getElementById('roundTripToggle')?.checked ?? false,
+        returnOnly: document.getElementById('returnOnlyToggle')?.checked ?? false,
+        fromLowOrbit: document.getElementById('fromLO')?.checked ?? false,
+        aeroLowOrbitDest: document.getElementById('aeroLowOrbitDest')?.checked ?? false,
+        aeroInterceptDest: document.getElementById('aeroInterceptDest')?.checked ?? false,
+        aeroLowOrbitOrigin: document.getElementById('aeroLowOrbitOrigin')?.checked ?? false,
+        aeroInterceptOrigin: document.getElementById('aeroInterceptOrigin')?.checked ?? false,
+        redundancyMultiplier: _getRedundancyMultiplier(),
+        ipsBranchDV: 1000,
+    };
+}
+
+function _getRedundancyMultiplier() {
+    const slider = document.getElementById('slider');
+    const step = Number.parseInt(slider?.value ?? '0', 10);
+    return 1 + ((Number.isFinite(step) ? step : 0) * 0.05);
 }
 
 function _initMobileLayoutSync() {

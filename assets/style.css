@@ -332,7 +332,7 @@ body {
     justify-content: flex-start;
     gap: 10px;
     padding: 10px 16px 12px;
-    overflow: hidden;
+    overflow: visible;
     border-left: 1px solid var(--border-sep);
 }
 
@@ -353,6 +353,7 @@ body {
 
 .result-group--dv {
     flex: 0 0 auto;
+    position: relative;
 }
 
 .result-group--dv .result-row {
@@ -523,11 +524,16 @@ body {
     display: none;
     position: absolute;
     background-color: var(--bg-dropdown);
-    min-width: 200px;
-    max-height: 180px;
-    overflow-y: auto;
-    box-shadow: 0 -8px 16px rgba(0, 0, 0, 0.5);
-    bottom: calc(var(--controls-h) + 2px);
+    min-width: 220px;
+    width: max-content;
+    max-width: min(420px, calc(100vw - 32px));
+    overflow: visible;
+    white-space: nowrap;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    top: 0;
+    left: 0;
     z-index: 20;
 }
 
@@ -536,6 +542,9 @@ body {
 }
 
 .dropdown-entry {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     padding: 7px 14px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     font-family: var(--font-ui);
@@ -543,12 +552,49 @@ body {
     color: rgb(190, 190, 190);
 }
 
+.dropdown-entry-marker {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background-color: currentColor;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.dropdown-entry-marker.is-empty {
+    opacity: 0;
+}
+
+.dropdown-entry-text {
+    display: block;
+}
+
+.dropdown-entry:first-child {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.dropdown-entry:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
 .dropdown-entry--end {
     color: #e05555;
 }
 
+.dropdown-entry--start {
+    color: rgb(50, 255, 50);
+}
+
 .dropdown-entry--surface {
     color: white;
+}
+
+.dropdown-entry--zeroed {
+    color: var(--text-muted);
+    text-decoration: line-through;
 }
 
 /* ─── SVG MAP ─────────────────────────────────────────────────── */
