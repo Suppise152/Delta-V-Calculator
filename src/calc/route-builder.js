@@ -129,7 +129,7 @@
             if (!parentBody) return;
 
             const parentNodeKeys = getNodeKeys(parentBody);
-            const parentAttachKey = parentNodeKeys.includes('orbit') ? 'orbit' : parentNodeKeys[0];
+            const parentAttachKey = parentNodeKeys[0];
             if (!parentAttachKey) return;
 
             addBidirectionalEdge(
