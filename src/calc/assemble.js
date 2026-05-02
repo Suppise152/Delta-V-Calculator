@@ -7,15 +7,18 @@
         stateId,
     } = api;
 
-    function findPath(graph, startId, endId) {
+    function findPath(graph, startId, endId, bodies, meta) {
         if (startId === endId) return [startId];
 
         const queue = [startId];
         const previous = new Map([[startId, null]]);
+        const targetState = parseStateId(endId);
+        const targetBody = bodies?.[targetState.bodyId] || null;
+        const targetHostId = targetBody?.parent || null;
 
         while (queue.length) {
             const currentId = queue.shift();
-            const edges = graph.get(currentId) || [];
+            const edges = _sortEdgesForTarget(graph.get(currentId) || [], currentId, targetState, targetHostId, bodies, meta);
 
             for (const edge of edges) {
                 if (previous.has(edge.to)) continue;
@@ -30,6 +33,44 @@
         }
 
         return [];
+    }
+
+    function _sortEdgesForTarget(edges, currentId, targetState, targetHostId, bodies, meta) {
+        const currentState = parseStateId(currentId);
+        const currentBody = bodies?.[currentState.bodyId] || null;
+        if (!currentBody || currentState.nodeKey == null || !targetState?.bodyId) {
+            return edges;
+        }
+
+        const centralBodyId = meta?.centralBody;
+        const currentIsMoonRoot = (
+            currentBody.parent
+            && currentBody.parent !== centralBodyId
+            && currentState.nodeKey === _getPrimaryNodeKey(currentBody)
+        );
+        if (!currentIsMoonRoot) return edges;
+
+        const targetIsSameHostSystem = targetState.bodyId === currentBody.parent || targetHostId === currentBody.parent;
+        return [...edges].sort((left, right) => (
+            _edgePriority(left, currentBody, targetIsSameHostSystem)
+            - _edgePriority(right, currentBody, targetIsSameHostSystem)
+        ));
+    }
+
+    function _edgePriority(edge, currentBody, targetIsSameHostSystem) {
+        if (targetIsSameHostSystem) {
+            if (edge.to === stateId(currentBody.parent, 'orbit')) return 0;
+            if (edge.to === api.INTERPLANETARY_ID) return 2;
+            return 1;
+        }
+
+        if (edge.to === api.INTERPLANETARY_ID) return 0;
+        if (edge.to === stateId(currentBody.parent, 'orbit')) return 2;
+        return 1;
+    }
+
+    function _getPrimaryNodeKey(body) {
+        return api.getNodeKeys(body)[0] || null;
     }
 
     function reconstructPath(previous, endId) {
@@ -57,11 +98,13 @@
         };
     }
 
-    function collectRouteSegments(graph, startPoint, endPoint, bodies) {
+    function collectRouteSegments(graph, startPoint, endPoint, bodies, meta) {
         const path = findPath(
             graph,
             stateId(startPoint.body, startPoint.node),
             stateId(endPoint.body, endPoint.node),
+            bodies,
+            meta,
         );
 
         if (path.length < 2) return [];
@@ -87,11 +130,13 @@
         return segments;
     }
 
-    function collectLegBreakdown(graph, startPoint, endPoint, bodies) {
+    function collectLegBreakdown(graph, startPoint, endPoint, bodies, meta) {
         const path = findPath(
             graph,
             stateId(startPoint.body, startPoint.node),
             stateId(endPoint.body, endPoint.node),
+            bodies,
+            meta,
         );
 
         if (path.length < 2) return [];

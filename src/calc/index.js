@@ -24,8 +24,8 @@
 
         const legOptions = normalizeCalculationOptions(options);
         const graph = buildRouteGraph(bodies, meta, legOptions.ipsBranchDV);
-        const forwardSegments = collectRouteSegments(graph, pointA, pointB, bodies);
-        const returnSegments = collectRouteSegments(graph, pointB, pointA, bodies);
+        const forwardSegments = collectRouteSegments(graph, pointA, pointB, bodies, meta);
+        const returnSegments = collectRouteSegments(graph, pointB, pointA, bodies, meta);
 
         const forwardEvaluation = evaluateRouteSegments(forwardSegments, bodies, meta, legOptions, {
             startPoint: pointA,
@@ -135,14 +135,17 @@
 
     function _isOrbitEscapeSegment(segment) {
         return (
-            segment.from.nodeKey === 'orbit'
-            && (
-                segment.to.bodyId === api.INTERPLANETARY_ID
-                || (
-                    segment.from.bodyId === segment.to.bodyId
-                    && segment.to.nodeKey === segment.primaryNodeKey
-                )
+            (
+                segment.from.nodeKey === 'orbit'
+                || (segment.nodeKey === 'escape' && segment.to.bodyId === api.INTERPLANETARY_ID)
             )
+            && (
+                    segment.to.bodyId === api.INTERPLANETARY_ID
+                    || (
+                        segment.from.bodyId === segment.to.bodyId
+                        && segment.to.nodeKey === segment.primaryNodeKey
+                    )
+                )
         );
     }
 

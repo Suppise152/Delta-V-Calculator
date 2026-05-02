@@ -33,7 +33,7 @@
         if (!body) return _emptyBranchResult(segment, 'orbit_escape');
 
         if (
-            segment.from.nodeKey === 'orbit'
+            (segment.from.nodeKey === 'orbit' || (segment.nodeKey === 'escape' && segment.to.bodyId === api.INTERPLANETARY_ID))
             && (segment.to.bodyId === api.INTERPLANETARY_ID || segment.to.nodeKey === segment.primaryNodeKey)
         ) {
             if (body.parent && body.parent === options?.meta?.centralBody) {
@@ -45,6 +45,7 @@
                     debug: {
                         source: 'formula.hyperbolic_departure',
                         periapsis,
+                        hostRelative: segment.from.bodyId !== body.id,
                     },
                 };
             }

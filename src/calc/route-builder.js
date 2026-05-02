@@ -28,6 +28,7 @@
             const currentKey = nodeKeys[index];
             const deeperKey = nodeKeys[index + 1];
             const dv = Number(body.nodes[deeperKey]) || 0;
+            const reverseNodeKey = index === 0 ? 'escape' : currentKey;
 
             addBidirectionalEdge(
                 graph,
@@ -35,7 +36,7 @@
                 stateId(body.id, deeperKey),
                 dv,
                 { bodyId: body.id, nodeKey: deeperKey },
-                { bodyId: body.id, nodeKey: currentKey },
+                { bodyId: body.id, nodeKey: reverseNodeKey },
             );
         }
     }
@@ -129,17 +130,44 @@
             if (!parentBody) return;
 
             const parentNodeKeys = getNodeKeys(parentBody);
-            const parentAttachKey = parentNodeKeys[0];
-            if (!parentAttachKey) return;
+            const parentInboundAttachKey = parentNodeKeys[0];
+            const parentOutboundAttachKey = parentNodeKeys.includes('orbit')
+                ? 'orbit'
+                : parentInboundAttachKey;
+            if (!parentInboundAttachKey || !parentOutboundAttachKey) return;
 
-            addBidirectionalEdge(
+            addDirectedEdge(
                 graph,
-                stateId(parentBody.id, parentAttachKey),
+                stateId(parentBody.id, parentInboundAttachKey),
                 stateId(body.id, firstKey),
                 Number(body.nodes[firstKey]) || 0,
                 { bodyId: body.id, nodeKey: firstKey },
-                { bodyId: body.id, nodeKey: firstKey },
             );
+            if (parentNodeKeys.includes('orbit')) {
+                addDirectedEdge(
+                    graph,
+                    stateId(parentBody.id, 'orbit'),
+                    stateId(body.id, firstKey),
+                    Number(body.nodes[firstKey]) || 0,
+                    { bodyId: body.id, nodeKey: firstKey },
+                );
+            }
+            addDirectedEdge(
+                graph,
+                stateId(body.id, firstKey),
+                stateId(parentBody.id, parentOutboundAttachKey),
+                Number(body.nodes[firstKey]) || 0,
+                { bodyId: parentBody.id, nodeKey: parentOutboundAttachKey },
+            );
+            if (parentBody.parent === centralBodyId) {
+                addDirectedEdge(
+                    graph,
+                    stateId(body.id, firstKey),
+                    INTERPLANETARY_ID,
+                    Number(parentBody.nodes?.orbit) || 0,
+                    { bodyId: parentBody.id, nodeKey: 'escape' },
+                );
+            }
         });
 
         return graph;
