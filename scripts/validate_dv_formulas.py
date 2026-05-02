@@ -1,83 +1,148 @@
 #!/usr/bin/env python3
-"""Validate stock DV formulas against the current stock map data.
+"""Validate branch formulas against explicit map reference values.
 
-Assumptions taken from the bundled stock map:
+Current scope:
 - low orbit is 10 km above atmosphere or terrain obstacles
-- orbit -> escape burns happen at periapsis
-- interplanetary legs are Hohmann-style transfers
-
-The script uses the current `data/stock.json` node values as the expected
-reference values that back the stock map in `assets/images/stock.png`.
+- plane change is included only in the transfer branch
+- local-branch map values are validated separately for:
+  - orbit -> escape
+  - flyby -> capture
 """
 
 from __future__ import annotations
 
-import argparse
 import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import mean
 
+from validation_reference_values import IMAGE_SOURCES, REFERENCE_VALUES
+
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_PACK_PATH = ROOT / "data" / "stock.json"
-REFERENCE_IMAGE_PATH = ROOT / "assets" / "images" / "stock.png"
 LOW_ORBIT_BUFFER_METERS = 10_000.0
-
-
-STOCK_PHYSICS = {
-    "kerbol": {"radius": 261_600_000.0, "mu": 1.1723328e18, "atmosphere": 0.0},
-    "moho": {"radius": 250_000.0, "mu": 1.6860938e11, "atmosphere": 0.0},
-    "eve": {"radius": 700_000.0, "mu": 8.1717302e12, "atmosphere": 90_000.0},
-    "gilly": {"radius": 13_000.0, "mu": 8.2894498e6, "atmosphere": 0.0},
-    "kerbin": {"radius": 600_000.0, "mu": 3.5316e12, "atmosphere": 70_000.0},
-    "mun": {"radius": 200_000.0, "mu": 6.5138398e10, "atmosphere": 0.0},
-    "minmus": {"radius": 60_000.0, "mu": 1.7658e9, "atmosphere": 0.0},
-    "duna": {"radius": 320_000.0, "mu": 3.0136321e11, "atmosphere": 50_000.0},
-    "ike": {"radius": 130_000.0, "mu": 1.8568369e10, "atmosphere": 0.0},
-    "dres": {"radius": 138_000.0, "mu": 2.1484489e10, "atmosphere": 0.0},
-    "jool": {"radius": 6_000_000.0, "mu": 2.82528e14, "atmosphere": 200_000.0},
-    "laythe": {"radius": 500_000.0, "mu": 1.962e12, "atmosphere": 50_000.0},
-    "vall": {"radius": 300_000.0, "mu": 2.074815e11, "atmosphere": 0.0},
-    "tylo": {"radius": 600_000.0, "mu": 2.82528e12, "atmosphere": 0.0},
-    "bop": {"radius": 65_000.0, "mu": 2.4868349e9, "atmosphere": 0.0},
-    "pol": {"radius": 44_000.0, "mu": 7.2170208e8, "atmosphere": 0.0},
-    "eeloo": {"radius": 210_000.0, "mu": 7.4410815e10, "atmosphere": 0.0},
-}
-
 
 @dataclass(frozen=True)
 class ModeResult:
     name: str
     label: str
     values: dict[str, float]
+    coplanar_values: dict[str, float]
+    plane_change_values: dict[str, float]
     mean_abs_diff: float
     max_abs_diff: float
 
 
+@dataclass(frozen=True)
+class TransferModelContext:
+    origin_radius: float
+    target_radius: float
+    origin_speed: float
+    target_speed: float
+    transfer_depart_speed: float
+    transfer_arrive_speed: float
+    plane_angle: float
+    vinf_depart_coplanar: float
+    vinf_depart_combined: float
+    vinf_arrive_coplanar: float
+    vinf_arrive_combined: float
+
+
 def load_pack(pack_path: Path) -> tuple[dict, dict[str, dict], dict]:
-    with pack_path.open("r", encoding="utf-8") as handle:
+    with pack_path.open("r", encoding="utf-8-sig") as handle:
         payload = json.load(handle)
 
     bodies = {body["id"]: body for body in payload["bodies"]}
     return payload["meta"], bodies, payload.get("transferConfig", {})
 
 
-def require_stock_support(meta: dict, bodies: dict[str, dict]) -> None:
-    pack_name = meta.get("pack")
-    missing = sorted(body_id for body_id in bodies if body_id not in STOCK_PHYSICS)
-    if pack_name != "stock" or missing:
+def load_reference_values() -> dict:
+    return REFERENCE_VALUES
+
+
+def get_pack_name(meta: dict) -> str:
+    return meta.get("pack", "stock")
+
+
+def get_node_model(meta: dict) -> dict:
+    return meta.get("nodeModel", {})
+
+
+def get_pack_physics(bodies: dict[str, dict]) -> dict[str, dict[str, float]]:
+    physics = {}
+    for body_id, body in bodies.items():
+        body_physics = body.get("physics")
+        if not body_physics:
+            continue
+        physics[body_id] = {
+            "radius": float(body_physics.get("radius", 0.0) or 0.0),
+            "mu": float(body_physics.get("mu", 0.0) or 0.0),
+            "atmosphere": float(body_physics.get("atmosphereHeight", 0.0) or 0.0),
+            "soiRadius": float(body_physics.get("soiRadius", 0.0) or 0.0),
+        }
+    return physics
+
+
+def get_reference_image(pack_name: str) -> Path:
+    return IMAGE_SOURCES.get(pack_name, ROOT / "assets" / "images" / f"{pack_name}.png")
+
+
+def require_pack_support(meta: dict, bodies: dict[str, dict]) -> None:
+    pack_name = get_pack_name(meta)
+    physics = get_pack_physics(bodies)
+    missing = sorted(body_id for body_id in bodies if body_id not in physics)
+    if missing:
         missing_text = ", ".join(missing) if missing else "unknown bodies"
         raise SystemExit(
-            "This validator currently supports only data/stock.json with the bundled "
-            f"stock-body constants. Missing support for: {missing_text}"
+            f"Pack '{pack_name}' is missing embedded body constants. "
+            f"Missing support for: {missing_text}"
         )
 
 
-def low_orbit_radius(body_id: str) -> float:
-    body = STOCK_PHYSICS[body_id]
-    return body["radius"] + body["atmosphere"] + LOW_ORBIT_BUFFER_METERS
+def requested_node_altitude(meta: dict, body_id: str, node_key: str, physics: dict[str, dict[str, float]]) -> float:
+    node_model = get_node_model(meta)
+    body = physics[body_id]
+    if node_key == "orbit":
+        altitude_override = (node_model.get("lowOrbitAltitudeOverrides") or {}).get(body_id)
+        default_altitude = float(
+            node_model.get("lowOrbitAltitudeMeters", LOW_ORBIT_BUFFER_METERS) or LOW_ORBIT_BUFFER_METERS
+        )
+    else:
+        altitude_override = (node_model.get("flybyPeriapsisAltitudeOverrides") or {}).get(body_id)
+        default_altitude = float(
+            node_model.get("flybyPeriapsisAltitudeMeters", LOW_ORBIT_BUFFER_METERS) or LOW_ORBIT_BUFFER_METERS
+        )
+    return float(altitude_override) if altitude_override is not None else body["atmosphere"] + default_altitude
+
+
+def constrained_periapsis_radius(
+    meta: dict,
+    body_id: str,
+    node_key: str,
+    physics: dict[str, dict[str, float]],
+) -> float:
+    body = physics[body_id]
+    requested_radius = body["radius"] + requested_node_altitude(meta, body_id, node_key, physics)
+    soi_radius = body["soiRadius"]
+    if soi_radius <= 0.0:
+        return requested_radius
+    maximum_radius = max(body["radius"] + 1.0, soi_radius * 0.95)
+    return min(requested_radius, maximum_radius)
+
+
+def low_orbit_radius(meta: dict, body_id: str, physics: dict[str, dict[str, float]]) -> float:
+    return constrained_periapsis_radius(meta, body_id, "orbit", physics)
+
+
+def flyby_periapsis_radius(meta: dict, body_id: str, physics: dict[str, dict[str, float]]) -> float:
+    return constrained_periapsis_radius(meta, body_id, "flyby", physics)
+
+
+def get_node_value(body: dict, node_key: str) -> float | None:
+    nodes = body.get("nodes") or {}
+    value = nodes.get(node_key)
+    return float(value) if value is not None else None
 
 
 def circular_speed(mu: float, radius: float) -> float:
@@ -96,6 +161,15 @@ def hyperbolic_departure_burn(mu: float, periapsis_radius: float, v_inf: float) 
     return math.sqrt((v_inf * v_inf) + ((2.0 * mu) / periapsis_radius)) - math.sqrt(
         mu / periapsis_radius
     )
+
+
+def ellipse_periapsis_speed(mu: float, periapsis_radius: float, apoapsis_radius: float) -> float:
+    semi_major_axis = (periapsis_radius + apoapsis_radius) / 2.0
+    return math.sqrt(mu * ((2.0 / periapsis_radius) - (1.0 / semi_major_axis)))
+
+
+def orbit_to_soi_edge_burn(mu: float, periapsis_radius: float, soi_radius: float) -> float:
+    return ellipse_periapsis_speed(mu, periapsis_radius, soi_radius) - math.sqrt(mu / periapsis_radius)
 
 
 def hohmann_transfer_speeds(mu: float, radius_a: float, radius_b: float) -> tuple[float, float]:
@@ -128,8 +202,78 @@ def summarize_mode(label: str, values: dict[str, float], expected: dict[str, flo
         name=label.lower().replace(" ", "_"),
         label=label,
         values=values,
+        coplanar_values={},
+        plane_change_values={},
         mean_abs_diff=mean(diffs),
         max_abs_diff=max(diffs),
+    )
+
+
+def summarize_branch_errors(rows: list[dict[str, object]]) -> tuple[float, float]:
+    diffs = [abs(float(row["diff"])) for row in rows]
+    return mean(diffs), max(diffs)
+
+
+def summarize_filtered_errors(
+    rows: list[dict[str, object]],
+    predicate,
+) -> tuple[float, float] | None:
+    filtered = [abs(float(row["diff"])) for row in rows if predicate(row)]
+    if not filtered:
+        return None
+    return mean(filtered), max(filtered)
+
+
+def orbital_radius(body: dict, location: str) -> float:
+    if location == "periapsis":
+        stored = body["orbit"].get("periapsisRadius")
+        if stored is not None:
+            return float(stored)
+    if location == "apoapsis":
+        stored = body["orbit"].get("apoapsisRadius")
+        if stored is not None:
+            return float(stored)
+    sma = body["orbit"]["sma"]
+    eccentricity = body["orbit"].get("eccentricity", 0.0) or 0.0
+    if location == "periapsis":
+        return sma * (1.0 - eccentricity)
+    if location == "apoapsis":
+        return sma * (1.0 + eccentricity)
+    return sma
+
+
+def orbital_speed(mu: float, semi_major_axis: float, radius: float) -> float:
+    return math.sqrt(mu * ((2.0 / radius) - (1.0 / semi_major_axis)))
+
+
+def build_transfer_context(
+    origin: dict,
+    target: dict,
+    origin_radius: float,
+    target_radius: float,
+    central_body_id: str,
+    physics: dict[str, dict[str, float]],
+) -> TransferModelContext:
+    star_mu = physics[central_body_id]["mu"]
+    origin_speed = orbital_speed(star_mu, origin["orbit"]["sma"], origin_radius)
+    target_speed = orbital_speed(star_mu, target["orbit"]["sma"], target_radius)
+    transfer_depart_speed, transfer_arrive_speed = hohmann_transfer_speeds(
+        star_mu, origin_radius, target_radius
+    )
+    angle = plane_angle(origin, target)
+
+    return TransferModelContext(
+        origin_radius=origin_radius,
+        target_radius=target_radius,
+        origin_speed=origin_speed,
+        target_speed=target_speed,
+        transfer_depart_speed=transfer_depart_speed,
+        transfer_arrive_speed=transfer_arrive_speed,
+        plane_angle=angle,
+        vinf_depart_coplanar=abs(transfer_depart_speed - origin_speed),
+        vinf_depart_combined=relative_speed(origin_speed, transfer_depart_speed, angle),
+        vinf_arrive_coplanar=abs(target_speed - transfer_arrive_speed),
+        vinf_arrive_combined=relative_speed(target_speed, transfer_arrive_speed, angle),
     )
 
 
@@ -137,157 +281,235 @@ def compute_interplanetary_context(
     origin_id: str,
     target_id: str,
     bodies: dict[str, dict],
-) -> dict[str, float]:
+    central_body_id: str,
+    physics: dict[str, dict[str, float]],
+) -> TransferModelContext:
     origin = bodies[origin_id]
     target = bodies[target_id]
-    star_mu = STOCK_PHYSICS["kerbol"]["mu"]
-
-    origin_radius = origin["orbit"]["sma"]
-    target_radius = target["orbit"]["sma"]
-    origin_speed = circular_speed(star_mu, origin_radius)
-    target_speed = circular_speed(star_mu, target_radius)
-    transfer_depart_speed, transfer_arrive_speed = hohmann_transfer_speeds(
-        star_mu, origin_radius, target_radius
+    return build_transfer_context(
+        origin,
+        target,
+        orbital_radius(origin, "periapsis"),
+        orbital_radius(target, "apoapsis"),
+        central_body_id,
+        physics,
     )
-    angle = plane_angle(origin, target)
-
-    return {
-        "plane_angle": angle,
-        "origin_speed": origin_speed,
-        "target_speed": target_speed,
-        "transfer_depart_speed": transfer_depart_speed,
-        "transfer_arrive_speed": transfer_arrive_speed,
-        "vinf_depart_coplanar": abs(transfer_depart_speed - origin_speed),
-        "vinf_depart_combined": relative_speed(origin_speed, transfer_depart_speed, angle),
-        "vinf_arrive_coplanar": abs(target_speed - transfer_arrive_speed),
-        "vinf_arrive_combined": relative_speed(target_speed, transfer_arrive_speed, angle),
-    }
 
 
-def build_interplanetary_modes(
+def summarize_mode_with_components(
+    label: str,
+    totals: dict[str, float],
+    coplanar: dict[str, float],
+    plane_changes: dict[str, float],
+    expected: dict[str, float],
+) -> ModeResult:
+    diffs = [abs(totals[body_id] - expected[body_id]) for body_id in expected]
+    return ModeResult(
+        name=label.lower().replace(" ", "_"),
+        label=label,
+        values=totals,
+        coplanar_values=coplanar,
+        plane_change_values=plane_changes,
+        mean_abs_diff=mean(diffs),
+        max_abs_diff=max(diffs),
+    )
+
+
+def build_transfer_mode(
+    label: str,
+    expected: dict[str, float],
+    contexts: dict[str, TransferModelContext],
+    origin_mu: float,
+    origin_periapsis_radius: float,
+) -> ModeResult:
+    totals = {}
+    coplanar_values = {}
+    plane_change_values = {}
+    local_escape = hyperbolic_departure_burn(origin_mu, origin_periapsis_radius, 0.0)
+
+    for body_id, context in contexts.items():
+        departure_burn = hyperbolic_departure_burn(
+            origin_mu,
+            origin_periapsis_radius,
+            context.vinf_depart_coplanar,
+        )
+        coplanar_extra = departure_burn - local_escape
+        plane_change_cost = plane_change_delta_v(context.origin_speed, context.plane_angle)
+
+        totals[body_id] = coplanar_extra + plane_change_cost
+        coplanar_values[body_id] = coplanar_extra
+        plane_change_values[body_id] = plane_change_cost
+
+    return summarize_mode_with_components(
+        label,
+        totals,
+        coplanar_values,
+        plane_change_values,
+        expected,
+    )
+
+
+def build_interplanetary_mode(
+    meta: dict,
     bodies: dict[str, dict],
     transfer_config: dict,
-) -> tuple[list[ModeResult], dict[str, float]]:
-    origin_id = transfer_config.get("originBody", "kerbin")
-    origin = bodies[origin_id]
-    origin_periapsis = low_orbit_radius(origin_id)
-    origin_mu = STOCK_PHYSICS[origin_id]["mu"]
-    base_escape = hyperbolic_departure_burn(origin_mu, origin_periapsis, 0.0)
+    expected: dict[str, float],
+) -> ModeResult:
+    physics = get_pack_physics(bodies)
+    origin_id = transfer_config.get("originBody")
+    central_body_id = meta.get("centralBody")
+    origin_periapsis_radius = low_orbit_radius(meta, origin_id, physics)
+    origin_mu = physics[origin_id]["mu"]
 
-    expected = {
-        body_id: body["nodes"]["intercept"]
+    contexts = {
+        body_id: compute_interplanetary_context(origin_id, body_id, bodies, central_body_id, physics)
         for body_id, body in bodies.items()
-        if body["parent"] == "kerbol" and body_id not in {"kerbol", origin_id}
+        if body["parent"] == central_body_id and body_id not in {central_body_id, origin_id}
     }
 
-    mode_values = {
-        "Coplanar extra + piecewise transfer plane change": {},
-        "Combined vector departure": {},
-        "Coplanar extra only": {},
-        "Coplanar extra + departure circular plane change": {},
-        "Coplanar extra + departure transfer plane change": {},
-        "Coplanar extra + arrival circular plane change": {},
-        "Coplanar extra + arrival transfer plane change": {},
-        "Coplanar extra + minimum-speed plane change": {},
-    }
+    return build_transfer_mode(
+        "Periapsis-to-apoapsis Hohmann + optimal transfer plane change",
+        expected,
+        contexts,
+        origin_mu,
+        origin_periapsis_radius,
+    )
+
+
+def body_inclination_angle(body: dict) -> float:
+    return math.radians(body["orbit"].get("inclination", 0.0) or 0.0)
+
+
+def build_host_to_child_transfer_context(
+    meta: dict,
+    host: dict,
+    target: dict,
+    physics: dict[str, dict[str, float]],
+) -> TransferModelContext:
+    host_mu = physics[host["id"]]["mu"]
+    origin_radius = low_orbit_radius(meta, host["id"], physics)
+    target_radius = orbital_radius(target, "apoapsis")
+    origin_speed = circular_speed(host_mu, origin_radius)
+    target_speed = orbital_speed(host_mu, target["orbit"]["sma"], target_radius)
+    transfer_depart_speed, transfer_arrive_speed = hohmann_transfer_speeds(
+        host_mu, origin_radius, target_radius
+    )
+    angle = body_inclination_angle(target)
+
+    return TransferModelContext(
+        origin_radius=origin_radius,
+        target_radius=target_radius,
+        origin_speed=origin_speed,
+        target_speed=target_speed,
+        transfer_depart_speed=transfer_depart_speed,
+        transfer_arrive_speed=transfer_arrive_speed,
+        plane_angle=angle,
+        vinf_depart_coplanar=abs(transfer_depart_speed - origin_speed),
+        vinf_depart_combined=relative_speed(origin_speed, transfer_depart_speed, angle),
+        vinf_arrive_coplanar=abs(target_speed - transfer_arrive_speed),
+        vinf_arrive_combined=relative_speed(target_speed, transfer_arrive_speed, angle),
+    )
+
+
+def build_escape_to_intercept_mode(
+    meta: dict,
+    bodies: dict[str, dict],
+    transfer_config: dict,
+    expected: dict[str, float],
+) -> ModeResult:
+    physics = get_pack_physics(bodies)
+    origin_id = transfer_config.get("originBody")
+    central_body_id = meta.get("centralBody")
+
+    totals = {}
+    coplanar_values = {}
+    plane_change_values = {}
 
     for body_id in expected:
-        context = compute_interplanetary_context(origin_id, body_id, bodies)
-        angle = context["plane_angle"]
-        total_combined = hyperbolic_departure_burn(
-            origin_mu,
-            origin_periapsis,
-            context["vinf_depart_combined"],
-        )
-        coplanar_total = hyperbolic_departure_burn(
-            origin_mu,
-            origin_periapsis,
-            context["vinf_depart_coplanar"],
-        )
-        coplanar_extra = coplanar_total - base_escape
+        target = bodies[body_id]
+        if target["parent"] == central_body_id:
+            origin_periapsis_radius = low_orbit_radius(meta, origin_id, physics)
+            origin_mu = physics[origin_id]["mu"]
+            context = compute_interplanetary_context(origin_id, body_id, bodies, central_body_id, physics)
+            local_escape = hyperbolic_departure_burn(origin_mu, origin_periapsis_radius, 0.0)
+            departure_burn = hyperbolic_departure_burn(
+                origin_mu,
+                origin_periapsis_radius,
+                context.vinf_depart_coplanar,
+            )
+            coplanar_extra = departure_burn - local_escape
+            plane_change_cost = plane_change_delta_v(context.origin_speed, context.plane_angle)
+        else:
+            host = bodies[target["parent"]]
+            context = build_host_to_child_transfer_context(meta, host, target, physics)
+            coplanar_extra = abs(context.transfer_depart_speed - context.origin_speed)
+            plane_change_cost = plane_change_delta_v(context.origin_speed, context.plane_angle)
 
-        departure_circular_pc = plane_change_delta_v(context["origin_speed"], angle)
-        departure_transfer_pc = plane_change_delta_v(context["transfer_depart_speed"], angle)
-        arrival_circular_pc = plane_change_delta_v(context["target_speed"], angle)
-        arrival_transfer_pc = plane_change_delta_v(context["transfer_arrive_speed"], angle)
-        min_speed_pc = min(
-            departure_circular_pc,
-            departure_transfer_pc,
-            arrival_circular_pc,
-            arrival_transfer_pc,
-        )
-        piecewise_transfer_pc = (
-            arrival_transfer_pc
-            if bodies[body_id]["orbit"]["sma"] < bodies[origin_id]["orbit"]["sma"]
-            else departure_transfer_pc
-        )
+        totals[body_id] = coplanar_extra + plane_change_cost
+        coplanar_values[body_id] = coplanar_extra
+        plane_change_values[body_id] = plane_change_cost
 
-        mode_values["Coplanar extra + piecewise transfer plane change"][body_id] = (
-            coplanar_extra + piecewise_transfer_pc
-        )
-        mode_values["Combined vector departure"][body_id] = total_combined - base_escape
-        mode_values["Coplanar extra only"][body_id] = coplanar_extra
-        mode_values["Coplanar extra + departure circular plane change"][body_id] = (
-            coplanar_extra + departure_circular_pc
-        )
-        mode_values["Coplanar extra + departure transfer plane change"][body_id] = (
-            coplanar_extra + departure_transfer_pc
-        )
-        mode_values["Coplanar extra + arrival circular plane change"][body_id] = (
-            coplanar_extra + arrival_circular_pc
-        )
-        mode_values["Coplanar extra + arrival transfer plane change"][body_id] = (
-            coplanar_extra + arrival_transfer_pc
-        )
-        mode_values["Coplanar extra + minimum-speed plane change"][body_id] = (
-            coplanar_extra + min_speed_pc
-        )
-
-    modes = [summarize_mode(label, values, expected) for label, values in mode_values.items()]
-    modes.sort(key=lambda item: (item.mean_abs_diff, item.max_abs_diff, item.label))
-    return modes, expected
+    return summarize_mode_with_components(
+        "Escape-to-intercept branch output",
+        totals,
+        coplanar_values,
+        plane_change_values,
+        expected,
+    )
 
 
-def compute_orbit_escape_values(
+def get_periapsis_radius_for_branch(
+    meta: dict,
+    body_id: str,
+    physics: dict[str, dict[str, float]],
+    branch_mode: str,
+) -> float:
+    if branch_mode == "outbound":
+        return low_orbit_radius(meta, body_id, physics)
+    return flyby_periapsis_radius(meta, body_id, physics)
+
+
+def compute_local_branch_values(
+    meta: dict,
     bodies: dict[str, dict],
     transfer_config: dict,
-) -> tuple[dict[str, float], dict[str, float]]:
-    origin_id = transfer_config.get("originBody", "kerbin")
-    expected = {}
+    expected: dict[str, float],
+    branch_mode: str,
+) -> dict[str, float]:
+    physics = get_pack_physics(bodies)
+    origin_id = transfer_config.get("originBody")
+    central_body_id = meta.get("centralBody")
     calculated = {}
 
-    for body_id, body in bodies.items():
-        if body_id == "kerbol":
-            continue
+    for body_id in expected:
+        body = bodies[body_id]
+        periapsis = get_periapsis_radius_for_branch(meta, body_id, physics, branch_mode)
+        body_mu = physics[body_id]["mu"]
+        base_escape = hyperbolic_departure_burn(body_mu, periapsis, 0.0)
 
-        periapsis = low_orbit_radius(body_id)
-        body_mu = STOCK_PHYSICS[body_id]["mu"]
-        expected[body_id] = float(body["nodes"]["orbit"])
+        if branch_mode == "outbound":
+            calculated[body_id] = base_escape
+            continue
 
         if body_id == origin_id:
             v_inf = 0.0
-        elif body["parent"] == "kerbol":
-            context = compute_interplanetary_context(origin_id, body_id, bodies)
-            v_inf = context["vinf_arrive_coplanar"]
+        elif body["parent"] == central_body_id:
+            context = compute_interplanetary_context(origin_id, body_id, bodies, central_body_id, physics)
+            v_inf = context.vinf_arrive_coplanar
         else:
             parent = bodies[body["parent"]]
-            parent_mu = STOCK_PHYSICS[parent["id"]]["mu"]
-            parent_low_orbit = low_orbit_radius(parent["id"])
-            moon_orbit_radius = body["orbit"]["sma"]
-            transfer_depart_speed, transfer_arrive_speed = hohmann_transfer_speeds(
+            parent_mu = physics[parent["id"]]["mu"]
+            parent_low_orbit = low_orbit_radius(meta, parent["id"], physics)
+            moon_orbit_radius = orbital_radius(body, "apoapsis")
+            _, transfer_arrive_speed = hohmann_transfer_speeds(
                 parent_mu, parent_low_orbit, moon_orbit_radius
             )
-            parent_low_orbit_speed = circular_speed(parent_mu, parent_low_orbit)
-            moon_orbit_speed = circular_speed(parent_mu, moon_orbit_radius)
-
+            moon_orbit_speed = orbital_speed(parent_mu, body["orbit"]["sma"], moon_orbit_radius)
             v_inf = abs(moon_orbit_speed - transfer_arrive_speed)
-
-            # Keep the departure-side values available for debugging symmetry checks.
-            _ = abs(parent_low_orbit_speed - transfer_depart_speed)
 
         calculated[body_id] = hyperbolic_departure_burn(body_mu, periapsis, v_inf)
 
-    return calculated, expected
+    return calculated
 
 
 def print_heading(title: str) -> None:
@@ -309,64 +531,290 @@ def print_table(title: str, rows: list[dict[str, object]]) -> None:
         )
 
 
-def print_mode_summary(modes: list[ModeResult]) -> None:
-    print_heading("Interplanetary Mode Summary")
+def print_output_table(title: str, rows: list[dict[str, object]]) -> None:
+    print_heading(title)
+    print(f"{'Body':<10} {'Calc':>10}")
+    for row in rows:
+        print(f"{row['body']:<10} {row['calc']:>10.1f}")
+
+
+def print_mode_summary(title: str, modes: list[ModeResult]) -> None:
+    print_heading(title)
     print(f"{'Mode':<56} {'Mean abs diff':>14} {'Max abs diff':>14}")
     for mode in modes:
         print(f"{mode.label:<56} {mode.mean_abs_diff:>14.1f} {mode.max_abs_diff:>14.1f}")
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Compare stock DV formulas against the bundled stock map values."
+def print_transfer_breakdown(title: str, mode: ModeResult, bodies: dict[str, dict], expected: dict[str, float]) -> None:
+    print_heading(title)
+    print(
+        f"{'Body':<10} {'Escape':>10} {'Plane chg':>10} {'Total':>10} {'Expected':>10} {'Diff':>10}"
     )
-    parser.add_argument(
-        "--pack",
-        default=str(DEFAULT_PACK_PATH),
-        help="Path to the pack JSON to validate. Only stock is currently supported.",
-    )
-    args = parser.parse_args()
+    for body_id in expected:
+        total = mode.values[body_id]
+        coplanar = mode.coplanar_values[body_id]
+        plane_change = mode.plane_change_values[body_id]
+        diff = total - expected[body_id]
+        print(
+            f"{bodies[body_id]['label']:<10} "
+            f"{coplanar:>10.1f} "
+            f"{plane_change:>10.1f} "
+            f"{total:>10.1f} "
+            f"{expected[body_id]:>10.1f} "
+            f"{diff:>10.1f}"
+        )
 
-    pack_path = Path(args.pack).resolve()
+
+def print_combined_breakdown(
+    title: str,
+    transfer_mode: ModeResult,
+    capture_values: dict[str, float],
+    bodies: dict[str, dict],
+    expected: dict[str, float],
+) -> tuple[float, float]:
+    print_heading(title)
+    print(
+        f"{'Body':<10} {'Transfer':>10} {'Capture':>10} {'Total':>10} {'Expected':>10} {'Diff':>10}"
+    )
+    rows = []
+    for body_id in expected:
+        transfer = transfer_mode.values[body_id]
+        capture = capture_values[body_id]
+        total = transfer + capture
+        diff = total - expected[body_id]
+        rows.append(diff)
+        print(
+            f"{bodies[body_id]['label']:<10} "
+            f"{transfer:>10.1f} "
+            f"{capture:>10.1f} "
+            f"{total:>10.1f} "
+            f"{expected[body_id]:>10.1f} "
+            f"{diff:>10.1f}"
+        )
+    diffs = [abs(value) for value in rows]
+    return mean(diffs), max(diffs)
+
+
+def print_full_route_breakdown(
+    title: str,
+    route_rows: list[dict[str, object]],
+) -> tuple[float, float]:
+    print_heading(title)
+    print(
+        f"{'Body':<10} {'Surf->Orb':>10} {'Orig Esc':>10} {'Transfer':>10} "
+        f"{'Capture':>10} {'Land':>10} {'Total':>10} {'Expected':>10} {'Diff':>10}"
+    )
+    diffs = []
+    for row in route_rows:
+        diff = float(row["diff"])
+        diffs.append(abs(diff))
+        print(
+            f"{row['body']:<10} "
+            f"{row['surface_to_orbit']:>10.1f} "
+            f"{row['origin_escape']:>10.1f} "
+            f"{row['transfer']:>10.1f} "
+            f"{row['capture']:>10.1f} "
+            f"{row['land']:>10.1f} "
+            f"{row['calc']:>10.1f} "
+            f"{row['expected']:>10.1f} "
+            f"{diff:>10.1f}"
+        )
+    return mean(diffs), max(diffs)
+
+
+def is_planet_row(row: dict[str, object]) -> bool:
+    return bool(row.get("is_planet"))
+
+
+def is_moon_row(row: dict[str, object]) -> bool:
+    return bool(row.get("is_moon"))
+
+
+def print_interplanetary_breakdown(title: str, mode: ModeResult, bodies: dict[str, dict], expected: dict[str, float]) -> None:
+    print_heading(title)
+    print(
+        f"{'Body':<10} {'Coplanar':>10} {'Plane chg':>10} {'Total':>10} {'Expected':>10} {'Diff':>10}"
+    )
+    for body_id in expected:
+        total = mode.values[body_id]
+        coplanar = mode.coplanar_values[body_id]
+        plane_change = mode.plane_change_values[body_id]
+        diff = total - expected[body_id]
+        print(
+            f"{bodies[body_id]['label']:<10} "
+            f"{coplanar:>10.1f} "
+            f"{plane_change:>10.1f} "
+            f"{total:>10.1f} "
+            f"{expected[body_id]:>10.1f} "
+            f"{diff:>10.1f}"
+        )
+
+
+def run_pack(pack_path: Path, reference_values: dict) -> None:
     meta, bodies, transfer_config = load_pack(pack_path)
-    require_stock_support(meta, bodies)
+    require_pack_support(meta, bodies)
+    pack_name = get_pack_name(meta)
+    pack_refs = reference_values.get(pack_name, {})
+    transfer_expected = {
+        body_id: float(value)
+        for body_id, value in (pack_refs.get("escapeIntercept") or {}).items()
+        if body_id in bodies
+    }
+    surface_to_surface_expected = {
+        body_id: float(value)
+        for body_id, value in (pack_refs.get("surfaceToSurface") or {}).items()
+        if body_id in bodies
+    }
 
     print(f"Pack:            {pack_path}")
-    print(f"Reference image: {REFERENCE_IMAGE_PATH}")
-    print("Low orbit rule:  10 km above atmosphere or terrain obstacles")
+    print(f"Reference image: {get_reference_image(pack_name)}")
+    if pack_name == "rss":
+        print("Low orbit rule:  pack-specific low-orbit altitudes taken from the RSS map labels")
+    else:
+        print("Low orbit rule:  10 km above atmosphere or terrain obstacles")
 
-    orbit_calculated, orbit_expected = compute_orbit_escape_values(bodies, transfer_config)
-    orbit_rows = [
-        {
-            "body": bodies[body_id]["label"],
-            "calc": orbit_calculated[body_id],
-            "expected": orbit_expected[body_id],
-            "diff": orbit_calculated[body_id] - orbit_expected[body_id],
-        }
-        for body_id in orbit_expected
+    comparison_ids = surface_to_surface_expected or transfer_expected
+    outbound_calculated = compute_local_branch_values(meta, bodies, transfer_config, comparison_ids, "outbound")
+    inbound_calculated = compute_local_branch_values(meta, bodies, transfer_config, comparison_ids, "inbound")
+    outbound_rows = [
+        {"body": bodies[body_id]["label"], "calc": outbound_calculated[body_id]}
+        for body_id in comparison_ids
     ]
-    print_table("Orbit -> Escape Validation", orbit_rows)
-    orbit_mean_abs = mean(abs(row["diff"]) for row in orbit_rows)
-    orbit_max_abs = max(abs(row["diff"]) for row in orbit_rows)
-    print(f"\nOrbit mean abs diff: {orbit_mean_abs:.1f} m/s")
-    print(f"Orbit max abs diff:  {orbit_max_abs:.1f} m/s")
-
-    modes, intercept_expected = build_interplanetary_modes(bodies, transfer_config)
-    print_mode_summary(modes)
-
-    best_mode = modes[0]
-    intercept_rows = [
-        {
-            "body": bodies[body_id]["label"],
-            "calc": best_mode.values[body_id],
-            "expected": intercept_expected[body_id],
-            "diff": best_mode.values[body_id] - intercept_expected[body_id],
-        }
-        for body_id in intercept_expected
+    inbound_rows = [
+        {"body": bodies[body_id]["label"], "calc": inbound_calculated[body_id]}
+        for body_id in comparison_ids
     ]
-    print_table(f"Kerbin Escape -> Intercept Validation ({best_mode.label})", intercept_rows)
-    print(f"\nBest mode mean abs diff: {best_mode.mean_abs_diff:.1f} m/s")
-    print(f"Best mode max abs diff:  {best_mode.max_abs_diff:.1f} m/s")
+    print_output_table("Orbit -> Escape Output", outbound_rows)
+    print_output_table("Flyby -> Capture Output", inbound_rows)
+
+    if transfer_expected:
+        transfer_mode = build_escape_to_intercept_mode(meta, bodies, transfer_config, transfer_expected)
+        transfer_values = transfer_mode.values
+        print_transfer_breakdown(
+            f"Escape -> Intercept Validation ({transfer_mode.label})",
+            transfer_mode,
+            bodies,
+            transfer_expected,
+        )
+        transfer_rows = [
+            {
+                "body": bodies[body_id]["label"],
+                "diff": transfer_mode.values[body_id] - transfer_expected[body_id],
+                "is_planet": bodies[body_id]["parent"] == meta.get("centralBody"),
+                "is_moon": bodies[body_id]["parent"] not in {None, meta.get("centralBody")},
+            }
+            for body_id in transfer_expected
+        ]
+        print(f"\nEscape -> Intercept mean abs diff: {transfer_mode.mean_abs_diff:.1f} m/s")
+        print(f"Escape -> Intercept max abs diff:  {transfer_mode.max_abs_diff:.1f} m/s")
+        planet_transfer_stats = summarize_filtered_errors(transfer_rows, is_planet_row)
+        moon_transfer_stats = summarize_filtered_errors(transfer_rows, is_moon_row)
+        if planet_transfer_stats:
+            print(f"Escape -> Intercept planets mean abs diff: {planet_transfer_stats[0]:.1f} m/s")
+            print(f"Escape -> Intercept planets max abs diff:  {planet_transfer_stats[1]:.1f} m/s")
+        if moon_transfer_stats:
+            print(f"Escape -> Intercept moons mean abs diff:   {moon_transfer_stats[0]:.1f} m/s")
+            print(f"Escape -> Intercept moons max abs diff:    {moon_transfer_stats[1]:.1f} m/s")
+
+        if surface_to_surface_expected and pack_name != "rss":
+            origin_id = transfer_config.get("originBody")
+            origin_surface_to_orbit = float((bodies[origin_id].get("surface") or {}).get("dvToOrbit", 0.0) or 0.0)
+            origin_escape = outbound_calculated[origin_id] if origin_id in outbound_calculated else compute_local_branch_values(
+                meta, bodies, transfer_config, {origin_id: 0.0}, "outbound"
+            )[origin_id]
+            route_rows = []
+            for body_id in surface_to_surface_expected:
+                destination_land = float((bodies[body_id].get("surface") or {}).get("dvToLand", 0.0) or 0.0)
+                target = bodies[body_id]
+                transfer_chain = []
+                ancestor_id = body_id
+                while True:
+                    parent_id = bodies[ancestor_id]["parent"]
+                    if parent_id is None:
+                        break
+                    if parent_id == origin_id:
+                        transfer_chain.insert(0, ancestor_id)
+                        break
+                    if parent_id == meta.get("centralBody"):
+                        transfer_chain.insert(0, ancestor_id)
+                        break
+                    transfer_chain.insert(0, ancestor_id)
+                    ancestor_id = parent_id
+
+                transfer_total = sum(transfer_values.get(segment_id, 0.0) for segment_id in transfer_chain)
+                include_origin_escape = target["parent"] != origin_id
+                component_origin_escape = origin_escape if include_origin_escape else 0.0
+                capture_total = inbound_calculated.get(body_id, 0.0)
+                calc_total = (
+                    origin_surface_to_orbit
+                    + component_origin_escape
+                    + transfer_total
+                    + capture_total
+                    + destination_land
+                )
+                route_rows.append(
+                    {
+                        "body": bodies[body_id]["label"],
+                        "surface_to_orbit": origin_surface_to_orbit,
+                        "origin_escape": component_origin_escape,
+                        "transfer": transfer_total,
+                        "capture": capture_total,
+                        "land": destination_land,
+                        "calc": calc_total,
+                        "expected": surface_to_surface_expected[body_id],
+                        "diff": calc_total - surface_to_surface_expected[body_id],
+                        "is_planet": bodies[body_id]["parent"] == meta.get("centralBody"),
+                        "is_moon": bodies[body_id]["parent"] not in {None, meta.get("centralBody")},
+                    }
+                )
+
+            full_mean_abs, full_max_abs = print_full_route_breakdown(
+                "Surface -> Surface Validation",
+                route_rows,
+            )
+            print(f"\nSurface -> Surface mean abs diff: {full_mean_abs:.1f} m/s")
+            print(f"Surface -> Surface max abs diff:  {full_max_abs:.1f} m/s")
+            planet_surface_stats = summarize_filtered_errors(route_rows, is_planet_row)
+            moon_surface_stats = summarize_filtered_errors(route_rows, is_moon_row)
+            if planet_surface_stats:
+                print(f"Surface -> Surface planets mean abs diff: {planet_surface_stats[0]:.1f} m/s")
+                print(f"Surface -> Surface planets max abs diff:  {planet_surface_stats[1]:.1f} m/s")
+            if moon_surface_stats:
+                print(f"Surface -> Surface moons mean abs diff:   {moon_surface_stats[0]:.1f} m/s")
+                print(f"Surface -> Surface moons max abs diff:    {moon_surface_stats[1]:.1f} m/s")
+
+    if pack_name == "rss" and transfer_expected:
+        combined_expected = {
+            body_id: transfer_expected[body_id] + get_node_value(bodies[body_id], "orbit")
+            for body_id in transfer_expected
+            if get_node_value(bodies[body_id], "orbit") is not None
+        }
+        capture_values = {
+            body_id: inbound_calculated[body_id]
+            for body_id in combined_expected
+        }
+        combined_mean_abs, combined_max_abs = print_combined_breakdown(
+            "Escape -> Orbit Validation (Escape -> Intercept + Flyby -> Capture)",
+            transfer_mode,
+            capture_values,
+            bodies,
+            combined_expected,
+        )
+        print(f"\nEscape -> Orbit mean abs diff: {combined_mean_abs:.1f} m/s")
+        print(f"Escape -> Orbit max abs diff:  {combined_max_abs:.1f} m/s")
+
+
+def main() -> None:
+    reference_values = load_reference_values()
+    pack_paths = [
+        ROOT / "data" / "opm.json",
+        ROOT / "data" / "rss.json",
+    ]
+
+    for index, pack_path in enumerate(pack_paths):
+        if index > 0:
+            print("\n" + ("=" * 100) + "\n")
+        run_pack(pack_path.resolve(), reference_values)
 
 
 if __name__ == "__main__":

@@ -63,6 +63,77 @@
         return Object.keys(body?.nodes || {}).filter((key) => key !== 'comment');
     }
 
+    function _getNodeModel(meta) {
+        return meta?.nodeModel || {
+            surfaceNodeKey: 'land',
+            orbitNodeKey: 'orbit',
+            flybyNodeKeys: ['flyby', 'intercept'],
+            lowOrbitAltitudeMeters: 10000,
+            flybyPeriapsisAltitudeMeters: 10000,
+            lowOrbitAltitudeOverrides: {},
+        };
+    }
+
+    function _getBodyPhysics(body) {
+        return body?.physics || null;
+    }
+
+    function _getLowOrbitAltitude(body, meta) {
+        const nodeModel = _getNodeModel(meta);
+        const overrides = nodeModel.lowOrbitAltitudeOverrides || {};
+        if (Object.prototype.hasOwnProperty.call(overrides, body.id)) {
+            return Number(overrides[body.id]) || 0;
+        }
+
+        const physics = _getBodyPhysics(body);
+        const atmosphereHeight = Number(physics?.atmosphereHeight) || 0;
+        return Math.max(
+            Number(nodeModel.lowOrbitAltitudeMeters) || 0,
+            atmosphereHeight + (Number(nodeModel.lowOrbitAltitudeMeters) || 0),
+        );
+    }
+
+    function _getFlybyPeriapsisAltitude(body, meta) {
+        const nodeModel = _getNodeModel(meta);
+        const physics = _getBodyPhysics(body);
+        const atmosphereHeight = Number(physics?.atmosphereHeight) || 0;
+        return Math.max(
+            Number(nodeModel.flybyPeriapsisAltitudeMeters) || 0,
+            atmosphereHeight + (Number(nodeModel.flybyPeriapsisAltitudeMeters) || 0),
+        );
+    }
+
+    function _getPhysicalRadius(body, altitudeMeters) {
+        const physics = _getBodyPhysics(body);
+        if (!physics) return null;
+        return (Number(physics.radius) || 0) + (Number(altitudeMeters) || 0);
+    }
+
+    function _describeCanonicalNodeState(body, nodeKey, meta) {
+        const nodeModel = _getNodeModel(meta);
+        if (nodeKey === nodeModel.surfaceNodeKey) {
+            return { type: 'surface', bodyId: body.id };
+        }
+        if (nodeKey === nodeModel.orbitNodeKey) {
+            return {
+                type: 'orbit',
+                bodyId: body.id,
+                altitudeMeters: _getLowOrbitAltitude(body, meta),
+                radiusMeters: _getPhysicalRadius(body, _getLowOrbitAltitude(body, meta)),
+            };
+        }
+        if ((nodeModel.flybyNodeKeys || []).includes(nodeKey)) {
+            return {
+                type: 'flyby',
+                bodyId: body.id,
+                altitudeMeters: _getFlybyPeriapsisAltitude(body, meta),
+                radiusMeters: _getPhysicalRadius(body, _getFlybyPeriapsisAltitude(body, meta)),
+            };
+        }
+
+        return { type: nodeKey, bodyId: body.id };
+    }
+
     function _stateId(bodyId, nodeKey) {
         return `${bodyId}::${nodeKey}`;
     }
