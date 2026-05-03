@@ -11,6 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css">
     <link rel="stylesheet" href="assets/mobile.css">
+    <script>
+        window.goatcounter = {
+            allow_local: true,
+        };
+    </script>
+    <script data-goatcounter="https://suppise.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
 </head>
 
 <body>
@@ -129,32 +136,32 @@
                 <div class="results-panel">
                     <div class="results-layout">
 
-                    <div class="result-group result-group--dv">
-                        <div class="result-label">Delta V Required</div>
-                        <div class="result-row">
-                            <input type="text" class="result-display" id="dV_display" readonly placeholder="—">
+                        <div class="result-group result-group--dv">
+                            <div class="result-label">Delta V Required</div>
+                            <div class="result-row">
+                                <input type="text" class="result-display" id="dV_display" readonly placeholder="—">
+                            </div>
+                            <label class="toggle-label toggle-label--sm" id="label-toggle8">
+                                <input type="checkbox" id="toggle8" onchange="handleToggleChange('toggle8')">
+                                <span>Breakdown</span>
+                            </label>
+                            <button type="button" class="result-action" id="clear-selection" onclick="handleClearSelection()">Clear</button>
+                            <div class="dropdown" id="dv-dropdown"></div>
                         </div>
-                        <label class="toggle-label toggle-label--sm" id="label-toggle8">
-                            <input type="checkbox" id="toggle8" onchange="handleToggleChange('toggle8')">
-                            <span>Breakdown</span>
-                        </label>
-                        <button type="button" class="result-action" id="clear-selection" onclick="handleClearSelection()">Clear</button>
-                        <div class="dropdown" id="dv-dropdown"></div>
-                    </div>
 
-                    <div class="transfer-row">
-                        <div class="transfer-block" id="transfer-block-arrive">
-                            <div class="result-label">Transfer Window to Target</div>
-                            <input type="text" class="result-display result-display--angle" id="arrival_angle" readonly placeholder="—">
-                            <div class="phase-diagram is-empty" id="phase-arrive"></div>
-                        </div>
-                        <div class="transfer-block" id="transfer-block-depart">
-                            <div class="result-label">Transfer Window from Target</div>
-                            <input type="text" class="result-display result-display--angle" id="departure_angle" readonly placeholder="—">
-                            <div class="phase-diagram is-empty" id="phase-depart"></div>
+                        <div class="transfer-row">
+                            <div class="transfer-block" id="transfer-block-arrive">
+                                <div class="result-label">Transfer Window to Target</div>
+                                <input type="text" class="result-display result-display--angle" id="arrival_angle" readonly placeholder="—">
+                                <div class="phase-diagram is-empty" id="phase-arrive"></div>
+                            </div>
+                            <div class="transfer-block" id="transfer-block-depart">
+                                <div class="result-label">Transfer Window from Target</div>
+                                <input type="text" class="result-display result-display--angle" id="departure_angle" readonly placeholder="—">
+                                <div class="phase-diagram is-empty" id="phase-depart"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
                 </div>
 
@@ -179,6 +186,7 @@
     <script src="src/transfer.js"></script>
     <script src="src/dropdown.js"></script>
     <script src="src/debug-view.js"></script>
+    <script src="src/analytics.js"></script>
     <script src="src/ui.js"></script>
 
 </body>

@@ -4,6 +4,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (typeof initAnalytics === 'function') {
+        initAnalytics();
+    }
     initMapVersionControls();
     loadPack('stock');
     initSlider();
@@ -59,8 +62,20 @@ async function loadPack(packId) {
 }
 
 function onNodeClick(bodyId, nodeKey) {
+    if (typeof trackNodeInteraction === 'function') {
+        const bodies = typeof getBodies === 'function' ? getBodies() : null;
+        trackNodeInteraction(bodyId, nodeKey, {
+            packId: _activePackId,
+            bodyLabel: bodies?.[bodyId]?.label || bodyId,
+        });
+    }
+
     setPointB(bodyId, nodeKey);
     _refreshOutputs();
+}
+
+function getActivePackId() {
+    return _activePackId;
 }
 
 function initSlider() {

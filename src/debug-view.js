@@ -1,5 +1,5 @@
 (function attachDeltaVDebugView(global) {
-    const DEBUG_VIEW_ENABLED = true;
+    const DEBUG_VIEW_ENABLED = false;
 
     document.addEventListener('DOMContentLoaded', () => {
         const panel = document.getElementById('calc-debug-panel');
