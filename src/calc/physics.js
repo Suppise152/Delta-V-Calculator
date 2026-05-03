@@ -1,6 +1,13 @@
 (function attachDeltaVCalcPhysics(global) {
     const api = global.DeltaVCalc = global.DeltaVCalc || {};
 
+    function normalizeAngleDegrees(angleDeg) {
+        if (!Number.isFinite(angleDeg)) return null;
+        let normalized = ((angleDeg + 180) % 360 + 360) % 360 - 180;
+        if (Object.is(normalized, -0)) normalized = 0;
+        return normalized;
+    }
+
     function circularSpeed(mu, radius) {
         return Math.sqrt(mu / radius);
     }
@@ -26,6 +33,12 @@
         const speedA = Math.sqrt(mu * ((2 / radiusA) - (1 / semiMajorAxis)));
         const speedB = Math.sqrt(mu * ((2 / radiusB) - (1 / semiMajorAxis)));
         return { speedA, speedB };
+    }
+
+    function hohmannTransferTime(mu, radiusA, radiusB) {
+        if (!(mu > 0) || !(radiusA > 0) || !(radiusB > 0)) return null;
+        const semiMajorAxis = (radiusA + radiusB) / 2;
+        return Math.PI * Math.sqrt((semiMajorAxis ** 3) / mu);
     }
 
     function planeAngle(bodyA, bodyB) {
@@ -89,6 +102,130 @@
         return constrainedPeriapsisRadius(body, api.getFlybyPeriapsisAltitude(body, meta));
     }
 
+    function orbitalPeriod(body, centralMu = 0) {
+        const siderealPeriod = Number(body?.orbit?.siderealPeriod);
+        if (siderealPeriod > 0) return siderealPeriod;
+
+        const sma = Number(body?.orbit?.sma) || 0;
+        if (!(sma > 0) || !(centralMu > 0)) return null;
+
+        return 2 * Math.PI * Math.sqrt((sma ** 3) / centralMu);
+    }
+
+    function meanMotion(body, centralMu = 0) {
+        const period = orbitalPeriod(body, centralMu);
+        if (!(period > 0)) return null;
+        return (2 * Math.PI) / period;
+    }
+
+    function resolveTransferWindowModel(pointABodyId, pointBBodyId, bodies, centralBodyId) {
+        const pointABody = bodies?.[pointABodyId];
+        const pointBBody = bodies?.[pointBBodyId];
+        if (!pointABody || !pointBBody) return null;
+
+        if (pointABodyId === pointBBodyId) return null;
+        if (_isAncestorBody(pointABodyId, pointBBodyId, bodies) || _isAncestorBody(pointBBodyId, pointABodyId, bodies)) {
+            return null;
+        }
+
+        const sharedHost = _findSharedHost(pointABodyId, pointBBodyId, bodies, centralBodyId);
+        const centerBodyId = sharedHost ?? centralBodyId;
+        const fromBodyId = _resolveDiagramBody(pointABodyId, centerBodyId, bodies);
+        const toBodyId = _resolveDiagramBody(pointBBodyId, centerBodyId, bodies);
+        if (!fromBodyId || !toBodyId || fromBodyId === toBodyId) return null;
+
+        const centerBody = bodies[centerBodyId];
+        const fromBody = bodies[fromBodyId];
+        const toBody = bodies[toBodyId];
+        if (!centerBody || !fromBody || !toBody) return null;
+
+        return {
+            centerBodyId,
+            centerLabel: centerBody.label,
+            fromBodyId,
+            fromLabel: fromBody.label,
+            fromOrbitRadius: Number(fromBody.orbit?.sma) || 0,
+            toBodyId,
+            toLabel: toBody.label,
+            toOrbitRadius: Number(toBody.orbit?.sma) || 0,
+        };
+    }
+
+    function calculatePhaseAngleDegrees(originBody, targetBody, centralBody) {
+        const centralMu = Number(getPhysics(centralBody).mu) || 0;
+        const originRadius = Number(originBody?.orbit?.sma) || 0;
+        const targetRadius = Number(targetBody?.orbit?.sma) || 0;
+        const targetMeanMotion = meanMotion(targetBody, centralMu);
+        const transferTime = hohmannTransferTime(centralMu, originRadius, targetRadius);
+
+        if (!(originRadius > 0) || !(targetRadius > 0) || !(targetMeanMotion > 0) || !(transferTime > 0)) {
+            return null;
+        }
+
+        return normalizeAngleDegrees((Math.PI - (targetMeanMotion * transferTime)) * (180 / Math.PI));
+    }
+
+    function calculateTransferWindowAngles(pointA, pointB, bodies, meta) {
+        const centralBodyId = meta?.centralBody;
+        const transferModel = resolveTransferWindowModel(pointA?.body, pointB?.body, bodies, centralBodyId);
+        if (!transferModel) {
+            return {
+                arrive: null,
+                depart: null,
+                model: null,
+            };
+        }
+
+        const centerBody = bodies?.[transferModel.centerBodyId];
+        const fromBody = bodies?.[transferModel.fromBodyId];
+        const toBody = bodies?.[transferModel.toBodyId];
+        if (!centerBody || !fromBody || !toBody) {
+            return {
+                arrive: null,
+                depart: null,
+                model: transferModel,
+            };
+        }
+
+        return {
+            arrive: calculatePhaseAngleDegrees(fromBody, toBody, centerBody),
+            depart: normalizeAngleDegrees(-(calculatePhaseAngleDegrees(toBody, fromBody, centerBody))),
+            model: transferModel,
+        };
+    }
+
+    function _findSharedHost(bodyAId, bodyBId, bodies, centralBodyId) {
+        const bodyA = bodies?.[bodyAId];
+        const bodyB = bodies?.[bodyBId];
+        if (!bodyA?.parent || !bodyB?.parent) return null;
+        if (bodyA.parent !== bodyB.parent) return null;
+        if (bodyA.parent === centralBodyId) return null;
+        return bodyA.parent;
+    }
+
+    function _resolveDiagramBody(bodyId, centerBodyId, bodies) {
+        let currentId = bodyId;
+
+        while (currentId) {
+            const body = bodies?.[currentId];
+            if (!body) return null;
+            if (body.parent === centerBodyId) return currentId;
+            if (!body.parent) return null;
+            currentId = body.transferAngleDiagram || body.parent;
+        }
+
+        return null;
+    }
+
+    function _isAncestorBody(ancestorId, bodyId, bodies) {
+        let currentId = bodies?.[bodyId]?.parent ?? null;
+        while (currentId) {
+            if (currentId === ancestorId) return true;
+            currentId = bodies?.[currentId]?.parent ?? null;
+        }
+        return false;
+    }
+
     function computeInterplanetaryContext(originBody, targetBody, meta, centralBody) {
         const starMu = Number(getPhysics(centralBody).mu) || 0;
         const originRadius = orbitalRadius(originBody, 'periapsis');
@@ -145,19 +282,26 @@
 
     Object.assign(api, {
         bodyInclinationAngle,
+        calculatePhaseAngleDegrees,
+        calculateTransferWindowAngles,
         circularSpeed,
         computeInterplanetaryContext,
         computeMoonTransferContext,
         flybyPeriapsisRadius,
         getPhysics,
         hohmannTransferSpeeds,
+        hohmannTransferTime,
         hyperbolicCaptureBurn,
         hyperbolicDepartureBurn,
         lowOrbitRadius,
+        meanMotion,
+        normalizeAngleDegrees,
         orbitalRadius,
+        orbitalPeriod,
         orbitalSpeed,
         planeAngle,
         planeChangeDeltaV,
         relativeSpeed,
+        resolveTransferWindowModel,
     });
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1,6 +1,5 @@
 const TRANSFER_SVG_NS = 'http://www.w3.org/2000/svg';
-const TRANSFER_PLACEHOLDER = '—';
-const TRANSFER_FIXED_ANGLE = 45;
+const TRANSFER_PLACEHOLDER = '\u2014';
 const TRANSFER_BODY_A_COLOUR = '#4A90D9';
 const TRANSFER_BODY_B_COLOUR = '#E53528';
 
@@ -22,6 +21,8 @@ function refreshTransferDisplay() {
     const bodies = typeof getBodies === 'function' ? getBodies() : null;
     const selection = typeof getSelectedPoints === 'function' ? getSelectedPoints() : null;
     const meta = typeof getSystemMeta === 'function' ? getSystemMeta() : null;
+    const calculationResult = typeof getCalculationResult === 'function' ? getCalculationResult() : null;
+    const transferAngles = calculationResult?.transferAngles || null;
 
     const arriveBlock = document.getElementById('transfer-block-arrive');
     const departBlock = document.getElementById('transfer-block-depart');
@@ -42,7 +43,8 @@ function refreshTransferDisplay() {
         return;
     }
 
-    const transferModel = _buildTransferModel(selection.pointA.body, selection.pointB.body, bodies, meta.centralBody);
+    const transferModel = transferAngles?.model
+        || _buildTransferModel(selection.pointA.body, selection.pointB.body, bodies, meta.centralBody);
 
     if (!transferModel) {
         _clearTransferBlock(arriveAngle, arriveDiagram);
@@ -54,22 +56,22 @@ function refreshTransferDisplay() {
     const showArrive = !returnOnly;
     const showDepart = roundTrip || returnOnly;
 
-    _renderTransferBlock(arriveBlock, arriveAngle, arriveDiagram, transferModel, 'depart', showArrive, bodies);
-    _renderTransferBlock(departBlock, departAngle, departDiagram, transferModel, 'arrive', showDepart, bodies);
+    _renderTransferBlock(arriveBlock, arriveAngle, arriveDiagram, transferModel, 'depart', showArrive, bodies, transferAngles?.arrive);
+    _renderTransferBlock(departBlock, departAngle, departDiagram, transferModel, 'arrive', showDepart, bodies, transferAngles?.depart);
     _syncTransferDiagramSizes();
 }
 
-function _renderTransferBlock(blockEl, angleEl, diagramEl, transferModel, mode, isVisible, bodies) {
-    if (!isVisible) {
+function _renderTransferBlock(blockEl, angleEl, diagramEl, transferModel, mode, isVisible, bodies, phaseAngle) {
+    if (!isVisible || !Number.isFinite(phaseAngle)) {
         _clearTransferBlock(angleEl, diagramEl);
         return;
     }
 
-    angleEl.value = `${TRANSFER_FIXED_ANGLE}°`;
+    angleEl.value = `${_formatPhaseAngle(phaseAngle)}\u00B0`;
     blockEl.dataset.state = 'active';
     diagramEl.classList.remove('is-empty');
     diagramEl.innerHTML = '';
-    diagramEl.appendChild(_buildTransferDiagramSvg(transferModel, mode, bodies));
+    diagramEl.appendChild(_buildTransferDiagramSvg(transferModel, mode, bodies, phaseAngle));
 }
 
 function _clearTransferBlock(angleEl, diagramEl) {
@@ -183,72 +185,10 @@ function _isMobilePortraitLayout() {
 }
 
 function _buildTransferModel(pointABodyId, pointBBodyId, bodies, centralBodyId) {
-    const pointABody = bodies[pointABodyId];
-    const pointBBody = bodies[pointBBodyId];
-    if (!pointABody || !pointBBody) return null;
-
-    if (pointABodyId === pointBBodyId) return null;
-    if (_isAncestorBody(pointABodyId, pointBBodyId, bodies) || _isAncestorBody(pointBBodyId, pointABodyId, bodies)) {
-        return null;
-    }
-
-    const sharedHost = _findSharedHost(pointABodyId, pointBBodyId, bodies, centralBodyId);
-    const centerBodyId = sharedHost ?? centralBodyId;
-    const fromBodyId = _resolveDiagramBody(pointABodyId, centerBodyId, bodies);
-    const toBodyId = _resolveDiagramBody(pointBBodyId, centerBodyId, bodies);
-
-    if (!fromBodyId || !toBodyId || fromBodyId === toBodyId) return null;
-
-    const centerBody = bodies[centerBodyId];
-    const fromBody = bodies[fromBodyId];
-    const toBody = bodies[toBodyId];
-    if (!centerBody || !fromBody || !toBody) return null;
-
-    return {
-        centerBodyId,
-        fromBodyId,
-        toBodyId,
-        centerLabel: centerBody.label,
-        fromLabel: fromBody.label,
-        toLabel: toBody.label,
-        fromOrbitRadius: fromBody.orbit?.sma ?? 0,
-        toOrbitRadius: toBody.orbit?.sma ?? 0,
-    };
+    return window.DeltaVCalc?.resolveTransferWindowModel?.(pointABodyId, pointBBodyId, bodies, centralBodyId) || null;
 }
 
-function _findSharedHost(bodyAId, bodyBId, bodies, centralBodyId) {
-    const bodyA = bodies[bodyAId];
-    const bodyB = bodies[bodyBId];
-    if (!bodyA?.parent || !bodyB?.parent) return null;
-    if (bodyA.parent !== bodyB.parent) return null;
-    if (bodyA.parent === centralBodyId) return null;
-    return bodyA.parent;
-}
-
-function _resolveDiagramBody(bodyId, centerBodyId, bodies) {
-    let currentId = bodyId;
-
-    while (currentId) {
-        const body = bodies[currentId];
-        if (!body) return null;
-        if (body.parent === centerBodyId) return currentId;
-        if (!body.parent) return null;
-        currentId = body.transferAngleDiagram || body.parent;
-    }
-
-    return null;
-}
-
-function _isAncestorBody(ancestorId, bodyId, bodies) {
-    let currentId = bodies[bodyId]?.parent ?? null;
-    while (currentId) {
-        if (currentId === ancestorId) return true;
-        currentId = bodies[currentId]?.parent ?? null;
-    }
-    return false;
-}
-
-function _buildTransferDiagramSvg(transferModel, mode, bodies) {
+function _buildTransferDiagramSvg(transferModel, mode, bodies, phaseAngle) {
     const svg = document.createElementNS(TRANSFER_SVG_NS, 'svg');
     svg.setAttribute('viewBox', '0 0 220 220');
     svg.setAttribute('class', 'transfer-diagram-svg');
@@ -274,13 +214,13 @@ function _buildTransferDiagramSvg(transferModel, mode, bodies) {
     const toRadius = fromIsInner ? radii.outer : radii.inner;
 
     const isDepart = mode === 'depart';
-    const fixedPhaseAngle = -45;
+    const targetAngle = -phaseAngle;
     const transferStartRadius = isDepart ? fromRadius : toRadius;
     const transferEndRadius = isDepart ? toRadius : fromRadius;
-    const transferStartAngle = isDepart ? 0 : fixedPhaseAngle;
+    const transferStartAngle = isDepart ? 0 : targetAngle;
     const transferEndAngle = 180;
     const bodyAPosition = _polarPoint(center, fromRadius, 0);
-    const bodyBPosition = _polarPoint(center, toRadius, fixedPhaseAngle);
+    const bodyBPosition = _polarPoint(center, toRadius, targetAngle);
     const interceptPoint = _polarPoint(center, transferEndRadius, transferStartAngle + 180);
 
     svg.appendChild(_svgNode('circle', {
@@ -365,6 +305,17 @@ function _polarPoint(center, radius, angleDeg) {
         x: center.x + Math.cos(angleRad) * radius,
         y: center.y + Math.sin(angleRad) * radius,
     };
+}
+
+function _formatPhaseAngle(angle) {
+    if (!Number.isFinite(angle)) return TRANSFER_PLACEHOLDER;
+
+    const rounded = Math.round(angle * 10) / 10;
+    if (Math.abs(rounded - Math.round(rounded)) < 0.05) {
+        return String(Math.round(rounded));
+    }
+
+    return rounded.toFixed(1);
 }
 
 function _svgNode(tag, attrs) {

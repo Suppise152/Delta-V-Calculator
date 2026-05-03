@@ -58,17 +58,22 @@
 
         const subtotal = breakdown.reduce((sum, entry) => sum + entry.dv, 0);
         const totalDV = Math.round((subtotal * legOptions.redundancyMultiplier) / 10) * 10;
+        const transferAngles = api.calculateTransferWindowAngles
+            ? api.calculateTransferWindowAngles(pointA, pointB, bodies, meta)
+            : {
+                arrive: null,
+                depart: null,
+                model: null,
+            };
 
         return {
             totalDV,
             breakdown,
-            transferAngles: {
-                arrive: null,
-                depart: null,
-            },
+            transferAngles,
             debug: {
                 options: legOptions,
                 route: debugRoute,
+                transferAngles,
             },
         };
     }
@@ -80,7 +85,7 @@
 
         for (const segment of segments) {
             const branchResult = evaluateSegmentBranch(segment, bodies, meta, evaluationOptions);
-            const aerobrakeAdjustment = getAerobrakeAdjustment(segment, branchResult, routeContext, options);
+            const aerobrakeAdjustment = getAerobrakeAdjustment(segment, branchResult, routeContext, options, bodies);
             const adjustedDv = aerobrakeAdjustment.zeroed ? 0 : branchResult.dv;
             const body = bodies[segment.bodyId];
             breakdown.push({
@@ -190,11 +195,18 @@
         );
     }
 
-    function getAerobrakeAdjustment(segment, branchResult, routeContext, options) {
+    function getAerobrakeAdjustment(segment, branchResult, routeContext, options, bodies) {
         const isForward = routeContext?.direction === 'forward';
         const appliesToDestination = segment.bodyId === routeContext?.endPoint?.body;
 
         if (!appliesToDestination) {
+            return { zeroed: false, mode: null };
+        }
+
+        const destinationBody = routeContext?.endPoint?.body ? (bodies?.[routeContext.endPoint.body] || null) : null;
+        const segmentBody = segment.bodyId ? (bodies?.[segment.bodyId] || null) : null;
+        const aerobrakeBody = segmentBody || destinationBody;
+        if (!aerobrakeBody?.surface?.canAerobrake) {
             return { zeroed: false, mode: null };
         }
 

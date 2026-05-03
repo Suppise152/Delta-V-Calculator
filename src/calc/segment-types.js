@@ -10,6 +10,7 @@
             transferAngles: {
                 arrive: null,
                 depart: null,
+                model: null,
             },
         };
     }
