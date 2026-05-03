@@ -675,7 +675,7 @@ body {
 
 .dropdown-entry--start {
     color: rgb(50, 255, 50);
-    background: rgba(0, 255, 64, 0.1);
+    background: rgba(0, 255, 0, 0.1);
 }
 
 .dropdown-entry--surface {
