@@ -110,7 +110,7 @@
             return api.calculateOrbitEscapeBranch(segment, bodies, options);
         }
 
-        if (_isEscapeInterceptSegment(segment)) {
+        if (_isEscapeInterceptSegment(segment, bodies, meta)) {
             return api.calculateEscapeInterceptBranch(segment, bodies, meta, options);
         }
 
@@ -149,12 +149,22 @@
         );
     }
 
-    function _isEscapeInterceptSegment(segment) {
+    function _isEscapeInterceptSegment(segment, bodies, meta) {
+        const targetBody = bodies[segment.to.bodyId];
+        const targetIsMoon = targetBody?.parent && targetBody.parent !== meta?.centralBody;
+        const targetParent = targetBody?.parent || null;
+        const targetParentPrimary = targetParent && bodies[targetParent] ? api.getNodeKeys(bodies[targetParent])[0] : null;
         return (
             (segment.from.bodyId === api.INTERPLANETARY_ID && segment.to.nodeKey === segment.primaryNodeKey)
             || (
                 segment.from.nodeKey === 'orbit'
                 && segment.from.bodyId !== segment.to.bodyId
+                && segment.to.nodeKey === segment.primaryNodeKey
+            )
+            || (
+                targetIsMoon
+                && segment.from.bodyId === targetParent
+                && segment.from.nodeKey === targetParentPrimary
                 && segment.to.nodeKey === segment.primaryNodeKey
             )
         );

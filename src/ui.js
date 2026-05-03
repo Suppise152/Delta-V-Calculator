@@ -251,6 +251,9 @@ function _refreshCalculationUi() {
         if (typeof renderBreakdown === 'function') {
             renderBreakdown([]);
         }
+        if (typeof renderDebugView === 'function') {
+            renderDebugView(null);
+        }
         if (dVDisplay) {
             dVDisplay.value = dVDisplay.placeholder || '';
         }
@@ -271,12 +274,18 @@ function _refreshCalculationUi() {
         if (typeof renderBreakdown === 'function') {
             renderBreakdown([]);
         }
+        if (typeof renderDebugView === 'function') {
+            renderDebugView(null);
+        }
         return;
     }
 
     dVDisplay.value = `${result.totalDV.toLocaleString()} m/s`;
     if (typeof renderBreakdown === 'function') {
         renderBreakdown(result.breakdown);
+    }
+    if (typeof renderDebugView === 'function') {
+        renderDebugView(result);
     }
 }
 

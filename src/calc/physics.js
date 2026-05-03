@@ -45,6 +45,10 @@
         return 2 * speed * Math.sin(angleRad / 2);
     }
 
+    function bodyInclinationAngle(body) {
+        return Math.PI * (Number(body.orbit?.inclination) || 0) / 180;
+    }
+
     function orbitalRadius(body, location) {
         if (location === 'periapsis' && body.orbit?.periapsisRadius != null) {
             return Number(body.orbit.periapsisRadius);
@@ -112,9 +116,38 @@
         };
     }
 
+    function computeMoonTransferContext(hostBody, targetBody, meta, targetLocation = 'periapsis') {
+        const hostMu = Number(getPhysics(hostBody).mu) || 0;
+        const originRadius = lowOrbitRadius(hostBody, meta);
+        const targetRadius = orbitalRadius(targetBody, targetLocation);
+        const originSpeed = circularSpeed(hostMu, originRadius);
+        const targetSpeed = orbitalSpeed(hostMu, Number(targetBody.orbit?.sma) || 0, targetRadius);
+        const { speedA: transferDepartSpeed, speedB: transferArriveSpeed } = hohmannTransferSpeeds(
+            hostMu,
+            originRadius,
+            targetRadius,
+        );
+        const angle = bodyInclinationAngle(targetBody);
+
+        return {
+            originRadius,
+            targetRadius,
+            originSpeed,
+            targetSpeed,
+            transferDepartSpeed,
+            transferArriveSpeed,
+            planeAngle: angle,
+            vinfDepartCoplanar: Math.abs(transferDepartSpeed - originSpeed),
+            vinfArriveCoplanar: Math.abs(targetSpeed - transferArriveSpeed),
+            vinfArriveCombined: relativeSpeed(targetSpeed, transferArriveSpeed, angle),
+        };
+    }
+
     Object.assign(api, {
+        bodyInclinationAngle,
         circularSpeed,
         computeInterplanetaryContext,
+        computeMoonTransferContext,
         flybyPeriapsisRadius,
         getPhysics,
         hohmannTransferSpeeds,

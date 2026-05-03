@@ -1,7 +1,7 @@
 (function attachDeltaVCalcLocalBranches(global) {
     const api = global.DeltaVCalc = global.DeltaVCalc || {};
 
-    function calculateSurfaceOrbitBranch(segment, bodies) {
+    function calculateSurfaceOrbitBranch(segment, bodies, meta) {
         const body = bodies[segment.bodyId];
         if (!body) return _emptyBranchResult(segment, 'surface_orbit');
 
@@ -11,6 +11,8 @@
                 branchType: 'surface_to_orbit',
                 debug: {
                     source: 'body.surface.dvToOrbit',
+                    altitudeMeters: api.getLowOrbitAltitude(body, meta),
+                    radiusMeters: api.lowOrbitRadius(body, meta),
                 },
             };
         }
@@ -21,6 +23,8 @@
                 branchType: 'orbit_to_surface',
                 debug: {
                     source: 'body.surface.dvToLand',
+                    altitudeMeters: api.getLowOrbitAltitude(body, meta),
+                    radiusMeters: api.lowOrbitRadius(body, meta),
                 },
             };
         }
@@ -45,18 +49,28 @@
                     debug: {
                         source: 'formula.hyperbolic_departure',
                         periapsis,
+                        altitudeMeters: api.getLowOrbitAltitude(body, options?.meta),
                         hostRelative: segment.from.bodyId !== body.id,
                     },
                 };
             }
 
             if (segment.to.nodeKey === segment.primaryNodeKey && body.parent && body.parent !== options?.meta?.centralBody) {
+                const hostBody = bodies[body.parent];
+                const context = api.computeMoonTransferContext(hostBody, body, options?.meta, 'periapsis');
+                const periapsis = api.lowOrbitRadius(body, options?.meta);
+                const mu = Number(api.getPhysics(body).mu) || 0;
                 return {
-                    dv: Number(body.nodes?.[segment.primaryNodeKey]) || 0,
+                    dv: api.hyperbolicDepartureBurn(mu, periapsis, context.vinfArriveCombined),
                     branchType: 'orbit_to_escape',
                     debug: {
-                        source: `body.nodes.${segment.primaryNodeKey}`,
+                        source: 'formula.moon_escape',
                         hostRelative: true,
+                        periapsis,
+                        altitudeMeters: api.getLowOrbitAltitude(body, options?.meta),
+                        hostLowOrbitAltitudeMeters: api.getLowOrbitAltitude(hostBody, options?.meta),
+                        hostLowOrbitRadiusMeters: context.originRadius,
+                        hostBodyId: hostBody.id,
                     },
                 };
             }
@@ -80,12 +94,57 @@
 
         if (segment.from.nodeKey === segment.primaryNodeKey && segment.to.nodeKey === 'orbit') {
             if (body.parent && body.parent !== meta?.centralBody) {
+                const hostBody = bodies[body.parent];
+                const context = api.computeMoonTransferContext(hostBody, body, meta, 'periapsis');
+                const periapsis = api.flybyPeriapsisRadius(body, meta);
+                const mu = Number(api.getPhysics(body).mu) || 0;
+                const finalSpeed = Math.sqrt(mu / periapsis);
+                const originTopLevelBody = _resolveTransferOriginTopLevelBody(options?.routeContext?.startPoint?.body, bodies, meta);
+                const isForeignHostArrival = originTopLevelBody && originTopLevelBody !== hostBody.id;
+                let hostToMoonInsertion = 0;
+                if (isForeignHostArrival) {
+                    const hostArrivalContext = api.computeInterplanetaryContext(
+                        bodies[originTopLevelBody],
+                        hostBody,
+                        meta,
+                        bodies[meta?.centralBody],
+                    );
+                    const hostPeriapsis = api.flybyPeriapsisRadius(hostBody, meta);
+                    const hostMu = Number(api.getPhysics(hostBody).mu) || 0;
+                    const hostToMoonTransfer = api.hohmannTransferSpeeds(
+                        hostMu,
+                        hostPeriapsis,
+                        context.targetRadius,
+                    );
+                    hostToMoonInsertion = api.hyperbolicCaptureBurn(
+                        hostMu,
+                        hostPeriapsis,
+                        hostArrivalContext.vinfArriveCombined,
+                        hostToMoonTransfer.speedA,
+                    );
+                    const hostSoiRadius = Number(api.getPhysics(hostBody).soiRadius) || 0;
+                    const retargetScale = hostSoiRadius > 0
+                        ? Math.max(0, Math.min(1, context.targetRadius / hostSoiRadius))
+                        : 0;
+                    hostToMoonInsertion += Math.abs(
+                        hostArrivalContext.vinfArriveCoplanar - context.vinfDepartCoplanar,
+                    ) * (1 - retargetScale);
+                }
                 return {
-                    dv: Number(body.nodes?.orbit) || 0,
+                    dv: hostToMoonInsertion + api.hyperbolicCaptureBurn(mu, periapsis, context.vinfArriveCombined, finalSpeed),
                     branchType: 'flyby_to_capture',
                     debug: {
-                        source: 'body.nodes.orbit',
+                        source: 'formula.moon_capture',
                         hostRelative: true,
+                        periapsis,
+                        altitudeMeters: api.getLowOrbitAltitude(body, meta),
+                        flybyAltitudeMeters: api.getFlybyPeriapsisAltitude(body, meta),
+                        hostFlybyAltitudeMeters: isForeignHostArrival ? api.getFlybyPeriapsisAltitude(hostBody, meta) : null,
+                        hostLowOrbitRadiusMeters: context.originRadius,
+                        moonTransferTargetRadiusMeters: context.targetRadius,
+                        hostBodyId: hostBody.id,
+                        hostToMoonInsertion,
+                        isForeignHostArrival,
                     },
                 };
             }
@@ -106,6 +165,8 @@
                             source: 'formula.hyperbolic_capture',
                             arrivalMode: 'combined',
                             periapsis,
+                            altitudeMeters: api.getLowOrbitAltitude(body, meta),
+                            flybyAltitudeMeters: api.getFlybyPeriapsisAltitude(body, meta),
                         },
                     };
                 }
