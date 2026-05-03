@@ -103,11 +103,37 @@
 
         const text = document.createElement('span');
         text.className = 'dropdown-entry-text';
-        text.textContent = `${item.label}: ${_formatEntryDv(item.dv, multiplier)}`;
+        text.appendChild(document.createTextNode(`${item.label}: `));
+        text.appendChild(_createDvValue(item, multiplier));
 
         entry.appendChild(marker);
+        if (item.zeroed) {
+            const aerobrakeMarker = document.createElement('span');
+            aerobrakeMarker.className = 'dropdown-entry-aerobrake';
+            aerobrakeMarker.setAttribute('aria-hidden', 'true');
+            entry.appendChild(aerobrakeMarker);
+        }
         entry.appendChild(text);
         return entry;
+    }
+
+    function _createDvValue(item, multiplier) {
+        const value = document.createElement('span');
+        const adjustedValue = _formatEntryDv(item.dv, multiplier);
+
+        if (!item.zeroed) {
+            value.textContent = adjustedValue;
+            return value;
+        }
+
+        value.className = 'dropdown-entry-value';
+
+        const strike = document.createElement('span');
+        strike.className = 'dropdown-entry-value--discounted';
+        strike.textContent = _formatEntryDv(item.rawDv ?? item.dv, multiplier);
+        value.appendChild(strike);
+
+        return value;
     }
 
     function _formatEntryDv(dv, multiplier) {

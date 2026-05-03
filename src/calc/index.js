@@ -13,6 +13,10 @@
             ipsBranchDV: Number.isFinite(options.ipsBranchDV) ? options.ipsBranchDV : DEFAULT_IPS_BRANCH_DV,
             roundTrip: Boolean(options.roundTrip),
             returnOnly: Boolean(options.returnOnly),
+            aeroLowOrbitDest: Boolean(options.aeroLowOrbitDest),
+            aeroInterceptDest: Boolean(options.aeroInterceptDest),
+            aeroLowOrbitOrigin: Boolean(options.aeroLowOrbitOrigin),
+            aeroInterceptOrigin: Boolean(options.aeroInterceptOrigin),
             redundancyMultiplier: Number.isFinite(options.redundancyMultiplier) ? options.redundancyMultiplier : 1,
         };
     }
@@ -76,19 +80,27 @@
 
         for (const segment of segments) {
             const branchResult = evaluateSegmentBranch(segment, bodies, meta, evaluationOptions);
+            const aerobrakeAdjustment = getAerobrakeAdjustment(segment, branchResult, routeContext, options);
+            const adjustedDv = aerobrakeAdjustment.zeroed ? 0 : branchResult.dv;
             const body = bodies[segment.bodyId];
             breakdown.push({
                 label: api.formatEntryLabel(body, segment.nodeKey),
-                dv: branchResult.dv,
+                dv: adjustedDv,
+                rawDv: branchResult.dv,
                 type: segment.nodeKey,
                 markerBodyId: api.resolveMarkerBodyId(body, segment.nodeKey),
-                zeroed: false,
+                zeroed: aerobrakeAdjustment.zeroed,
+                aerobrake: aerobrakeAdjustment.zeroed ? aerobrakeAdjustment.mode : null,
             });
             debugSegments.push({
                 segment,
                 branchType: branchResult.branchType,
-                dv: branchResult.dv,
-                debug: branchResult.debug,
+                dv: adjustedDv,
+                debug: {
+                    ...branchResult.debug,
+                    aerobrake: aerobrakeAdjustment.zeroed ? aerobrakeAdjustment.mode : null,
+                    rawDv: branchResult.dv,
+                },
             });
         }
 
@@ -176,6 +188,32 @@
             && segment.from.nodeKey === segment.primaryNodeKey
             && segment.to.nodeKey === 'orbit'
         );
+    }
+
+    function getAerobrakeAdjustment(segment, branchResult, routeContext, options) {
+        const isForward = routeContext?.direction === 'forward';
+        const appliesToDestination = segment.bodyId === routeContext?.endPoint?.body;
+
+        if (!appliesToDestination) {
+            return { zeroed: false, mode: null };
+        }
+
+        const interceptToggle = isForward
+            ? options?.aeroInterceptDest
+            : options?.aeroInterceptOrigin;
+        const orbitToggle = isForward
+            ? options?.aeroLowOrbitDest
+            : options?.aeroLowOrbitOrigin;
+
+        if (interceptToggle && (branchResult.branchType === 'flyby_to_capture' || branchResult.branchType === 'orbit_to_surface')) {
+            return { zeroed: true, mode: 'intercept' };
+        }
+
+        if (orbitToggle && branchResult.branchType === 'orbit_to_surface') {
+            return { zeroed: true, mode: 'orbit' };
+        }
+
+        return { zeroed: false, mode: null };
     }
 
     Object.assign(api, {

@@ -97,7 +97,7 @@
 
         const nodeKeys = _getNodeKeys(body);
         nodeKeys.forEach((nodeKey, index) => {
-            if (!['flyby', 'intercept', 'orbit', 'land'].includes(nodeKey)) return;
+            if (!['orbit', 'land'].includes(nodeKey)) return;
 
             const pos = _getPosition(context, `${body.id}_${nodeKey}`);
             if (!pos) return;
@@ -330,7 +330,7 @@
                 bNodes.forEach(nodeId => {
                     const parts = nodeId.split('_');
                     const nodeKey = parts[2];
-                    if (['flyby', 'intercept', 'orbit', 'land'].includes(nodeKey)) {
+                    if (['orbit', 'land'].includes(nodeKey)) {
                         activeIndicators.push(`indicator_${parts[1]}_${nodeKey}`);
                     }
                 });
@@ -349,7 +349,7 @@
                 aNodes.forEach(nodeId => {
                     const parts = nodeId.split('_');
                     const nodeKey = parts[2];
-                    if (['flyby', 'intercept', 'orbit', 'land'].includes(nodeKey)) {
+                    if (['orbit', 'land'].includes(nodeKey)) {
                         activeIndicators.push(`indicator_${parts[1]}_${nodeKey}`);
                     }
                 });
@@ -376,7 +376,7 @@
             if (!body?.surface?.canAerobrake) return;
 
             Object.keys(body.nodes)
-                .filter(key => key !== 'comment' && ['flyby', 'intercept', 'orbit', 'land'].includes(key))
+                .filter(key => key !== 'comment' && ['orbit', 'land'].includes(key))
                 .forEach(key => nodeIds.push(`node_${body.id}_${key}`));
         });
 
