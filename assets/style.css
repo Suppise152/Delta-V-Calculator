@@ -670,12 +670,12 @@ body {
 
 .dropdown-entry--end {
     color: #e05555;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 0, 0, 0.1);
 }
 
 .dropdown-entry--start {
     color: rgb(50, 255, 50);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 255, 64, 0.1);
 }
 
 .dropdown-entry--surface {
