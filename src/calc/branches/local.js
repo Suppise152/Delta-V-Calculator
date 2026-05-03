@@ -100,7 +100,9 @@
                 const mu = Number(api.getPhysics(body).mu) || 0;
                 const finalSpeed = Math.sqrt(mu / periapsis);
                 const originTopLevelBody = _resolveTransferOriginTopLevelBody(options?.routeContext?.startPoint?.body, bodies, meta);
-                const isForeignHostArrival = originTopLevelBody && originTopLevelBody !== hostBody.id;
+                const isForeignHostArrival = hostBody.parent === meta?.centralBody
+                    && originTopLevelBody
+                    && originTopLevelBody !== hostBody.id;
                 let hostToMoonInsertion = 0;
                 if (isForeignHostArrival) {
                     const hostArrivalContext = api.computeInterplanetaryContext(

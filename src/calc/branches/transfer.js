@@ -64,9 +64,10 @@
             const hostBody = bodies[body.parent];
             const context = api.computeMoonTransferContext(hostBody, body, meta, 'periapsis');
             const fromHostIntercept = segment.from.bodyId === hostBody.id && segment.from.nodeKey === api.getNodeKeys(hostBody)[0];
+            const isTopLevelHostArrival = hostBody.parent === meta?.centralBody;
             let coplanarExtra = Math.abs(context.transferDepartSpeed - context.originSpeed);
             let planeChangeSpeed = context.transferArriveSpeed;
-            if (fromHostIntercept) {
+            if (fromHostIntercept && isTopLevelHostArrival) {
                 const originTopLevelBody = _resolveTransferOriginTopLevelBody(options?.routeContext?.startPoint?.body, bodies, meta);
                 const hostArrivalContext = originTopLevelBody && originTopLevelBody !== hostBody.id
                     ? api.computeInterplanetaryContext(bodies[originTopLevelBody], hostBody, meta, bodies[meta?.centralBody])
@@ -90,6 +91,7 @@
                     planeChange,
                     hostBodyId: hostBody.id,
                     fromHostIntercept,
+                    isTopLevelHostArrival,
                     planeChangeSpeed,
                     hostLowOrbitAltitudeMeters: api.getLowOrbitAltitude(hostBody, meta),
                     hostLowOrbitRadiusMeters: context.originRadius,
