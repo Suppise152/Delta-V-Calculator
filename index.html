@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KSP Delta V Calculator | Suppise Aerospace</title>
-    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -16,8 +16,7 @@
             allow_local: true,
         };
     </script>
-    <script data-goatcounter="https://suppise.goatcounter.com/count"
-            async src="//gc.zgo.at/count.js"></script>
+    <script data-goatcounter="https://suppise.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 
 <body>
@@ -32,7 +31,7 @@
             </div>
         </div>
         <footer class="site-footer">
-            <span id="version-info">Version 2.0.1</span>
+            <span id="version-info">Version 2.0.0-dev</span>
         </footer>
     </header>
 
@@ -48,7 +47,7 @@
                 This is an interactive ΔV map. Simply click on a node on a branch to
                 determine the target planet, and how you would like to explore it.
                 Toggle the checkboxes to tweak the calculations to your mission
-                parameters, and watch the required ΔV values as well as the relevant
+                parameters, and the required ΔV values as well as the relevant
                 transfer angles be displayed in real time.
             </p>
             <h2>Using a Delta-V Map</h2>
@@ -67,6 +66,97 @@
                 left. Performing manoeuvres such as changing your orbit or landing on a
                 planet will use up some of your ΔV. Knowing how much ΔV is required to
                 perform a given task is essential for planning any mission.
+            </p>
+            <h2>The Math</h2>
+
+            <p>
+                Rather than a look-up table, this site dynamically calculates the required ΔV for each mission profile.
+                After the route is selected, the calculator assigns a manoeuvre class to each segment of the route,
+                of which there are three.<br>
+                In the expressions below:<br>
+                - <code>&mu; = GM</code> is the standard gravitational parameter of the central body<br>
+                - <code>r</code> is the parking-orbit radius<br>
+                - <code>a</code> is the semi-major axis of the transfer ellipse.
+            </p>
+
+            <h3>Orbit to Escape</h3>
+            <p>
+                For a circular parking orbit of radius <code>r<sub>0</sub></code>, the local orbital speed is
+                <code>v<sub>circ</sub> = &radic;(&mu; / r<sub>0</sub>)</code>.
+                Pure escape from that radius requires
+                <code>v<sub>esc</sub> = &radic;(2&mu; / r<sub>0</sub>)</code>,
+                giving the ideal escape burn
+                <code>&Delta;v<sub>esc</sub> = v<sub>esc</sub> - v<sub>circ</sub></code>.<br>
+                This site assumes the transfer is a non-zero hyperbolic excess velocity <code>v<sub>&infin;</sub></code>,
+                giving the escape burn as
+                <code>&Delta;v<sub>ej</sub> = &radic;(v<sub>&infin;</sub><sup>2</sup> + 2&mu;/r<sub>0</sub>) - &radic;(&mu;/r<sub>0</sub>)</code>.
+            </p>
+
+            <h3>Interplanetary Point A-B</h3>
+            <p>
+                This site assumes an ideal coplanar Hohmann transfer from orbit A to orbit B,
+                the transfer semi-major axis for which is
+                <code>a<sub>t</sub> = (r<sub>A</sub> + r<sub>B</sub>) / 2</code>.<br>
+                The circular speeds: <br>
+                <code>v<sub>A</sub> = &radic;(&mu;/r<sub>A</sub>)</code> <br>
+                <code>v<sub>B</sub> = &radic;(&mu;/r<sub>B</sub>)</code>.<br>
+                The transfer-orbit speeds at the two ends: <br>
+                <code>v<sub>t,A</sub> = &radic;(&mu;(2/r<sub>A</sub> - 1/a<sub>t</sub>))</code> <br>
+                <code>v<sub>t,B</sub> = &radic;(&mu;(2/r<sub>B</sub> - 1/a<sub>t</sub>))</code>.<br>
+                The ideal heliocentric burns are therefore: <br>
+                <code>&Delta;v<sub>A</sub> = |v<sub>t,A</sub> - v<sub>A</sub>|</code> <br>
+                <code>&Delta;v<sub>B</sub> = |v<sub>B</sub> - v<sub>t,B</sub>|</code>.
+            </p>
+
+            <h3>Capture to Low Orbit</h3>
+            <p>
+                On arrival, let the incoming hyperbolic excess velocity relative to the target be
+                <code>v<sub>&infin;</sub></code>.<br>
+                At periapsis radius <code>r<sub>p</sub></code>, the hyperbolic periapsis speed is
+                <code>v<sub>p,hyp</sub> = &radic;(v<sub>&infin;</sub><sup>2</sup> + 2&mu;/r<sub>p</sub>)</code>.<br>
+                The circular low-orbit speed at that same radius is
+                <code>v<sub>circ,p</sub> = &radic;(&mu;/r<sub>p</sub>)</code>.<br>
+                The ideal capture burn is then
+                <code>&Delta;v<sub>cap</sub> = v<sub>p,hyp</sub> - v<sub>circ,p</sub></code>.
+            </p>
+
+            <h3>Transfer Windows</h3>
+            <p>
+                The Hohmann transfer time between two circular orbits is
+                <code>t<sub>trans</sub> = &pi;&radic;(a<sub>t</sub><sup>3</sup> / &mu;)</code>.<br>
+                The corresponding mean motions are:<br>
+                <code>n<sub>A</sub> = &radic;(&mu;/r<sub>A</sub><sup>3</sup>)</code> <br>
+                <code>n<sub>B</sub> = &radic;(&mu;/r<sub>B</sub><sup>3</sup>)</code>.<br>
+                The required departure phase angle for A to B is:<br>
+                <code>&phi;<sub>A&rarr;B</sub> = &pi; - n<sub>B</sub> t<sub>trans</sub></code>,<br>
+                while the reverse transfer is:<br>
+                <code>&phi;<sub>B&rarr;A</sub> = &pi; - n<sub>A</sub> t<sub>trans</sub></code>.<br>
+                Converting to degrees gives
+                <code>&phi;<sub>deg</sub> = &phi; &times; 180 / &pi;</code>,
+                assuming the target is ahead of the origin in its orbit.
+            </p>
+
+            <h3>Assumptions</h3>
+            <p>
+                The calculator makes the following explicit assumptions:<br>
+                1. All transfer-window solutions are ideal two-body Hohmann transfers between the selected orbital radii.<br>
+                2. Departure and arrival burns are treated as impulsive burns rather than finite-duration burns.<br>
+                3. Mean motion is taken from sidereal period where available, otherwise reconstructed from <code>&mu;</code> and semi-major axis.<br>
+                4. Interplanetary transfer geometry is evaluated from orbital radii rather than a full Lambert solution over arbitrary departure dates.<br>
+                5. Hyperbolic departure and capture are modeled with patched conics.<br>
+                6. Local parking orbits are treated as circular for low-orbit, escape, and capture calculations.<br>
+                7. Low-orbit radius is 10km above the planet's surface or atmosphere.<br>
+                8. Flyby or capture periapsis is 10km above the planet's surface or atmosphere.<br>
+                9. Escape and capture burns are evaluated at periapsis.<br>
+                10. Pure local escape assumes <code>v<sub>&infin;</sub> = 0</code>.<br>
+                11. For top-level interplanetary transfers, departure-side <code>v<sub>&infin;</sub> = |v<sub>t,A</sub> - v<sub>A</sub>|</code>.<br>
+                12. For top-level interplanetary arrivals, arrival-side <code>v<sub>&infin;</sub> = |v<sub>B</sub> - v<sub>t,B</sub>|</code>.<br>
+                13. Where orbital planes differ, the burn is combined with a plane-change rotation rather than treating it as a separate manoeuvre.<br>
+                14. Plane angle is derived from the relative inclination and longitude of ascending node only.<br>
+                15. Plane-change cost uses the impulsive approximation <code>&Delta;v = 2v sin(&theta;/2)</code> at the speed chosen for that branch.<br>
+                16. Surface-to-orbit and orbit-to-surface costs are taken from body data rather than being derived from thrust, drag, gravity turn, or entry simulation.<br>
+                17. Thrust limits, steering losses, long-burn Oberth inefficiency, and staging transients are ignored.<br>
+                18. Aerobraking conditions remove the entire ΔV cost for the relevant branch.<br>
             </p>
         </aside>
 

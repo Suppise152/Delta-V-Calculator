@@ -157,6 +157,15 @@ body {
     direction: ltr;
 }
 
+.panel-left h3 {
+    margin: 14px 0 4px 14px;
+    font-family: var(--font-ui);
+    font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+    font-weight: 700;
+    text-align: left;
+    direction: ltr;
+}
+
 .panel-left p {
     font-size: clamp(0.95rem, 1.3vw, 1.3rem);
     line-height: 1.6;
