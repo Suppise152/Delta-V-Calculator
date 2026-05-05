@@ -71,11 +71,10 @@
 
             <p>
                 Rather than a look-up table, this site dynamically calculates the required ΔV for each mission profile.
-                After the route is selected, the calculator assigns a manoeuvre class to each segment of the route,
-                of which there are three.<br>
+                After the route is selected, the calculator evaluates it using four primary calculation blocks.<br>
                 In the expressions below:<br>
-                - <code>&mu; = GM</code> is the standard gravitational parameter of the central body<br>
-                - <code>r</code> is the parking-orbit radius<br>
+                - <code>&mu; = GM</code> is the standard gravitational parameter of the relevant central body<br>
+                - <code>r</code> is the relevant orbital or parking-orbit radius<br>
                 - <code>a</code> is the semi-major axis of the transfer ellipse.
             </p>
 
@@ -87,15 +86,14 @@
                 <code>v<sub>esc</sub> = &radic;(2&mu; / r<sub>0</sub>)</code>,
                 giving the ideal escape burn
                 <code>&Delta;v<sub>esc</sub> = v<sub>esc</sub> - v<sub>circ</sub></code>.<br>
-                This site assumes the transfer is a non-zero hyperbolic excess velocity <code>v<sub>&infin;</sub></code>,
-                giving the escape burn as
+                Including hyperbolic excess velocity <code>v<sub>&infin;</sub></code>, the escape burn becomes
                 <code>&Delta;v<sub>ej</sub> = &radic;(v<sub>&infin;</sub><sup>2</sup> + 2&mu;/r<sub>0</sub>) - &radic;(&mu;/r<sub>0</sub>)</code>.
             </p>
 
-            <h3>Interplanetary Point A-B</h3>
+            <h3>Interplanetary Transfer A-B</h3>
             <p>
-                This site assumes an ideal coplanar Hohmann transfer from orbit A to orbit B,
-                the transfer semi-major axis for which is
+                The interplanetary leg is modeled as an ideal coplanar Hohmann transfer from orbit A to orbit B.
+                The transfer semi-major axis is
                 <code>a<sub>t</sub> = (r<sub>A</sub> + r<sub>B</sub>) / 2</code>.<br>
                 The circular speeds: <br>
                 <code>v<sub>A</sub> = &radic;(&mu;/r<sub>A</sub>)</code> <br>
