@@ -150,8 +150,8 @@
     }
 
     .toggle-label input[type="checkbox"] {
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
         flex-shrink: 0;
     }
 
@@ -213,16 +213,16 @@
 
     .transfer-row {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         flex-wrap: nowrap;
         gap: 14px;
         align-items: stretch;
     }
 
     .transfer-block {
-        flex: none;
+        flex: 1 1 0;
         min-width: 0;
-        width: 100%;
+        width: auto;
     }
 
     .result-group {

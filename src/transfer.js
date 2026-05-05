@@ -125,7 +125,7 @@ function _syncTransferDiagramSizes() {
         if (transferBlocks.length !== TRANSFER_BLOCK_IDS.length) return;
 
         if (_isMobilePortraitLayout()) {
-            resultsLayoutEl.dataset.layout = 'stacked';
+            resultsLayoutEl.dataset.layout = 'pair';
             transferBlocks.forEach((block) => {
                 block.diagramEl.style.removeProperty('--phase-diagram-size');
                 block.blockEl.style.setProperty('--transfer-block-min-width', '0px');
