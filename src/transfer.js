@@ -109,7 +109,6 @@ function _syncTransferDiagramSizes() {
             const angleRect = angleEl.getBoundingClientRect();
             const blockRect = blockEl.getBoundingClientRect();
             const labelWidth = Math.ceil(labelEl?.scrollWidth ?? 0);
-            const stackedWidth = labelWidth;
             const angleBottomOffset = Math.ceil(angleRect.bottom - blockRect.top);
             const blockStyles = window.getComputedStyle(blockEl);
             const blockGap = Number.parseFloat(blockStyles.rowGap || blockStyles.gap || '0') || 0;
@@ -120,7 +119,6 @@ function _syncTransferDiagramSizes() {
                 blockEl,
                 diagramEl,
                 labelWidth,
-                stackedWidth,
             });
         });
 
@@ -139,24 +137,34 @@ function _syncTransferDiagramSizes() {
         const transferRowStyles = window.getComputedStyle(transferRowEl);
         const layoutGap = Number.parseFloat(layoutStyles.rowGap || layoutStyles.gap || '0') || 0;
         const transferGap = Number.parseFloat(transferRowStyles.columnGap || transferRowStyles.gap || '0') || 0;
+        const stackedGap = Number.parseFloat(transferRowStyles.rowGap || transferRowStyles.gap || '0') || 0;
         const dvWidth = Math.ceil(dvGroupEl.getBoundingClientRect().width);
         const dvHeight = Math.ceil(dvGroupEl.getBoundingClientRect().height);
+        const stackedBlockHeight = Math.max(
+            0,
+            Math.floor((resultsHeight - dvHeight - layoutGap - (stackedGap * (transferBlocks.length - 1))) / transferBlocks.length),
+        );
 
         const wideWidths = transferBlocks.map((block) => {
-            const availableHeight = Math.max(0, Math.floor(resultsHeight - block.angleBottomOffset - block.blockGap));
+            const size = Math.max(0, Math.floor(resultsHeight - block.angleBottomOffset - block.blockGap));
             return {
-                minWidth: Math.max(block.labelWidth, availableHeight),
-                size: availableHeight,
+                minWidth: Math.max(block.labelWidth, size),
+                size,
             };
         });
 
         const pairWidths = transferBlocks.map((block) => {
-            const availableHeight = Math.max(0, Math.floor(resultsHeight - dvHeight - layoutGap - block.angleBottomOffset - block.blockGap));
+            const size = Math.max(0, Math.floor(resultsHeight - dvHeight - layoutGap - block.angleBottomOffset - block.blockGap));
             return {
-                minWidth: Math.max(block.labelWidth, availableHeight),
-                size: availableHeight,
+                minWidth: Math.max(block.labelWidth, size),
+                size,
             };
         });
+
+        const stackedSizes = transferBlocks.map((block) => Math.max(
+            0,
+            stackedBlockHeight - block.angleBottomOffset - block.blockGap,
+        ));
 
         const wideWidth = wideWidths.reduce((sum, block) => sum + block.minWidth, 0) + (transferGap * (wideWidths.length - 1));
         const pairWidth = pairWidths.reduce((sum, block) => sum + block.minWidth, 0) + (transferGap * (pairWidths.length - 1));
@@ -171,8 +179,8 @@ function _syncTransferDiagramSizes() {
 
         transferBlocks.forEach((block, index) => {
             const horizontalMetrics = nextLayout === 'wide' ? wideWidths[index] : pairWidths[index];
-            const size = nextLayout === 'stacked' ? block.stackedWidth : horizontalMetrics.size;
-            const minWidth = nextLayout === 'stacked' ? block.stackedWidth : horizontalMetrics.minWidth;
+            const size = nextLayout === 'stacked' ? stackedSizes[index] : horizontalMetrics.size;
+            const minWidth = nextLayout === 'stacked' ? 0 : horizontalMetrics.minWidth;
 
             block.diagramEl.style.setProperty('--phase-diagram-size', `${size}px`);
             block.blockEl.style.setProperty('--transfer-block-min-width', `${minWidth}px`);

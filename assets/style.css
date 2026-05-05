@@ -31,12 +31,12 @@
     --map-h: 55%;
     --controls-h: 45%;
 
-    --font-size-base: clamp(10px, 1.0vw, 12px);
-    --font-size-small: clamp(0.82rem, 0.9vw, 1rem);
-    --font-size-ui: clamp(0.95rem, 1vw, 1.2rem);
-    --font-size-ui-large: clamp(1.25rem, 1.8vw, 2rem);
-    --checkbox-size: clamp(12px, 0.65vw, 16px);
-    --toggle-vertical-gap: clamp(0.1rem, 0.9vw, 0.3rem);
+    --font-size-base: clamp(10px, 0.5vw + 0.28vh, 11px);
+    --font-size-small: clamp(0.78rem, 0.4vw + 0.32vh, 0.94rem);
+    --font-size-ui: clamp(0.9rem, 0.46vw + 0.34vh, 1.08rem);
+    --font-size-ui-large: clamp(1.1rem, 0.8vw + 0.55vh, 1.7rem);
+    --checkbox-size: clamp(11px, 0.2vw + 0.42vh, 14px);
+    --toggle-vertical-gap: clamp(0.08rem, 0.12vw + 0.16vh, 0.22rem);
     --banner-logo-width: 17vh;
     --banner-logo-height: 17vh;
     --banner-logo-wrapper-width: 17vh;
@@ -404,7 +404,7 @@ body {
 }
 
 .result-display--angle {
-    font-size: clamp(1.1rem, 1.7vw, 1.2rem);
+    font-size: clamp(1.25rem, 1.85vw, 1.8rem);
     width: 100px;
 }
 
@@ -544,6 +544,16 @@ body {
     flex-wrap: nowrap;
     align-items: stretch;
     align-self: stretch;
+}
+
+.results-layout[data-layout="stacked"] .transfer-row {
+    align-self: stretch;
+    width: 100%;
+}
+
+.results-layout[data-layout="stacked"] .transfer-block {
+    width: 100%;
+    max-width: 100%;
 }
 
 .results-layout[data-layout="pair"] .transfer-block,
@@ -905,4 +915,43 @@ body {
 #version-info {
     font-size: 10px;
     color: rgb(198, 213, 234);
+}
+
+@media (min-width: 1200px) and (max-height: 950px) {
+    :root {
+        --font-size-base: clamp(10px, 0.42vw + 0.24vh, 10.5px);
+        --font-size-small: clamp(0.76rem, 0.34vw + 0.28vh, 0.9rem);
+        --font-size-ui: clamp(0.86rem, 0.38vw + 0.3vh, 1rem);
+        --font-size-ui-large: clamp(1.05rem, 0.7vw + 0.48vh, 1.55rem);
+        --checkbox-size: clamp(10px, 0.16vw + 0.36vh, 13px);
+        --toggle-vertical-gap: clamp(0.06rem, 0.08vw + 0.12vh, 0.16rem);
+        --banner-title-font-size: clamp(4rem, 7.5vh, 7rem);
+    }
+
+    .controls-bar {
+        padding: 8px 14px 10px;
+    }
+
+    .map-controls,
+    .results-panel {
+        padding: 8px 14px 10px;
+    }
+
+    .results-layout,
+    .transfer-row {
+        gap: 12px;
+    }
+
+    .result-row {
+        gap: 10px;
+    }
+
+    .result-group--dv .result-row {
+        margin-bottom: 4px;
+    }
+
+    .result-action {
+        margin-top: 4px;
+        padding: 8px 10px;
+    }
 }
