@@ -90,6 +90,12 @@
         background: #66b0ec;
     }
 
+    .site-footer {
+        position: fixed;
+        top: calc(17vh + 8px);
+        right: 8px;
+    }
+
     /* Firefox scrollbar */
     .map-container {
         scrollbar-width: auto;

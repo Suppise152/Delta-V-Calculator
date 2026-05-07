@@ -30,9 +30,6 @@
                 <div class="banner-title">Suppise Delta-V Calculator</div>
             </div>
         </div>
-        <footer class="site-footer">
-            <span id="version-info">Version 2.0.0-dev</span>
-        </footer>
     </header>
 
     <main class="content">
@@ -67,7 +64,7 @@
                 planet will use up some of your ΔV. Knowing how much ΔV is required to
                 perform a given task is essential for planning any mission.
             </p>
-            <h2>The Math</h2>
+            <h2>The Mathematics</h2>
 
             <p>
                 Rather than a look-up table, this site dynamically calculates the required ΔV for each mission profile.
@@ -136,31 +133,36 @@
 
             <h3>Assumptions</h3>
             <p>
-                The calculator makes the following explicit assumptions:<br>
-                1. All transfer-window solutions are ideal two-body Hohmann transfers between the selected orbital radii.<br>
-                2. Departure and arrival burns are treated as impulsive burns rather than finite-duration burns.<br>
-                3. Mean motion is taken from sidereal period where available, otherwise reconstructed from <code>&mu;</code> and semi-major axis.<br>
-                4. Interplanetary transfer geometry is evaluated from orbital radii rather than a full Lambert solution over arbitrary departure dates.<br>
-                5. Hyperbolic departure and capture are modeled with patched conics.<br>
-                6. Local parking orbits are treated as circular for low-orbit, escape, and capture calculations.<br>
-                7. Low-orbit radius is 10km above the planet's surface or atmosphere.<br>
-                8. Flyby or capture periapsis is 10km above the planet's surface or atmosphere.<br>
-                9. Escape and capture burns are evaluated at periapsis.<br>
-                10. Pure local escape assumes <code>v<sub>&infin;</sub> = 0</code>.<br>
-                11. For top-level interplanetary transfers, departure-side <code>v<sub>&infin;</sub> = |v<sub>t,A</sub> - v<sub>A</sub>|</code>.<br>
-                12. For top-level interplanetary arrivals, arrival-side <code>v<sub>&infin;</sub> = |v<sub>B</sub> - v<sub>t,B</sub>|</code>.<br>
-                13. Where orbital planes differ, the burn is combined with a plane-change rotation rather than treating it as a separate manoeuvre.<br>
-                14. Plane angle is derived from the relative inclination and longitude of ascending node only.<br>
-                15. Plane-change cost uses the impulsive approximation <code>&Delta;v = 2v sin(&theta;/2)</code> at the speed chosen for that branch.<br>
-                16. Surface-to-orbit and orbit-to-surface costs are taken from body data rather than being derived from thrust, drag, gravity turn, or entry simulation.<br>
-                17. Thrust limits, steering losses, long-burn Oberth inefficiency, and staging transients are ignored.<br>
-                18. Aerobraking conditions remove the entire ΔV cost for the relevant branch.<br>
+                The calculator makes the following explicit assumptions:
             </p>
+            <ol class="assumptions-list">
+                <li>All transfer-window solutions are ideal two-body Hohmann transfers between the selected orbital radii.</li>
+                <li>Departure and arrival burns are treated as impulsive burns rather than finite-duration burns.</li>
+                <li>Mean motion is taken from sidereal period where available, otherwise reconstructed from <code>&mu;</code> and semi-major axis.</li>
+                <li>Interplanetary transfer geometry is evaluated from orbital radii rather than a full Lambert solution over arbitrary departure dates.</li>
+                <li>Hyperbolic departure and capture are modeled with patched conics.</li>
+                <li>Local parking orbits are treated as circular for low-orbit, escape, and capture calculations.</li>
+                <li>Low-orbit radius is 10km above the planet's surface or atmosphere.</li>
+                <li>Flyby or capture periapsis is 10km above the planet's surface or atmosphere.</li>
+                <li>Escape and capture burns are evaluated at periapsis.</li>
+                <li>Pure local escape assumes <code>v<sub>&infin;</sub> = 0</code>.</li>
+                <li>For top-level interplanetary transfers, departure-side <code>v<sub>&infin;</sub> = |v<sub>t,A</sub> - v<sub>A</sub>|</code>.</li>
+                <li>For top-level interplanetary arrivals, arrival-side <code>v<sub>&infin;</sub> = |v<sub>B</sub> - v<sub>t,B</sub>|</code>.</li>
+                <li>Where orbital planes differ, the burn is combined with a plane-change rotation rather than treating it as a separate manoeuvre.</li>
+                <li>Plane angle is derived from the relative inclination and longitude of ascending node only.</li>
+                <li>Plane-change cost uses the impulsive approximation <code>&Delta;v = 2v sin(&theta;/2)</code> at the speed chosen for that branch.</li>
+                <li>Surface-to-orbit and orbit-to-surface costs are taken from body data rather than being derived from thrust, drag, gravity turn, or entry simulation.</li>
+                <li>Thrust limits, steering losses, long-burn Oberth inefficiency, and staging transients are ignored.</li>
+                <li>Aerobraking conditions remove the entire &Delta;V cost for the relevant branch.</li>
+            </ol>
         </aside>
 
         <section class="panel-right">
 
             <div class="map-container" id="map-container">
+                <footer class="site-footer">
+                    <span id="version-info">Version 2.0.0-dev</span>
+                </footer>
                 <div class="map-placeholder" id="map-placeholder">
                     <span>Map loading...</span>
                 </div>

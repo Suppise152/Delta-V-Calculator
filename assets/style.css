@@ -173,6 +173,19 @@ body {
     direction: ltr;
 }
 
+.assumptions-list {
+    margin: 0 0 1em 1.6em;
+    padding-left: 1.1em;
+    font-size: clamp(0.95rem, 1.3vw, 1.3rem);
+    line-height: 1.6;
+    font-family: var(--font-ui);
+    direction: ltr;
+}
+
+.assumptions-list li::marker {
+    font-weight: 700;
+}
+
 /* Scrollbar styling for left panel */
 .panel-left::-webkit-scrollbar {
     width: 12px;
@@ -214,6 +227,7 @@ body {
     padding: 10px 12px 6px;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .map-container svg,
@@ -255,6 +269,7 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     gap: var(--toggle-vertical-gap);
+    padding-right: 18px;
     font-family: var(--font-ui);
     font-size: var(--font-size-ui);
 }
@@ -914,8 +929,8 @@ body {
 /* ─── FOOTER ──────────────────────────────────────────────────── */
 .site-footer {
     position: absolute;
-    bottom: 5px;
-    right: 10px;
+    top: 10px;
+    right: 12px;
     font-family: var(--font-ui);
     pointer-events: none;
     z-index: 10;
