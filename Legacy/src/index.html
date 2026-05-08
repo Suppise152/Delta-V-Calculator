@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>KSP Delta V Calculator | Suppise Aerospace</title>
+  <link rel="icon" href="favicon.ico" type="images/general/logo2.png">
+</head>
+
+<body>
+
+  <body onload="setDefaultSliderValue()">
+    <div class="banner">
+      <img id="bannerPic" src="images/general/banner.png" alt="bannerPic">
+      <img id="mobileBannerPic" src="images/general/mobileBanner.png" alt="mobileBannerPic">
+
+      <!-- Styles -->
+      <link rel="stylesheet" href="Styles/default.css">
+      <link rel="stylesheet" href="Styles/mobile.css" media="screen and (max-width: 1200px)">
+    </div>
+    <div class="content">
+      <div class="left-section">
+        <h2>How to Use this Site</h2>
+        <p>
+          This is an interactive ΔV map. Simply click on a node on a branch to determine the target planet, and how you
+          would like to explore it. Toggle the checkboxes to tweak the calculations to your mission parameters, and
+          watch the required ΔV values as well as the relevant transfer angles be displayed in real time.
+        </p>
+
+        <h2>Using a Delta-V Map</h2>
+        <p>
+          To use a typical ΔV map, you add all the values along the branch, from your starting position to your target
+          position. A white arrow in the direction of your travel means you can aerobrake there and can therefore
+          exclude the value from your calculation. The values above a branch indicate plane changes. This site performs
+          all these calculations for you.
+        </p>
+
+        <h2>What is Delta-V (ΔV)</h2>
+        <p>
+          Delta-V, or ΔV, is a crafts capacity to change its velocity, and can be interpreted as the range of a given
+          craft. Similar to how a car may say it has 50 km of fuel left, a spacecraft may have 5000 m/s of ΔV left.
+          Performing maneuvers such as changing your orbit or landing on a planet will use up some of your ΔV. Knowing
+          how much ΔV is required to perform a given task is essential for planning any mission.
+        </p>
+      </div>
+      <div class="right-section"></div>
+      <input type="text" id="dV_display" readonly>
+      <div id="dV">Delta V Required:</div>
+
+      <input type="text" id="arrival_angle" readonly>
+      <div id="arrival">Transfer Angle <br> to Target:</div>
+
+      <input type="text" id="departure_angle" readonly>
+      <div id="departure">Transfer Angle <br> from Target:</div>
+
+      <div class="dropdown">
+        <div class="dropdown-content" id="dv-dropdown">
+          <!-- Entries added dynamically -->
+        </div>
+      </div>
+
+      <!-- dv map display -->
+      <img id="calculator-image" src="images/maps/mapV3.png" alt="Calculator Image">
+      <div class="paths">
+        <img id="sun0" src="images/maps/sun0.png" alt="sun0">
+        <img id="sun1" src="images/maps/sun1.png" alt="sun1">
+        <img id="moho0" src="images/maps/moho0.png" alt="moho0">
+        <img id="moho1" src="images/maps/moho1.png" alt="moho1">
+        <img id="moho2" src="images/maps/moho2.png" alt="moho2">
+        <img id="eve0" src="images/maps/eve0.png" alt="eve0">
+        <img id="eve1" src="images/maps/eve1.png" alt="eve1">
+        <img id="eve2" src="images/maps/eve2.png" alt="eve2">
+        <img id="gilly0" src="images/maps/gilly0.png" alt="gilly0">
+        <img id="gilly1" src="images/maps/gilly1.png" alt="gilly1">
+        <img id="gilly2" src="images/maps/gilly2.png" alt="gilly2">
+        <img id="kerbin0" src="images/maps/kerbin0.png" alt="kerbin0">
+        <img id="kerbin1" src="images/maps/kerbin1.png" alt="kerbin1">
+        <img id="mun0" src="images/maps/mun0.png" alt="mun0">
+        <img id="mun1" src="images/maps/mun1.png" alt="mun1">
+        <img id="mun2" src="images/maps/mun2.png" alt="mun2">
+        <img id="minmus0" src="images/maps/minmus0.png" alt="minmus0">
+        <img id="minmus1" src="images/maps/minmus1.png" alt="minmus1">
+        <img id="minmus2" src="images/maps/minmus2.png" alt="minmus2">
+        <img id="duna0" src="images/maps/duna0.png" alt="duna0">
+        <img id="duna1" src="images/maps/duna1.png" alt="duna1">
+        <img id="duna2" src="images/maps/duna2.png" alt="duna2">
+        <img id="ike0" src="images/maps/ike0.png" alt="ike0">
+        <img id="ike1" src="images/maps/ike1.png" alt="ike1">
+        <img id="ike2" src="images/maps/ike2.png" alt="ike2">
+        <img id="dres0" src="images/maps/dres0.png" alt="dres0">
+        <img id="dres1" src="images/maps/dres1.png" alt="dres1">
+        <img id="dres2" src="images/maps/dres2.png" alt="dres2">
+        <img id="jool0" src="images/maps/jool0.png" alt="jool0">
+        <img id="jool1" src="images/maps/jool1.png" alt="jool1">
+        <img id="jool2" src="images/maps/jool2.png" alt="jool2">
+        <img id="laythe0" src="images/maps/laythe0.png" alt="laythe0">
+        <img id="laythe1" src="images/maps/laythe1.png" alt="laythe1">
+        <img id="laythe2" src="images/maps/laythe2.png" alt="laythe2">
+        <img id="vall0" src="images/maps/vall0.png" alt="vall0">
+        <img id="vall1" src="images/maps/vall1.png" alt="vall1">
+        <img id="vall2" src="images/maps/vall2.png" alt="vall2">
+        <img id="tylo0" src="images/maps/tylo0.png" alt="tylo0">
+        <img id="tylo1" src="images/maps/tylo1.png" alt="tylo1">
+        <img id="tylo2" src="images/maps/tylo2.png" alt="tylo2">
+        <img id="bop0" src="images/maps/bop0.png" alt="bop0">
+        <img id="bop1" src="images/maps/bop1.png" alt="bop1">
+        <img id="bop2" src="images/maps/bop2.png" alt="bop2">
+        <img id="pol0" src="images/maps/pol0.png" alt="pol0">
+        <img id="pol1" src="images/maps/pol1.png" alt="pol1">
+        <img id="pol2" src="images/maps/pol2.png" alt="pol2">
+        <img id="eeloo0" src="images/maps/eeloo0.png" alt="eeloo0">
+        <img id="eeloo1" src="images/maps/eeloo1.png" alt="eeloo1">
+        <img id="eeloo2" src="images/maps/eeloo2.png" alt="eeloo2">
+      </div>
+
+      <img id="aeroArrive" src="images/aerobreak/aeroArrive.png" alt="Aerobrake Arrival" class="aero">
+      <img id="aeroReturn" src="images/aerobreak/aeroReturn.png" alt="Aerobrake Return" class="aero">
+      <img id="aeroArriveLO" src="images/aerobreak/aeroArriveLO.png" alt="Aerobrake Arrive LO" class="aero">
+      <img id="aeroReturnLO" src="images/aerobreak/aeroReturnLO.png" alt="Aerobrake Return LO" class="aero">
+
+      <img id="emptyPhaseAngleArrive" src="images/transferAngles/emptyPhaseAngleArrive.png" alt="Transfer Angle Arrive">
+      <img id="mohoArrive" src="images/transferAngles/mohoArrive.png" alt="mohoArrive">
+      <img id="eveArrive" src="images/transferAngles/eveArrive.png" alt="eveArrive">
+      <img id="dunaArrive" src="images/transferAngles/dunaArrive.png" alt="dunaArrive">
+      <img id="dresArrive" src="images/transferAngles/dresArrive.png" alt="dresArrive">
+      <img id="joolArrive" src="images/transferAngles/joolArrive.png" alt="joolArrive">
+      <img id="eelooArrive" src="images/transferAngles/eelooArrive.png" alt="eelooArrive">
+      <div id="transferAngleArriveText">Transfer Window to Target</div>
+
+      <img id="emptyPhaseAngleDepart" src="images/transferAngles/emptyPhaseAngleDepart.png" alt="Transfer Angle Depart">
+      <img id="mohoDepart" src="images/transferAngles/mohoDepart.png" alt="mohoDepart">
+      <img id="eveDepart" src="images/transferAngles/eveDepart.png" alt="eveDepart">
+      <img id="dunaDepart" src="images/transferAngles/dunaDepart.png" alt="dunaDepart">
+      <img id="dresDepart" src="images/transferAngles/dresDepart.png" alt="dresDepart">
+      <img id="joolDepart" src="images/transferAngles/joolDepart.png" alt="joolDepart">
+      <img id="eelooDepart" src="images/transferAngles/eelooDepart.png" alt="eelooDepart">
+      <div id="transferAngleDepartText">Transfer Window from Target</div>
+
+      <div class="toggle-boxes"> <!-- Apear in the order of which they are on the site (not numerical) -->
+        <label>
+          <input type="checkbox" id="toggle1" onchange="handleToggleChange('toggle1')">Round Trip
+        </label>
+        <label>
+          <input type="checkbox" id="toggle2" onchange="handleToggleChange('toggle2')">Aerobrake from Low Orbit on
+          Arrival
+        </label>
+        <label>
+          <input type="checkbox" id="toggle3" onchange="handleToggleChange('toggle3')">Aerobrake from Intercept on
+          Arrival
+        </label>
+        <label>
+          <input type="checkbox" id="toggle7" onchange="handleToggleChange('toggle7')">Calculate from Low Kerbin Orbit
+        </label>
+        <label>
+          <input type="checkbox" id="toggle4" onchange="handleToggleChange('toggle4')">Return Only
+        </label>
+        <label>
+          <input type="checkbox" id="toggle5" onchange="handleToggleChange('toggle5')">Aerobrake from Low Kerbin Orbit
+        </label>
+        <label>
+          <input type="checkbox" id="toggle6" onchange="handleToggleChange('toggle6')">Aerobrake from Kerbin Intercept
+        </label>
+        <div class="slider">
+          <input type="range" id="slider" min="0" max="5" step="1" onchange="handleSliderChange(this)">
+          <div id="slider-value">+ x% Redundancy</div>
+        </div>
+        </label>
+      </div>
+      <label>
+        <input type="checkbox" id="toggle8" onchange="handleToggleChange('toggle8')">
+        <div id="dropdown-toggle">Toggle dropdown menu</div>
+      </label>
+    </div>
+    <div class="tree">
+      <div class="branch" id="Sun"> <!-- sun -->
+        <button class="node" id="sunOrbit" onclick="calculateSum('Sun', 0)" data-value="19700">Orbit</button>
+        <button class="node" id="sunLand" onclick="calculateSum('Sun', 1)" data-value="67000">Land</button>
+        <div id="kerbolLabel">Kerbol</div>
+      </div>
+      <div class="branch" id="Moho"> <!-- moho -->
+        <button class="node" id="mohoIntercept" onclick="calculateSum('Moho', 0)" data-value="3280">Fly by</button>
+        <button class="node" id="mohoOrbit" onclick="calculateSum('Moho', 1)" data-value="2410">Orbit</button>
+        <button class="node" id="mohoLand" onclick="calculateSum('Moho', 2)" data-value="870">Land</button>
+        <div id="mohoLabel">Moho</div>
+      </div>
+      <div class="branch" id="Eve"> <!-- eve -->
+        <button class="node" id="eveIntercept" onclick="calculateSum('Eve', 0)" data-value="520">Fly by</button>
+        <button class="node" id="eveOrbit" onclick="calculateSum('Eve', 1)" data-value="1410">Orbit</button>
+        <button class="node" id="eveLand" onclick="calculateSum('Eve', 2)" data-value="8000">Land</button>
+        <div id="eveLabel">Eve</div>
+      </div>
+      <div class="branch" id="Gilly"> <!-- gilly -->
+        <button class="node" id="gillyIntercept" onclick="calculateSum('Gilly', 0)" data-value="660">Fly by</button>
+        <button class="node" id="gillyOrbit" onclick="calculateSum('Gilly', 1)" data-value="410">Orbit</button>
+        <button class="node" id="gillyLand" onclick="calculateSum('Gilly', 2)" data-value="30">Land</button>
+        <div id="gillyLabel">Gilly</div>
+      </div>
+      <div class="branch" id="Kerbin"> <!-- kerbin -->
+        <button class="node" id="kerbinOrbit" onclick="calculateSum('Kerbin', 0)" data-value="3400">Orbit</button>
+        <button class="node" id="kerbinEscape" onclick="calculateSum('Kerbin', 1)" data-value="950">Escape</button>
+        <div id="kerbinLabel">Kerbin</div>
+      </div>
+      <div class="branch" id="Mun"> <!-- mun -->
+        <button class="node" id="munIntercept" onclick="calculateSum('Mun', 0)" data-value="860">Fly by</button>
+        <button class="node" id="munOrbit" onclick="calculateSum('Mun', 1)" data-value="310">Orbit</button>
+        <button class="node" id="munLand" onclick="calculateSum('Mun', 2)" data-value="580">Land</button>
+        <div id="munLabel">Mun</div>
+      </div>
+      <div class="branch" id="Minmus"> <!-- minmus -->
+        <button class="node" id="minmusIntercept" onclick="calculateSum('Minmus', 0)" data-value="1170">Fly
+          by</button>
+        <button class="node" id="minmusOrbit" onclick="calculateSum('Minmus', 1)" data-value="160">Orbit</button>
+        <button class="node" id="minmusLand" onclick="calculateSum('Minmus', 2)" data-value="180">Land</button>
+        <div id="minmusLabel">Minmus</div>
+      </div>
+      <div class="branch" id="Duna"> <!-- duna -->
+        <button class="node" id="dunaIntercept" onclick="calculateSum('Duna', 0)" data-value="140">Fly by</button>
+        <button class="node" id="dunaOrbit" onclick="calculateSum('Duna', 1)" data-value="610">Orbit</button>
+        <button class="node" id="dunaLand" onclick="calculateSum('Duna', 2)" data-value="1450">Land</button>
+        <div id="dunaLabel">Duna</div>
+      </div>
+      <div class="branch" id="Ike"> <!-- ike -->
+        <button class="node" id="ikeIntercept" onclick="calculateSum('Ike', 0)" data-value="420">Fly by</button>
+        <button class="node" id="ikeOrbit" onclick="calculateSum('Ike', 1)" data-value="180">Orbit</button>
+        <button class="node" id="ikeLand" onclick="calculateSum('Ike', 2)" data-value="390">Land</button>
+        <div id="ikeLabel">Ike</div>
+      </div>
+      <div class="branch" id="Dres"> <!-- dres -->
+        <button class="node" id="dresIntercept" onclick="calculateSum('Dres', 0)" data-value="1620">Fly by</button>
+        <button class="node" id="dresOrbit" onclick="calculateSum('Dres', 1)" data-value="1290">Orbit</button>
+        <button class="node" id="dresLand" onclick="calculateSum('Dres', 2)" data-value="430">Land</button>
+        <div id="dresLabel">Dres</div>
+      </div>
+      <div class="branch" id="Jool"> <!-- jool -->
+        <button class="node" id="joolIntercept" onclick="calculateSum('Jool', 0)" data-value="1250">Fly by</button>
+        <button class="node" id="joolOrbit" onclick="calculateSum('Jool', 1)" data-value="2970">Orbit</button>
+        <button class="node" id="joolLand" onclick="calculateSum('Jool', 2)" data-value="14000">Land</button>
+        <div id="joolLabel">Jool</div>
+      </div>
+      <div class="branch" id="Laythe"> <!-- laythe -->
+        <button class="node" id="laytheIntercept" onclick="calculateSum('Laythe', 0)" data-value="2340">Fly
+          by</button>
+        <button class="node" id="laytheOrbit" onclick="calculateSum('Laythe', 1)" data-value="1070">Orbit</button>
+        <button class="node" id="laytheLand" onclick="calculateSum('Laythe', 2)" data-value="2900">Land</button>
+        <div id="laytheLabel">Laythe</div>
+      </div>
+      <div class="branch" id="Vall"> <!-- vall -->
+        <button class="node" id="vallIntercept" onclick="calculateSum('Vall', 0)" data-value="2030">Fly by</button>
+        <button class="node" id="vallOrbit" onclick="calculateSum('Vall', 1)" data-value="910">Orbit</button>
+        <button class="node" id="vallLand" onclick="calculateSum('Vall', 2)" data-value="860">Land</button>
+        <div id="vallLabel">Vall</div>
+      </div>
+      <div class="branch" id="Tylo"> <!-- tylo -->
+        <button class="node" id="tyloIntercept" onclick="calculateSum('Tylo', 0)" data-value="1810">Fly by</button>
+        <button class="node" id="tyloOrbit" onclick="calculateSum('Tylo', 1)" data-value="1100">Orbit</button>
+        <button class="node" id="tyloLand" onclick="calculateSum('Tylo', 2)" data-value="2270">Land</button>
+        <div id="tyloLabel">Tylo</div>
+      </div>
+      <div class="branch" id="Bop"> <!-- bop -->
+        <button class="node" id="bopIntercept" onclick="calculateSum('Bop', 0)" data-value="4070">Fly by</button>
+        <button class="node" id="bopOrbit" onclick="calculateSum('Bop', 1)" data-value="900">Orbit</button>
+        <button class="node" id="bopLand" onclick="calculateSum('Bop', 2)" data-value="230">Land</button>
+        <div id="bopLabel">Bop</div>
+      </div>
+      <div class="branch" id="Pol"> <!-- pol -->
+        <button class="node" id="polIntercept" onclick="calculateSum('Pol', 0)" data-value="2270">Fly by</button>
+        <button class="node" id="polOrbit" onclick="calculateSum('Pol', 1)" data-value="820">Orbit</button>
+        <button class="node" id="polLand" onclick="calculateSum('Pol', 2)" data-value="130">Land</button>
+        <div id="polLabel">Pol</div>
+      </div>
+      <div class="branch" id="Eeloo"> <!-- eeloo -->
+        <button class="node" id="eelooIntercept" onclick="calculateSum('Eeloo', 0)" data-value="2470">Fly by</button>
+        <button class="node" id="eelooOrbit" onclick="calculateSum('Eeloo', 1)" data-value="1370">Orbit</button>
+        <button class="node" id="eelooLand" onclick="calculateSum('Eeloo', 2)" data-value="620">Land</button>
+        <div id="eelooLabel">Eeloo</div>
+      </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+    <footer>
+      <span id="version-info">Version 1.5.1.0</span>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="Scripts/Main.js"></script>
+    <script src="Scripts/Aerobrake.js"></script>
+    <script src="Scripts/Transfer.js"></script>
+    <script src="Scripts/Dropdown.js"></script>
+  </body>
+
+</html>

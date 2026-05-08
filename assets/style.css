@@ -1,0 +1,1011 @@
+/* ═══════════════════════════════════════════════════════════════
+   KSP ΔV Calculator v2.0 — style.css
+   Breakpoint: 1200px
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── TOKENS ─────────────────────────────────────────────────── */
+:root {
+    --bg-page: rgb(28, 28, 38);
+    --bg-left: rgb(2, 0, 14);
+    --bg-right: rgb(28, 28, 38);
+    --bg-dropdown: #2b2e3f;
+    --bg-input: transparent;
+
+    --text-primary: lightgray;
+    --text-muted: grey;
+    --text-input: lightgray;
+
+    --accent: rgb(59, 140, 207);
+    --border-panel: #2b2e3f;
+    --border-sep: rgba(255, 255, 255, 0.07);
+    --border-input: #444;
+
+    --font-ui: 'Share Tech Mono', monospace;
+    --font-title: 'Oswald', sans-serif;
+
+    --banner-h: 17%;
+    --left-w: 30%;
+    --right-w: 70%;
+
+    /* right panel split */
+    --map-h: 55%;
+    --controls-h: 45%;
+
+    --font-size-base: clamp(10px, 0.5vw + 0.28vh, 11px);
+    --font-size-small: clamp(0.78rem, 0.4vw + 0.32vh, 0.94rem);
+    --font-size-ui: clamp(0.9rem, 0.46vw + 0.34vh, 1.08rem);
+    --font-size-ui-large: clamp(1.1rem, 0.8vw + 0.55vh, 1.7rem);
+    --checkbox-size: clamp(11px, 0.2vw + 0.42vh, 14px);
+    --toggle-vertical-gap: clamp(0.08rem, 0.12vw + 0.16vh, 0.22rem);
+    --banner-logo-width: 17vh;
+    --banner-logo-height: 17vh;
+    --banner-logo-wrapper-width: 17vh;
+    --banner-logo-wrapper-height: 17vh;
+    --banner-logo-wrapper-padding: 10px;
+    --banner-logo-backdrop-size: 95%;
+    --banner-logo-image-padding: 8%;
+    --banner-title-font-size: clamp(5rem, 10vh, 10rem);
+    --dash-length: clamp(20px, 1vw, 24px);
+    --dash-gap: clamp(22px, 1.2vw, 28px);
+}
+
+/* ─── RESET ───────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-size: var(--font-size-base);
+    line-height: var(--text-line-height);
+}
+
+/* ─── BANNER ──────────────────────────────────────────────────── */
+.banner {
+    flex: 0 0 auto;
+    height: 17vh;
+    background: #3b8ccf;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: visible;
+    position: relative;
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+.banner-logo-wrapper {
+    background-image: url('images/logoBackdrop.png');
+    background-size: var(--banner-logo-backdrop-size);
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--banner-logo-wrapper-width);
+    height: var(--banner-logo-wrapper-height);
+    padding: var(--banner-logo-wrapper-padding);
+}
+
+.banner-logo {
+    width: var(--banner-logo-width);
+    height: var(--banner-logo-height);
+    object-fit: contain;
+    padding: var(--banner-logo-image-padding);
+}
+
+.banner-copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.banner-title {
+    font-family: var(--font-title);
+    font-size: var(--banner-title-font-size);
+    color: white;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 0.25rem 0.5rem;
+    white-space: nowrap;
+}
+
+/* ─── CONTENT ─────────────────────────────────────────────────── */
+.content {
+    display: flex;
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* ─── LEFT PANEL ──────────────────────────────────────────────── */
+.panel-left {
+    flex: 0 0 var(--left-w);
+    min-height: 0;
+    background-color: var(--bg-left);
+    padding: 0 20px;
+    overflow-y: auto;
+    direction: rtl;
+}
+
+.panel-left h2 {
+    font-size: clamp(1.6rem, 3vw, 2.6rem);
+    padding-top: 15px;
+    margin-bottom: 0;
+    font-family: var(--font-ui);
+    direction: ltr;
+}
+
+.panel-left h3 {
+    margin: 14px 0 4px 14px;
+    font-family: var(--font-ui);
+    font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+    font-weight: 700;
+    text-align: left;
+    direction: ltr;
+}
+
+.panel-left p {
+    font-size: clamp(0.95rem, 1.3vw, 1.3rem);
+    line-height: 1.6;
+    font-family: var(--font-ui);
+    direction: ltr;
+}
+
+.assumptions-list {
+    margin: 0 0 1em 1.6em;
+    padding-left: 1.1em;
+    font-size: clamp(0.95rem, 1.3vw, 1.3rem);
+    line-height: 1.6;
+    font-family: var(--font-ui);
+    direction: ltr;
+}
+
+.assumptions-list li::marker {
+    font-weight: 700;
+}
+
+/* Scrollbar styling for left panel */
+.panel-left::-webkit-scrollbar {
+    width: 12px;
+}
+
+.panel-left::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.panel-left::-webkit-scrollbar-thumb {
+    background: #262736;
+    border-radius: 6px;
+}
+
+.panel-left::-webkit-scrollbar-thumb:hover {
+    background: #333333;
+}
+
+/* Firefox scrollbar */
+.panel-left {
+    scrollbar-color: #262736 transparent;
+}
+
+/* ─── RIGHT PANEL ─────────────────────────────────────────────── */
+.panel-right {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-right);
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* ─── MAP AREA — fills top portion, full width ────────────────── */
+.map-container {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+    padding: 10px 12px 6px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.map-container svg,
+.dv-map {
+    flex: 1 1 0;
+    width: 100%;
+    min-height: 0;
+    display: block;
+}
+
+.map-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border: 1px dashed var(--border-panel);
+    border-radius: 4px;
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    font-size: clamp(0.95rem, 1.1vw, 1.15rem);
+}
+
+/* ─── CONTROLS BAR — fixed height bottom strip ────────────────── */
+.controls-bar {
+    flex: 0 0 28vh;
+    display: flex;
+    gap: 0;
+    border-top: 5px solid var(--accent);
+    min-height: 0;
+    padding: 10px 16px 12px;
+    overflow: visible;
+}
+
+/* ─── TOGGLE BOXES (left half of controls bar) ────────────────── */
+.toggle-boxes {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--toggle-vertical-gap);
+    padding-right: 18px;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-ui);
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    line-height: var(--text-line-height);
+    user-select: none;
+}
+
+.toggle-label input[type="checkbox"] {
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+    width: var(--checkbox-size);
+    height: var(--checkbox-size);
+}
+
+.toggle-label--sm {
+    font-size: var(--font-size-small);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+}
+
+/* ─── TOGGLE GROUP SEPARATOR ─────────────────────────────────── */
+.toggle-group-separator {
+    height: 1px;
+    background: var(--border-sep);
+    margin: 4px 0;
+}
+
+/* ─── SLIDER ──────────────────────────────────────────────────── */
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 6px;
+}
+
+#slider {
+    accent-color: var(--accent);
+    width: 100%;
+    max-width: 260px;
+    cursor: pointer;
+}
+
+#slider-value {
+    font-family: var(--font-ui);
+    font-size: clamp(0.9rem, 1vw, 1.2rem);
+    color: var(--text-primary);
+}
+
+/* ─── MAP CONTROLS ──────────────────────────────────────────── */
+.map-controls {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 10px 16px 12px;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-ui);
+    border-left: 1px solid var(--border-sep);
+    border-right: 1px solid var(--border-sep);
+}
+
+.map-controls-title {
+    font-size: clamp(0.72rem, 0.9vw, 0.92rem);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+
+/* ─── RESULTS PANEL (right half of controls bar) ─────────────── */
+.results-panel {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px 16px 12px;
+    overflow: visible;
+    border-left: 1px solid var(--border-sep);
+}
+
+.results-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    flex: 1 1 0;
+    min-height: 0;
+    align-items: flex-start;
+}
+
+.result-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.result-group--dv {
+    flex: 0 0 auto;
+    position: relative;
+}
+
+.result-group--dv .result-row {
+    margin-bottom: 6px;
+}
+
+.result-action {
+    align-self: flex-start;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-ui);
+    font-weight: 700;
+    color: white;
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 10px 10px;
+    cursor: pointer;
+    margin-top: 6px;
+}
+
+.result-action:hover {
+    filter: brightness(1.08);
+}
+
+.result-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.result-label {
+    font-family: var(--font-ui);
+    font-size: clamp(0.8rem, 1vw, 1rem);
+    color: var(--text-muted);
+}
+
+.result-display {
+    font-family: var(--font-ui);
+    font-size: clamp(1.4rem, 2vw, 2.4rem);
+    color: var(--text-input);
+    background: var(--bg-input);
+    border: none;
+    border-bottom: 1px solid var(--border-input);
+    padding: 1px 0;
+    outline: none;
+    cursor: default;
+    width: 190px;
+}
+
+.result-display--angle {
+    font-size: clamp(1.25rem, 1.85vw, 1.8rem);
+    width: 100px;
+}
+
+.result-display::placeholder {
+    color: var(--text-muted);
+}
+
+/* ─── TRANSFER ROW ────────────────────────────────────────────── */
+.transfer-row {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: flex-start;
+    min-height: 0;
+}
+
+.debug-panel {
+    width: 100%;
+    max-width: min(760px, 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0;
+    overflow: hidden;
+    margin: 20px 0 24px;
+    direction: ltr;
+}
+
+.debug-panel summary {
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-ui);
+    font-size: clamp(0.8rem, 0.95vw, 1rem);
+    color: var(--text-muted);
+    padding: 10px 12px;
+    user-select: none;
+}
+
+.debug-panel summary::-webkit-details-marker {
+    display: none;
+}
+
+.debug-output {
+    max-height: 52vh;
+    overflow: auto;
+    padding: 0 12px 12px;
+    font-family: var(--font-ui);
+    font-size: clamp(0.72rem, 0.88vw, 0.92rem);
+    color: var(--text-primary);
+}
+
+.debug-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.debug-section+.debug-section {
+    margin-top: 14px;
+}
+
+.debug-section-title {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.debug-entry {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.debug-entry:first-of-type {
+    border-top: none;
+}
+
+.debug-entry-title {
+    color: white;
+}
+
+.debug-entry-meta {
+    color: var(--text-muted);
+}
+
+.debug-entry-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.transfer-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 0;
+    min-width: var(--transfer-block-min-width, 132px);
+}
+
+.transfer-block .result-label {
+    white-space: nowrap;
+}
+
+.transfer-meta-label {
+    font-family: var(--font-ui);
+    font-size: clamp(0.72rem, 0.95vw, 1rem);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* Phase diagrams — responsive size matching the visible control space */
+.phase-diagram {
+    width: var(--phase-diagram-size, 110px);
+    height: var(--phase-diagram-size, 110px);
+    max-width: 100%;
+    border-radius: 10px;
+    background: radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 62%);
+    margin-top: auto;
+    flex: 0 0 auto;
+}
+
+.phase-diagram.is-empty {
+    opacity: 0.24;
+}
+
+.phase-diagram svg {
+    width: 100%;
+    height: 100%;
+}
+
+.results-layout[data-layout="pair"] .transfer-row,
+.results-layout[data-layout="wide"] .transfer-row {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    align-self: stretch;
+}
+
+.results-layout[data-layout="stacked"] .transfer-row {
+    align-self: stretch;
+    width: 100%;
+}
+
+.results-layout[data-layout="stacked"] .transfer-block {
+    width: 100%;
+    max-width: 100%;
+}
+
+.results-layout[data-layout="pair"] .transfer-block,
+.results-layout[data-layout="wide"] .transfer-block {
+    flex: 1 1 0;
+}
+
+.results-layout[data-layout="wide"] {
+    flex-direction: row;
+    align-items: stretch;
+}
+
+.transfer-orbit-ring {
+    fill: none;
+    stroke: rgba(255, 240, 200, 0.14);
+    stroke-width: 3;
+}
+
+.transfer-trajectory {
+    fill: none;
+    stroke: #3ea0ff;
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.transfer-intercept-mark {
+    fill: none;
+    stroke: #f4db3d;
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.transfer-intercept-point {
+    fill: #f4db3d;
+    filter: drop-shadow(0 0 4px rgba(244, 219, 61, 0.45));
+}
+
+.transfer-center-body {
+    filter: drop-shadow(0 0 10px rgba(255, 190, 70, 0.28));
+}
+
+.transfer-body {
+    stroke: rgba(8, 10, 20, 0.55);
+    stroke-width: 2;
+}
+
+/* ─── BREAKDOWN TOGGLE ────────────────────────────────────────── */
+.breakdown-toggle {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ─── DROPDOWN ────────────────────────────────────────────────── */
+.dropdown {
+    display: none;
+    position: absolute;
+    background-color: var(--bg-dropdown);
+    min-width: 220px;
+    width: max-content;
+    max-width: min(420px, calc(100vw - 32px));
+    overflow: visible;
+    white-space: nowrap;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    top: 0;
+    left: 0;
+    z-index: 20;
+}
+
+.dropdown.is-open {
+    display: block;
+}
+
+.dropdown-entry {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: var(--font-ui);
+    font-size: clamp(0.85rem, 1.0vw, 1.05rem);
+    color: rgb(190, 190, 190);
+}
+
+.dropdown-entry-marker {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background-color: currentColor;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.dropdown-entry-marker.is-empty {
+    opacity: 0;
+}
+
+.dropdown-entry-aerobrake {
+    flex: 0 0 auto;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 9px solid white;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.35));
+    margin-left: 2px;
+}
+
+.dropdown-entry-text {
+    display: block;
+}
+
+.dropdown-entry:first-child {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.dropdown-entry:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.dropdown-entry--end {
+    color: #e05555;
+    background: rgba(255, 0, 0, 0.1);
+}
+
+.dropdown-entry--start {
+    color: rgb(50, 255, 50);
+    background: rgba(0, 255, 0, 0.1);
+}
+
+.dropdown-entry--surface {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-entry--zeroed {
+    color: var(--text-muted);
+}
+
+.dropdown-entry-value {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.dropdown-entry-value--discounted {
+    text-decoration: line-through;
+}
+
+/* ─── SVG MAP ─────────────────────────────────────────────────── */
+.map-node {
+    cursor: pointer;
+}
+
+.map-node circle {
+    fill: #3a3a4a;
+    transition: fill 0.15s ease, filter 0.15s ease;
+}
+
+.map-node:hover circle {
+    fill: #55556a;
+    filter: brightness(1.2);
+}
+
+.map-node.is-active circle {
+    fill: #b0c4de;
+}
+
+.map-node.has-atmo-glow circle {
+    filter: drop-shadow(0 0 4px var(--node-glow-color)) drop-shadow(0 0 8px color-mix(in srgb, var(--node-glow-color) 65%, transparent));
+}
+
+.map-node text {
+    fill: #ccc;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    pointer-events: none;
+}
+
+.map-node.is-active text {
+    fill: #111;
+}
+
+/* dim on selection */
+.dv-map.has-selection .map-node:not(.is-active) circle {
+    fill: #262634;
+}
+
+.dv-map.has-selection .map-node:not(.is-active) text {
+    fill: #8b8b98;
+}
+
+.dv-map.has-selection .map-node.is-route:not(.is-active) circle {
+    fill: #3a3a4a;
+}
+
+.dv-map.has-selection .map-node.is-route:not(.is-active) text {
+    fill: #ccc;
+}
+
+.dv-map.has-selection .map-node.has-atmo-glow:not(.is-active):not(.is-route) circle {
+    filter: drop-shadow(0 0 3px color-mix(in srgb, var(--node-glow-color) 55%, transparent));
+}
+
+.map-label {
+    fill: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    pointer-events: none;
+}
+
+.dv-map.has-selection .map-label {
+    fill: #8a8a98;
+}
+
+/* ─── MAP PATHS ───────────────────────────────────────────────── */
+
+/* Static base paths — always present */
+.map-path {
+    fill: none;
+    opacity: 1;
+    stroke-opacity: 1;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+/* Dim base paths when a selection is active */
+.dv-map.has-selection .map-path {
+    opacity: 0.50;
+    stroke-opacity: 0.50;
+}
+
+/* Keep selected base paths dim so the animated overlay is the only lit layer */
+.dv-map.has-selection .map-path.is-route {
+    opacity: 0.75;
+    stroke-opacity: 0.75;
+}
+
+/* ─── AEROBRAKE INDICATORS ────────────────────────────────────── */
+.aerobrake-indicator {
+    fill: white;
+    opacity: 1;
+    transition: opacity 0.15s ease, filter 0.15s ease;
+    pointer-events: none;
+}
+
+/* Dim indicators when a selection is active */
+.dv-map.has-selection .aerobrake-indicator {
+    opacity: 0.40;
+}
+
+/* Active indicators stay fully visible */
+.dv-map.has-selection .aerobrake-indicator.is-active {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.55));
+}
+
+/* ─── ANIMATED OVERLAYS ───────────────────────────────────────── */
+/*
+ * Overlays are SVG <line> elements cloned from base paths and appended
+ * by map.js. _clearActive() removes them from the DOM entirely —
+ * no stale class state possible.
+ *
+ * One-way:    one overlay per segment, full stroke-width, one direction.
+ * Round trip: two overlays per segment, each at half stroke-width,
+ *             flowing in opposite directions simultaneously.
+ *             The half-width makes the two streams visually distinct lanes.
+ *
+ * Jitter fix: explicit from/to keyframes + per-segment animation-delay
+ *             staggering prevents all segments resetting simultaneously.
+ */
+
+.map-path-overlay {
+    fill: none;
+    pointer-events: none;
+    stroke-dasharray: 12 15;
+    stroke-opacity: 1;
+    /* Overlays are always fully visible — they sit above the dimmed base paths */
+    opacity: 1;
+}
+
+/* Outbound A→B */
+.map-path-overlay.is-active {
+    opacity: 1;
+}
+
+/* Return B→A — slightly reduced opacity so direction is distinguishable */
+.map-path-overlay.is-return {
+    opacity: 1.0;
+}
+
+.map-path-overlay.flow-forward {
+    animation: flow-forward 0.7s linear infinite;
+}
+
+.map-path-overlay.flow-return {
+    animation: flow-return 0.7s linear infinite;
+}
+
+@keyframes flow-forward {
+    from {
+        stroke-dashoffset: 0;
+    }
+
+    to {
+        stroke-dashoffset: -27;
+    }
+}
+
+@keyframes flow-return {
+    from {
+        stroke-dashoffset: 0;
+    }
+
+    to {
+        stroke-dashoffset: 27;
+    }
+}
+
+/* ─── INTERPLANETARY HUB NODE ─────────────────────────────────── */
+.map-node--hub circle {
+    fill: #22222e;
+    stroke-width: 2;
+}
+
+.map-node--hub text {
+    fill: #c8c8d4;
+    font-family: var(--font-ui);
+    font-size: clamp(0.75rem, 1.2vw, 1rem);
+    pointer-events: none;
+    letter-spacing: 0.05em;
+}
+
+.map-node--hub:hover circle {
+    fill: #2e2e3e;
+    filter: brightness(1.15);
+}
+
+/* Hub is highlighted when it's part of the active route */
+.dv-map.has-selection .map-node--hub.is-route circle {
+    fill: #3a3a50;
+    stroke-width: 2.5;
+}
+
+/* ─── FOOTER ──────────────────────────────────────────────────── */
+.site-footer {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-family: var(--font-ui);
+    pointer-events: none;
+    z-index: 10;
+}
+
+#version-info {
+    font-size: 10px;
+    color: rgb(198, 213, 234);
+}
+
+@media (min-width: 1200px) and (max-height: 950px) {
+    :root {
+        --font-size-base: clamp(10px, 0.42vw + 0.24vh, 10.5px);
+        --font-size-small: clamp(0.76rem, 0.34vw + 0.28vh, 0.9rem);
+        --font-size-ui: clamp(0.86rem, 0.38vw + 0.3vh, 1rem);
+        --font-size-ui-large: clamp(1.05rem, 0.7vw + 0.48vh, 1.55rem);
+        --checkbox-size: clamp(10px, 0.16vw + 0.36vh, 13px);
+        --toggle-vertical-gap: clamp(0.06rem, 0.08vw + 0.12vh, 0.16rem);
+        --banner-title-font-size: clamp(4rem, 7.5vh, 7rem);
+    }
+
+    .controls-bar {
+        padding: 8px 14px 10px;
+    }
+
+    .map-controls,
+    .results-panel {
+        padding: 8px 14px 10px;
+    }
+
+    .results-layout,
+    .transfer-row {
+        gap: 12px;
+    }
+
+    .result-row {
+        gap: 10px;
+    }
+
+    .result-group--dv .result-row {
+        margin-bottom: 4px;
+    }
+
+    .result-action {
+        margin-top: 4px;
+        padding: 8px 10px;
+    }
+}
+
+@media (min-width: 1800px) and (min-height: 1000px) {
+    :root {
+        --font-size-base: clamp(11.5px, 0.46vw + 0.28vh, 13px);
+        --font-size-small: clamp(0.9rem, 0.4vw + 0.34vh, 1.1rem);
+        --font-size-ui: clamp(1.05rem, 0.46vw + 0.36vh, 1.28rem);
+        --font-size-ui-large: clamp(1.3rem, 0.78vw + 0.55vh, 2rem);
+    }
+
+    .panel-left h2 {
+        font-size: clamp(1.9rem, 2.75vw, 3.05rem);
+    }
+
+    .panel-left h3 {
+        font-size: clamp(1.25rem, 1.45vw, 1.65rem);
+    }
+
+    .panel-left p,
+    .assumptions-list {
+        font-size: clamp(1.1rem, 1.18vw, 1.55rem);
+    }
+
+    .result-display {
+        font-size: clamp(1.65rem, 1.9vw, 2.8rem);
+    }
+
+    .transfer-block .result-display--angle {
+        font-size: clamp(1.45rem, 1.72vw, 2.12rem);
+    }
+}
