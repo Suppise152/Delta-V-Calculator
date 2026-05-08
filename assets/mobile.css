@@ -50,9 +50,9 @@
     /* ─── MAP CONTAINER ───────────────────────────────────────── */
     .map-container {
         flex: none;
-        height: 120vw;
+        height: 112vw;
         min-height: 320px;
-        max-height: 50vh;
+        max-height: 46vh;
         padding: 8px 8px 18px;
         margin-bottom: 6px;
         overflow-x: auto;

@@ -979,3 +979,33 @@ body {
         padding: 8px 10px;
     }
 }
+
+@media (min-width: 1800px) and (min-height: 1000px) {
+    :root {
+        --font-size-base: clamp(11.5px, 0.46vw + 0.28vh, 13px);
+        --font-size-small: clamp(0.9rem, 0.4vw + 0.34vh, 1.1rem);
+        --font-size-ui: clamp(1.05rem, 0.46vw + 0.36vh, 1.28rem);
+        --font-size-ui-large: clamp(1.3rem, 0.78vw + 0.55vh, 2rem);
+    }
+
+    .panel-left h2 {
+        font-size: clamp(1.9rem, 2.75vw, 3.05rem);
+    }
+
+    .panel-left h3 {
+        font-size: clamp(1.25rem, 1.45vw, 1.65rem);
+    }
+
+    .panel-left p,
+    .assumptions-list {
+        font-size: clamp(1.1rem, 1.18vw, 1.55rem);
+    }
+
+    .result-display {
+        font-size: clamp(1.65rem, 1.9vw, 2.8rem);
+    }
+
+    .transfer-block .result-display--angle {
+        font-size: clamp(1.45rem, 1.72vw, 2.12rem);
+    }
+}
