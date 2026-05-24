@@ -253,6 +253,36 @@
         };
     }
 
+    function computeCentralBodyTransferContext(outerBody, centralBody, meta) {
+        const centralMu = Number(getPhysics(centralBody).mu) || 0;
+        const outerRadius = orbitalRadius(outerBody, 'periapsis');
+        const centralLowOrbitRadius = lowOrbitRadius(centralBody, meta);
+        const outerSpeed = orbitalSpeed(centralMu, Number(outerBody.orbit?.sma) || 0, outerRadius);
+        const centralLowOrbitSpeed = circularSpeed(centralMu, centralLowOrbitRadius);
+        const { speedA: transferOuterSpeed, speedB: transferCentralSpeed } = hohmannTransferSpeeds(
+            centralMu,
+            outerRadius,
+            centralLowOrbitRadius,
+        );
+        const angle = bodyInclinationAngle(outerBody);
+
+        return {
+            outerBodyId: outerBody.id,
+            centralBodyId: centralBody.id,
+            outerRadius,
+            centralLowOrbitRadius,
+            outerSpeed,
+            centralLowOrbitSpeed,
+            transferOuterSpeed,
+            transferCentralSpeed,
+            planeAngle: angle,
+            vinfAtOuterCoplanar: Math.abs(transferOuterSpeed - outerSpeed),
+            vinfAtOuterCombined: relativeSpeed(outerSpeed, transferOuterSpeed, angle),
+            centralLowOrbitInsertion: Math.abs(transferCentralSpeed - centralLowOrbitSpeed),
+            centralLowOrbitDeparture: Math.abs(transferCentralSpeed - centralLowOrbitSpeed),
+        };
+    }
+
     function computeMoonTransferContext(hostBody, targetBody, meta, targetLocation = 'periapsis') {
         const hostMu = Number(getPhysics(hostBody).mu) || 0;
         const originRadius = lowOrbitRadius(hostBody, meta);
@@ -286,6 +316,7 @@
         calculateTransferWindowAngles,
         circularSpeed,
         computeInterplanetaryContext,
+        computeCentralBodyTransferContext,
         computeMoonTransferContext,
         flybyPeriapsisRadius,
         getPhysics,

@@ -6,11 +6,12 @@
         if (!body) return _emptyBranchResult(segment, 'surface_orbit');
 
         if (segment.from.nodeKey === 'land' && segment.to.nodeKey === 'orbit') {
+            const dvToOrbit = _configuredDv(body.surface?.dvToOrbit, body.nodes?.orbit);
             return {
-                dv: Number(body.surface?.dvToOrbit) || 0,
+                dv: dvToOrbit,
                 branchType: 'surface_to_orbit',
                 debug: {
-                    source: 'body.surface.dvToOrbit',
+                    source: body.surface?.dvToOrbit == null ? 'body.nodes.orbit' : 'body.surface.dvToOrbit',
                     altitudeMeters: api.getLowOrbitAltitude(body, meta),
                     radiusMeters: api.lowOrbitRadius(body, meta),
                 },
@@ -18,11 +19,12 @@
         }
 
         if (segment.from.nodeKey === 'orbit' && segment.to.nodeKey === 'land') {
+            const dvToLand = _configuredDv(body.surface?.dvToLand, body.nodes?.land);
             return {
-                dv: Number(body.surface?.dvToLand) || 0,
+                dv: dvToLand,
                 branchType: 'orbit_to_surface',
                 debug: {
-                    source: 'body.surface.dvToLand',
+                    source: body.surface?.dvToLand == null ? 'body.nodes.land' : 'body.surface.dvToLand',
                     altitudeMeters: api.getLowOrbitAltitude(body, meta),
                     radiusMeters: api.lowOrbitRadius(body, meta),
                 },
@@ -30,6 +32,14 @@
         }
 
         return _emptyBranchResult(segment, 'surface_orbit');
+    }
+
+    function _configuredDv(primaryValue, fallbackValue) {
+        const primary = Number(primaryValue);
+        if (primaryValue != null && Number.isFinite(primary)) return primary;
+
+        const fallback = Number(fallbackValue);
+        return Number.isFinite(fallback) ? fallback : 0;
     }
 
     function calculateOrbitEscapeBranch(segment, bodies, options) {
@@ -156,7 +166,9 @@
                 const originBody = bodies[originTopLevelBody];
                 const centralBody = bodies[meta?.centralBody];
                 if (originBody && centralBody) {
-                    const context = api.computeInterplanetaryContext(originBody, body, meta, centralBody);
+                    const context = originTopLevelBody === meta?.centralBody
+                        ? _computeCentralBodyOriginArrivalContext(body, centralBody, meta)
+                        : api.computeInterplanetaryContext(originBody, body, meta, centralBody);
                     const periapsis = api.flybyPeriapsisRadius(body, meta);
                     const mu = Number(api.getPhysics(body).mu) || 0;
                     const finalSpeed = Math.sqrt(mu / periapsis);
@@ -223,6 +235,18 @@
             currentBodyId = parentId;
         }
         return startBodyId;
+    }
+
+    function _computeCentralBodyOriginArrivalContext(targetBody, centralBody, meta) {
+        const context = api.computeCentralBodyTransferContext(targetBody, centralBody, meta);
+        return {
+            ...context,
+            targetRadius: context.outerRadius,
+            targetSpeed: context.outerSpeed,
+            transferArriveSpeed: context.transferOuterSpeed,
+            vinfArriveCoplanar: context.vinfAtOuterCoplanar,
+            vinfArriveCombined: context.vinfAtOuterCombined,
+        };
     }
 
     Object.assign(api, {

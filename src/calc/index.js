@@ -123,6 +123,10 @@
             return api.calculateSurfaceOrbitBranch(segment, bodies, meta, options);
         }
 
+        if (_isCentralBodyTransferSegment(segment, meta)) {
+            return api.calculateCentralBodyTransferBranch(segment, bodies, meta, options);
+        }
+
         if (_isOrbitEscapeSegment(segment)) {
             return api.calculateOrbitEscapeBranch(segment, bodies, options);
         }
@@ -192,6 +196,24 @@
             segment.from.bodyId === segment.to.bodyId
             && segment.from.nodeKey === segment.primaryNodeKey
             && segment.to.nodeKey === 'orbit'
+        );
+    }
+
+    function _isCentralBodyTransferSegment(segment, meta) {
+        const centralBodyId = meta?.centralBody;
+        if (!centralBodyId) return false;
+
+        return (
+            (
+                segment.from.bodyId === api.INTERPLANETARY_ID
+                && segment.to.bodyId === centralBodyId
+                && segment.to.nodeKey === 'orbit'
+            )
+            || (
+                segment.from.bodyId === centralBodyId
+                && segment.from.nodeKey === 'orbit'
+                && segment.to.bodyId === api.INTERPLANETARY_ID
+            )
         );
     }
 
