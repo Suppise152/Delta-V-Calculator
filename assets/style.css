@@ -31,10 +31,10 @@
     --map-h: 55%;
     --controls-h: 45%;
 
-    --font-size-base: clamp(10px, 0.5vw + 0.28vh, 11px);
-    --font-size-small: clamp(0.78rem, 0.4vw + 0.32vh, 0.94rem);
-    --font-size-ui: clamp(0.9rem, 0.46vw + 0.34vh, 1.08rem);
-    --font-size-ui-large: clamp(1.1rem, 0.8vw + 0.55vh, 1.7rem);
+    --font-size-base: clamp(10.5px, 0.52vw + 0.3vh, 11.5px);
+    --font-size-small: clamp(0.82rem, 0.42vw + 0.34vh, 0.98rem);
+    --font-size-ui: clamp(0.94rem, 0.48vw + 0.36vh, 1.14rem);
+    --font-size-ui-large: clamp(1.16rem, 0.82vw + 0.58vh, 1.78rem);
     --checkbox-size: clamp(11px, 0.2vw + 0.42vh, 14px);
     --toggle-vertical-gap: clamp(0.08rem, 0.12vw + 0.16vh, 0.22rem);
     --banner-logo-width: 17vh;
@@ -982,10 +982,10 @@ body {
 
 @media (min-width: 1800px) and (min-height: 1000px) {
     :root {
-        --font-size-base: clamp(11.5px, 0.46vw + 0.28vh, 13px);
-        --font-size-small: clamp(0.9rem, 0.4vw + 0.34vh, 1.1rem);
-        --font-size-ui: clamp(1.05rem, 0.46vw + 0.36vh, 1.28rem);
-        --font-size-ui-large: clamp(1.3rem, 0.78vw + 0.55vh, 2rem);
+        --font-size-base: clamp(12.5px, 0.5vw + 0.34vh, 14.5px);
+        --font-size-small: clamp(1rem, 0.44vw + 0.38vh, 1.22rem);
+        --font-size-ui: clamp(1.16rem, 0.52vw + 0.42vh, 1.42rem);
+        --font-size-ui-large: clamp(1.45rem, 0.84vw + 0.62vh, 2.15rem);
     }
 
     .panel-left h2 {
@@ -998,14 +998,19 @@ body {
 
     .panel-left p,
     .assumptions-list {
-        font-size: clamp(1.1rem, 1.18vw, 1.55rem);
+        font-size: clamp(1.18rem, 1.22vw, 1.65rem);
     }
 
     .result-display {
-        font-size: clamp(1.65rem, 1.9vw, 2.8rem);
+        font-size: clamp(1.8rem, 2vw, 3rem);
     }
 
     .transfer-block .result-display--angle {
-        font-size: clamp(1.45rem, 1.72vw, 2.12rem);
+        font-size: clamp(1.58rem, 1.82vw, 2.25rem);
+    }
+
+    .result-label,
+    .dropdown-entry {
+        font-size: clamp(0.98rem, 1.05vw, 1.2rem);
     }
 }

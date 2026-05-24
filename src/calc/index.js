@@ -123,6 +123,14 @@
             return api.calculateSurfaceOrbitBranch(segment, bodies, meta, options);
         }
 
+        if (_isCentralBodyTransferSegment(segment, meta)) {
+            return api.calculateCentralBodyTransferBranch(segment, bodies, meta, options);
+        }
+
+        if (_isMoonHostEscapeSegment(segment, bodies, meta)) {
+            return api.calculateMoonHostEscapeBranch(segment, bodies, meta, options);
+        }
+
         if (_isOrbitEscapeSegment(segment)) {
             return api.calculateOrbitEscapeBranch(segment, bodies, options);
         }
@@ -187,11 +195,45 @@
         );
     }
 
+    function _isMoonHostEscapeSegment(segment, bodies, meta) {
+        if (segment.to.bodyId !== api.INTERPLANETARY_ID || segment.nodeKey !== 'escape') {
+            return false;
+        }
+
+        const moonBody = bodies[segment.from.bodyId];
+        const hostBody = bodies[segment.bodyId];
+        return Boolean(
+            moonBody
+            && hostBody
+            && moonBody.parent === hostBody.id
+            && hostBody.parent === meta?.centralBody
+            && segment.from.nodeKey === segment.primaryNodeKey
+        );
+    }
+
     function _isFlybyCaptureSegment(segment) {
         return (
             segment.from.bodyId === segment.to.bodyId
             && segment.from.nodeKey === segment.primaryNodeKey
             && segment.to.nodeKey === 'orbit'
+        );
+    }
+
+    function _isCentralBodyTransferSegment(segment, meta) {
+        const centralBodyId = meta?.centralBody;
+        if (!centralBodyId) return false;
+
+        return (
+            (
+                segment.from.bodyId === api.INTERPLANETARY_ID
+                && segment.to.bodyId === centralBodyId
+                && segment.to.nodeKey === 'orbit'
+            )
+            || (
+                segment.from.bodyId === centralBodyId
+                && segment.from.nodeKey === 'orbit'
+                && segment.to.bodyId === api.INTERPLANETARY_ID
+            )
         );
     }
 

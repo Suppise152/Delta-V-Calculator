@@ -44,8 +44,8 @@ async function loadPack(packId) {
             return;
         }
 
-        const res = await fetch(`data/${config.dataPackId}.json`);
-        const data = await res.json();
+        const res = await fetch(`data/${config.dataPackId}.json`, { cache: 'no-store' });
+        const data = _normalizeLoadedPackData(await res.json());
         _loadedDataPackId = config.dataPackId;
         _loadedSystemData = data;
         _activePackId = packId;
@@ -59,6 +59,21 @@ async function loadPack(packId) {
         const c = document.getElementById('map-container');
         c.innerHTML = '<div class="map-placeholder"><span>Failed to load map data.</span></div>';
     }
+}
+
+function _normalizeLoadedPackData(data) {
+    if (data?.meta?.pack !== 'rss') return data;
+
+    const sol = data.bodies?.find((body) => body.id === 'sol');
+    if (!sol) return data;
+
+    const solSurfaceDv = 436760;
+    sol.surface = sol.surface || {};
+    sol.nodes = sol.nodes || {};
+    sol.surface.dvToLand = solSurfaceDv;
+    sol.nodes.land = solSurfaceDv;
+
+    return data;
 }
 
 function onNodeClick(bodyId, nodeKey) {

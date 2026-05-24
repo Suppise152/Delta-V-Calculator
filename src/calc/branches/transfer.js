@@ -21,22 +21,35 @@
                 const originBody = bodies[originTopLevelBody];
                 const centralBody = bodies[meta?.centralBody];
                 if (originBody && centralBody) {
-                    const context = api.computeInterplanetaryContext(originBody, body, meta, centralBody);
+                    const fromCentralBody = originTopLevelBody === meta?.centralBody;
+                    const context = fromCentralBody
+                        ? _computeCentralBodyOriginArrivalContext(body, centralBody, meta)
+                        : api.computeInterplanetaryContext(originBody, body, meta, centralBody);
                     const originMu = Number(api.getPhysics(originBody).mu) || 0;
-                    const originPeriapsis = api.lowOrbitRadius(originBody, meta);
-                    const localEscape = api.hyperbolicDepartureBurn(originMu, originPeriapsis, 0);
-                    const departureBurn = api.hyperbolicDepartureBurn(originMu, originPeriapsis, context.vinfDepartCoplanar);
+                    const originPeriapsis = fromCentralBody
+                        ? null
+                        : api.lowOrbitRadius(originBody, meta);
+                    const localEscape = fromCentralBody
+                        ? 0
+                        : api.hyperbolicDepartureBurn(originMu, originPeriapsis, 0);
+                    const departureBurn = fromCentralBody
+                        ? 0
+                        : api.hyperbolicDepartureBurn(originMu, originPeriapsis, context.vinfDepartCoplanar);
                     const coplanarExtra = departureBurn - localEscape;
-                    const planeChange = api.planeChangeDeltaV(context.originSpeed, context.planeAngle);
+                    const planeChange = fromCentralBody
+                        ? 0
+                        : api.planeChangeDeltaV(context.originSpeed, context.planeAngle);
                     return {
                         dv: coplanarExtra + planeChange,
                         branchType: 'escape_to_intercept',
                         debug: {
-                            source: 'formula.periapsis_to_periapsis_departure_plane_change',
+                            source: fromCentralBody
+                                ? 'formula.central_low_orbit_to_outer_intercept'
+                                : 'formula.periapsis_to_periapsis_departure_plane_change',
                             coplanarExtra,
                             planeChange,
                             originTopLevelBody,
-                            originLowOrbitAltitudeMeters: api.getLowOrbitAltitude(originBody, meta),
+                            originLowOrbitAltitudeMeters: fromCentralBody ? null : api.getLowOrbitAltitude(originBody, meta),
                             originLowOrbitRadiusMeters: originPeriapsis,
                             targetEndpointRadiusMeters: context.targetRadius,
                         },
@@ -122,6 +135,143 @@
         };
     }
 
+    function _computeCentralBodyOriginArrivalContext(targetBody, centralBody, meta) {
+        const context = api.computeCentralBodyTransferContext(targetBody, centralBody, meta);
+        return {
+            ...context,
+            originSpeed: context.centralLowOrbitSpeed,
+            targetRadius: context.outerRadius,
+            targetSpeed: context.outerSpeed,
+            transferArriveSpeed: context.transferOuterSpeed,
+            vinfDepartCoplanar: 0,
+            vinfArriveCoplanar: context.vinfAtOuterCoplanar,
+            vinfArriveCombined: context.vinfAtOuterCombined,
+        };
+    }
+
+    function calculateMoonHostEscapeBranch(segment, bodies, meta, options) {
+        const hostBody = bodies[segment.bodyId];
+        const moonBody = bodies[segment.from.bodyId];
+        const destinationTopLevelBody = bodies[_resolveTransferOriginTopLevelBody(
+            options?.routeContext?.endPoint?.body,
+            bodies,
+            meta,
+        )];
+        const centralBody = bodies[meta?.centralBody];
+        if (!hostBody || !moonBody || !destinationTopLevelBody || !centralBody) {
+            return _emptyBranchResult(segment, 'moon_host_escape');
+        }
+
+        const moonContext = api.computeMoonTransferContext(hostBody, moonBody, meta, 'periapsis');
+        const hostDepartureContext = api.computeInterplanetaryContext(
+            hostBody,
+            destinationTopLevelBody,
+            meta,
+            centralBody,
+        );
+        const hostSoiRadius = Number(api.getPhysics(hostBody).soiRadius) || 0;
+        const retargetScale = hostSoiRadius > 0
+            ? Math.max(0, Math.min(1, moonContext.targetRadius / hostSoiRadius))
+            : 0;
+        const coplanarExtra = Math.abs(
+            hostDepartureContext.vinfDepartCoplanar - moonContext.vinfArriveCoplanar,
+        ) * retargetScale;
+        const planeChangeSpeed = hostDepartureContext.vinfDepartCoplanar;
+        const planeChange = api.planeChangeDeltaV(planeChangeSpeed, moonContext.planeAngle);
+
+        return {
+            dv: coplanarExtra + planeChange,
+            branchType: 'moon_host_escape',
+            debug: {
+                source: 'formula.moon_host_escape',
+                hostBodyId: hostBody.id,
+                moonBodyId: moonBody.id,
+                destinationTopLevelBodyId: destinationTopLevelBody.id,
+                coplanarExtra,
+                planeChange,
+                planeChangeSpeed,
+                retargetScale,
+                hostDepartureVinfDepartCoplanar: hostDepartureContext.vinfDepartCoplanar,
+                moonTransferVinfArriveCoplanar: moonContext.vinfArriveCoplanar,
+                hostSoiRadius,
+                moonTransferTargetRadiusMeters: moonContext.targetRadius,
+            },
+        };
+    }
+
+    function calculateCentralBodyTransferBranch(segment, bodies, meta, options) {
+        const centralBody = bodies[meta?.centralBody];
+        if (!centralBody) {
+            return _emptyBranchResult(segment, 'central_body_transfer');
+        }
+
+        const travellingToCentralBody = segment.to.bodyId === meta?.centralBody;
+        const routePoint = travellingToCentralBody
+            ? options?.routeContext?.startPoint
+            : options?.routeContext?.endPoint;
+        const outerBodyId = _resolveTransferOriginTopLevelBody(routePoint?.body, bodies, meta);
+        const outerBody = bodies[outerBodyId];
+        if (!outerBody || outerBody.id === centralBody.id) {
+            return {
+                dv: Number(centralBody.nodes?.orbit) || 0,
+                branchType: 'central_body_transfer',
+                debug: {
+                    source: 'body.nodes.orbit',
+                    fallback: true,
+                },
+            };
+        }
+
+        const context = api.computeCentralBodyTransferContext(outerBody, centralBody, meta);
+        if (travellingToCentralBody) {
+            const outerMu = Number(api.getPhysics(outerBody).mu) || 0;
+            const outerPeriapsis = api.lowOrbitRadius(outerBody, meta);
+            const localEscape = api.hyperbolicDepartureBurn(outerMu, outerPeriapsis, 0);
+            const departureBurn = api.hyperbolicDepartureBurn(outerMu, outerPeriapsis, context.vinfAtOuterCoplanar);
+            const coplanarExtra = departureBurn - localEscape;
+            const planeChange = api.planeChangeDeltaV(context.outerSpeed, context.planeAngle);
+            return {
+                dv: coplanarExtra + planeChange + context.centralLowOrbitInsertion,
+                branchType: 'central_body_transfer',
+                debug: {
+                    source: 'formula.outer_orbit_to_central_low_orbit',
+                    outerBodyId: outerBody.id,
+                    centralBodyId: centralBody.id,
+                    coplanarExtra,
+                    planeChange,
+                    centralLowOrbitInsertion: context.centralLowOrbitInsertion,
+                    centralLowOrbitAltitudeMeters: api.getLowOrbitAltitude(centralBody, meta),
+                    centralLowOrbitRadiusMeters: context.centralLowOrbitRadius,
+                },
+            };
+        }
+
+        return {
+            dv: context.centralLowOrbitDeparture,
+            branchType: 'central_body_transfer',
+            debug: {
+                source: 'formula.central_low_orbit_to_outer_orbit',
+                outerBodyId: outerBody.id,
+                centralBodyId: centralBody.id,
+                centralLowOrbitDeparture: context.centralLowOrbitDeparture,
+                centralLowOrbitAltitudeMeters: api.getLowOrbitAltitude(centralBody, meta),
+                centralLowOrbitRadiusMeters: context.centralLowOrbitRadius,
+            },
+        };
+    }
+
+    function _emptyBranchResult(segment, branchType) {
+        return {
+            dv: 0,
+            branchType,
+            debug: {
+                unresolved: true,
+                from: segment.from,
+                to: segment.to,
+            },
+        };
+    }
+
     function _resolveTransferOriginTopLevelBody(startBodyId, bodies, meta) {
         let currentBodyId = startBodyId;
         while (currentBodyId && bodies[currentBodyId]) {
@@ -135,6 +285,8 @@
     }
 
     Object.assign(api, {
+        calculateCentralBodyTransferBranch,
         calculateEscapeInterceptBranch,
+        calculateMoonHostEscapeBranch,
     });
 })(typeof window !== 'undefined' ? window : globalThis);

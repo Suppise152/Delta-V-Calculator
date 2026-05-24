@@ -75,11 +75,11 @@
       "surface": {
         "canAerobrake": false,
         "dvToOrbit": 619000,
-        "dvToLand": null
+        "dvToLand": 436760
       },
       "nodes": {
         "orbit": 619000,
-        "land": null
+        "land": 436760
       },
       "physics": {
         "radius": 695700000,
