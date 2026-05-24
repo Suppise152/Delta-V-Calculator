@@ -149,6 +149,56 @@
         };
     }
 
+    function calculateMoonHostEscapeBranch(segment, bodies, meta, options) {
+        const hostBody = bodies[segment.bodyId];
+        const moonBody = bodies[segment.from.bodyId];
+        const destinationTopLevelBody = bodies[_resolveTransferOriginTopLevelBody(
+            options?.routeContext?.endPoint?.body,
+            bodies,
+            meta,
+        )];
+        const centralBody = bodies[meta?.centralBody];
+        if (!hostBody || !moonBody || !destinationTopLevelBody || !centralBody) {
+            return _emptyBranchResult(segment, 'moon_host_escape');
+        }
+
+        const moonContext = api.computeMoonTransferContext(hostBody, moonBody, meta, 'periapsis');
+        const hostDepartureContext = api.computeInterplanetaryContext(
+            hostBody,
+            destinationTopLevelBody,
+            meta,
+            centralBody,
+        );
+        const hostSoiRadius = Number(api.getPhysics(hostBody).soiRadius) || 0;
+        const retargetScale = hostSoiRadius > 0
+            ? Math.max(0, Math.min(1, moonContext.targetRadius / hostSoiRadius))
+            : 0;
+        const coplanarExtra = Math.abs(
+            hostDepartureContext.vinfDepartCoplanar - moonContext.vinfArriveCoplanar,
+        ) * retargetScale;
+        const planeChangeSpeed = hostDepartureContext.vinfDepartCoplanar;
+        const planeChange = api.planeChangeDeltaV(planeChangeSpeed, moonContext.planeAngle);
+
+        return {
+            dv: coplanarExtra + planeChange,
+            branchType: 'moon_host_escape',
+            debug: {
+                source: 'formula.moon_host_escape',
+                hostBodyId: hostBody.id,
+                moonBodyId: moonBody.id,
+                destinationTopLevelBodyId: destinationTopLevelBody.id,
+                coplanarExtra,
+                planeChange,
+                planeChangeSpeed,
+                retargetScale,
+                hostDepartureVinfDepartCoplanar: hostDepartureContext.vinfDepartCoplanar,
+                moonTransferVinfArriveCoplanar: moonContext.vinfArriveCoplanar,
+                hostSoiRadius,
+                moonTransferTargetRadiusMeters: moonContext.targetRadius,
+            },
+        };
+    }
+
     function calculateCentralBodyTransferBranch(segment, bodies, meta, options) {
         const centralBody = bodies[meta?.centralBody];
         if (!centralBody) {
@@ -237,5 +287,6 @@
     Object.assign(api, {
         calculateCentralBodyTransferBranch,
         calculateEscapeInterceptBranch,
+        calculateMoonHostEscapeBranch,
     });
 })(typeof window !== 'undefined' ? window : globalThis);

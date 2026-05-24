@@ -127,6 +127,10 @@
             return api.calculateCentralBodyTransferBranch(segment, bodies, meta, options);
         }
 
+        if (_isMoonHostEscapeSegment(segment, bodies, meta)) {
+            return api.calculateMoonHostEscapeBranch(segment, bodies, meta, options);
+        }
+
         if (_isOrbitEscapeSegment(segment)) {
             return api.calculateOrbitEscapeBranch(segment, bodies, options);
         }
@@ -188,6 +192,22 @@
                 && segment.from.nodeKey === targetParentPrimary
                 && segment.to.nodeKey === segment.primaryNodeKey
             )
+        );
+    }
+
+    function _isMoonHostEscapeSegment(segment, bodies, meta) {
+        if (segment.to.bodyId !== api.INTERPLANETARY_ID || segment.nodeKey !== 'escape') {
+            return false;
+        }
+
+        const moonBody = bodies[segment.from.bodyId];
+        const hostBody = bodies[segment.bodyId];
+        return Boolean(
+            moonBody
+            && hostBody
+            && moonBody.parent === hostBody.id
+            && hostBody.parent === meta?.centralBody
+            && segment.from.nodeKey === segment.primaryNodeKey
         );
     }
 
