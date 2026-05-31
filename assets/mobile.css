@@ -85,18 +85,18 @@
     }
 
     .map-container::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.08);
+        background: var(--cardBorder);
         border-radius: 500;
     }
 
     .map-container::-webkit-scrollbar-thumb {
-        background: rgba(59, 140, 207, 0.92);
-        border: 2px solid rgba(16, 18, 28, 0.95);
+        background: var(--toggleHoverBg);
+        border: 2px solid var(--mobileScrollBorder);
         border-radius: 999px;
     }
 
     .map-container::-webkit-scrollbar-thumb:hover {
-        background: #66b0ec;
+        background: var(--mobileScrollHover);
     }
 
     .site-footer {
@@ -108,7 +108,7 @@
     /* Firefox scrollbar */
     .map-container {
         scrollbar-width: auto;
-        scrollbar-color: rgba(167, 179, 189, 0.92) rgba(255, 255, 255, 0.08);
+        scrollbar-color: var(--mobileScrollFirefox) var(--cardBorder);
     }
 
     /* ─── CONTROLS BAR ────────────────────────────────────────── */
@@ -129,31 +129,31 @@
     }
 
     .controls-bar::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.08);
+        background: var(--cardBorder);
         border-radius: 999px;
     }
 
     .controls-bar::-webkit-scrollbar-thumb {
-        background: rgba(59, 140, 207, 0.92);
-        border: 2px solid rgba(16, 18, 28, 0.95);
+        background: var(--toggleHoverBg);
+        border: 2px solid var(--mobileScrollBorder);
         border-radius: 999px;
     }
 
     .controls-bar::-webkit-scrollbar-thumb:hover {
-        background: #66b0ec;
+        background: var(--mobileScrollHover);
     }
 
     /* Firefox scrollbar */
     .controls-bar {
         scrollbar-width: auto;
-        scrollbar-color: rgba(167, 179, 189, 0.92) rgba(255, 255, 255, 0.08);
+        scrollbar-color: var(--mobileScrollFirefox) var(--cardBorder);
     }
 
     /* ─── TOGGLE BOXES ────────────────────────────────────────── */
     .toggle-boxes {
         flex: none;
         border-right: none;
-        border-bottom: 1px solid var(--border-sep);
+        border-bottom: 1px solid var(--sepBorder);
         font-size: clamp(0.95rem, 1.2vw, 1.1rem);
         gap: 4px;
         padding: 12px;
@@ -176,7 +176,7 @@
 
     .toggle-group-separator {
         height: 1px;
-        background: var(--border-sep);
+        background: var(--sepBorder);
         margin: 3px 0;
     }
 
@@ -195,7 +195,7 @@
         flex: none;
         border-left: none;
         border-right: none;
-        border-bottom: 1px solid var(--border-sep);
+        border-bottom: 1px solid var(--sepBorder);
         font-size: clamp(0.95rem, 1.2vw, 1.1rem);
         gap: 4px;
         padding: 12px;

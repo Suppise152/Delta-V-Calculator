@@ -5,21 +5,6 @@
 
 /* ─── TOKENS ─────────────────────────────────────────────────── */
 :root {
-    --bg-page: rgb(28, 28, 38);
-    --bg-left: rgb(2, 0, 14);
-    --bg-right: rgb(28, 28, 38);
-    --bg-dropdown: #2b2e3f;
-    --bg-input: transparent;
-
-    --text-primary: lightgray;
-    --text-muted: grey;
-    --text-input: lightgray;
-
-    --accent: rgb(59, 140, 207);
-    --border-panel: #2b2e3f;
-    --border-sep: rgba(255, 255, 255, 0.07);
-    --border-input: #444;
-
     --font-ui: 'Share Tech Mono', monospace;
     --font-title: 'Oswald', sans-serif;
 
@@ -62,8 +47,8 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background: var(--bg-page);
-    color: var(--text-primary);
+    background: var(--pageBg);
+    color: var(--txt);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -75,7 +60,7 @@ body {
 .banner {
     flex: 0 0 auto;
     height: 17vh;
-    background: #3b8ccf;
+    background: var(--bannerBg);
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -123,7 +108,7 @@ body {
 .banner-title {
     font-family: var(--font-title);
     font-size: var(--banner-title-font-size);
-    color: white;
+    color: var(--bannerTxt);
     letter-spacing: 0.05em;
     text-transform: uppercase;
     line-height: 1;
@@ -146,7 +131,8 @@ body {
     flex: 0 0 var(--left-w);
     max-width: var(--left-w);
     min-height: 0;
-    background-color: var(--bg-left);
+    background-color: var(--descBg);
+    color: var(--descTxt);
     padding: 0 20px;
     overflow-y: auto;
     direction: rtl;
@@ -156,6 +142,30 @@ body {
         padding 320ms ease,
         opacity 220ms ease,
         transform 320ms ease;
+}
+
+.theme-toggle {
+    display: block;
+    width: max-content;
+    margin: 12px auto 4px 0;
+    padding: 7px 10px;
+    direction: ltr;
+    font-family: var(--font-ui);
+    font-size: clamp(0.78rem, 0.85vw, 0.95rem);
+    color: var(--btnTxt);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.theme-toggle:hover {
+    filter: brightness(1.08);
+}
+
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--toggleLine);
+    outline-offset: 2px;
 }
 
 .content.is-description-collapsed .panel-left {
@@ -181,8 +191,8 @@ body {
     flex-direction: column;
     justify-content: center;
     gap: 5px;
-    background: rgba(28, 28, 38, 0.88);
-    border: 1px solid rgba(198, 213, 234, 0.28);
+    background: var(--toggleBg);
+    border: 1px solid var(--toggleBorder);
     border-radius: 4px;
     cursor: pointer;
     transition:
@@ -193,12 +203,12 @@ body {
 }
 
 .description-toggle:hover {
-    background: rgba(59, 140, 207, 0.92);
-    border-color: rgba(198, 213, 234, 0.75);
+    background: var(--toggleHoverBg);
+    border-color: var(--toggleHoverBorder);
 }
 
 .description-toggle:focus-visible {
-    outline: 2px solid rgb(198, 213, 234);
+    outline: 2px solid var(--toggleLine);
     outline-offset: 2px;
 }
 
@@ -206,7 +216,7 @@ body {
     display: block;
     width: 100%;
     height: 2px;
-    background: rgb(198, 213, 234);
+    background: var(--toggleLine);
     border-radius: 999px;
 }
 
@@ -261,17 +271,17 @@ body {
 }
 
 .panel-left::-webkit-scrollbar-thumb {
-    background: #262736;
+    background: var(--scrollThumb);
     border-radius: 6px;
 }
 
 .panel-left::-webkit-scrollbar-thumb:hover {
-    background: #333333;
+    background: var(--scrollThumbHover);
 }
 
 /* Firefox scrollbar */
 .panel-left {
-    scrollbar-color: #262736 transparent;
+    scrollbar-color: var(--scrollThumb) transparent;
 }
 
 /* ─── RIGHT PANEL ─────────────────────────────────────────────── */
@@ -279,7 +289,7 @@ body {
     flex: 1 1 0;
     display: flex;
     flex-direction: column;
-    background-color: var(--bg-right);
+    background-color: var(--mainBg);
     overflow: hidden;
     min-height: 0;
 }
@@ -293,6 +303,7 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+    background-color: var(--mapBg);
 }
 
 .map-container svg,
@@ -309,9 +320,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    border: 1px dashed var(--border-panel);
+    border: 1px dashed var(--panelBorder);
     border-radius: 4px;
-    color: var(--text-muted);
+    color: var(--mutedTxt);
     font-family: var(--font-ui);
     font-size: clamp(0.95rem, 1.1vw, 1.15rem);
 }
@@ -325,6 +336,7 @@ body {
     min-height: 0;
     padding: 10px 16px 12px;
     overflow: visible;
+    background-color: var(--ctrlBg);
 }
 
 /* ─── TOGGLE BOXES (left half of controls bar) ────────────────── */
@@ -343,7 +355,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--text-primary);
+    color: var(--txt);
     cursor: pointer;
     line-height: var(--text-line-height);
     user-select: none;
@@ -359,14 +371,14 @@ body {
 
 .toggle-label--sm {
     font-size: var(--font-size-small);
-    color: var(--text-primary);
+    color: var(--txt);
     font-family: var(--font-ui);
 }
 
 /* ─── TOGGLE GROUP SEPARATOR ─────────────────────────────────── */
 .toggle-group-separator {
     height: 1px;
-    background: var(--border-sep);
+    background: var(--sepBorder);
     margin: 4px 0;
 }
 
@@ -388,7 +400,7 @@ body {
 #slider-value {
     font-family: var(--font-ui);
     font-size: clamp(0.9rem, 1vw, 1.2rem);
-    color: var(--text-primary);
+    color: var(--txt);
 }
 
 /* ─── MAP CONTROLS ──────────────────────────────────────────── */
@@ -401,13 +413,13 @@ body {
     padding: 10px 16px 12px;
     font-family: var(--font-ui);
     font-size: var(--font-size-ui);
-    border-left: 1px solid var(--border-sep);
-    border-right: 1px solid var(--border-sep);
+    border-left: 1px solid var(--sepBorder);
+    border-right: 1px solid var(--sepBorder);
 }
 
 .map-controls-title {
     font-size: clamp(0.72rem, 0.9vw, 0.92rem);
-    color: var(--text-muted);
+    color: var(--mutedTxt);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 2px;
@@ -422,7 +434,7 @@ body {
     gap: 10px;
     padding: 10px 16px 12px;
     overflow: visible;
-    border-left: 1px solid var(--border-sep);
+    border-left: 1px solid var(--sepBorder);
 }
 
 .results-layout {
@@ -454,7 +466,7 @@ body {
     font-family: var(--font-ui);
     font-size: var(--font-size-ui);
     font-weight: 700;
-    color: white;
+    color: var(--btnTxt);
     background: var(--accent);
     border: 1px solid var(--accent);
     border-radius: 12px;
@@ -476,16 +488,16 @@ body {
 .result-label {
     font-family: var(--font-ui);
     font-size: clamp(0.8rem, 1vw, 1rem);
-    color: var(--text-muted);
+    color: var(--mutedTxt);
 }
 
 .result-display {
     font-family: var(--font-ui);
     font-size: clamp(1.4rem, 2vw, 2.4rem);
-    color: var(--text-input);
-    background: var(--bg-input);
+    color: var(--inputTxt);
+    background: var(--inputBg);
     border: none;
-    border-bottom: 1px solid var(--border-input);
+    border-bottom: 1px solid var(--inputBorder);
     padding: 1px 0;
     outline: none;
     cursor: default;
@@ -498,7 +510,7 @@ body {
 }
 
 .result-display::placeholder {
-    color: var(--text-muted);
+    color: var(--mutedTxt);
 }
 
 /* ─── TRANSFER ROW ────────────────────────────────────────────── */
@@ -513,9 +525,9 @@ body {
 .debug-panel {
     width: 100%;
     max-width: min(760px, 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--cardBorder);
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--debugBg);
     padding: 0;
     overflow: hidden;
     margin: 20px 0 24px;
@@ -527,7 +539,7 @@ body {
     list-style: none;
     font-family: var(--font-ui);
     font-size: clamp(0.8rem, 0.95vw, 1rem);
-    color: var(--text-muted);
+    color: var(--mutedTxt);
     padding: 10px 12px;
     user-select: none;
 }
@@ -542,7 +554,7 @@ body {
     padding: 0 12px 12px;
     font-family: var(--font-ui);
     font-size: clamp(0.72rem, 0.88vw, 0.92rem);
-    color: var(--text-primary);
+    color: var(--txt);
 }
 
 .debug-section {
@@ -556,7 +568,7 @@ body {
 }
 
 .debug-section-title {
-    color: var(--text-muted);
+    color: var(--mutedTxt);
     text-transform: uppercase;
     letter-spacing: 0.06em;
 }
@@ -566,7 +578,7 @@ body {
     flex-direction: column;
     gap: 4px;
     padding: 8px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid var(--rowBorder);
 }
 
 .debug-entry:first-of-type {
@@ -574,11 +586,11 @@ body {
 }
 
 .debug-entry-title {
-    color: white;
+    color: var(--titleTxt);
 }
 
 .debug-entry-meta {
-    color: var(--text-muted);
+    color: var(--mutedTxt);
 }
 
 .debug-entry-details {
@@ -602,7 +614,7 @@ body {
 .transfer-meta-label {
     font-family: var(--font-ui);
     font-size: clamp(0.72rem, 0.95vw, 1rem);
-    color: var(--text-muted);
+    color: var(--mutedTxt);
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
@@ -613,7 +625,7 @@ body {
     height: var(--phase-diagram-size, 110px);
     max-width: 100%;
     border-radius: 10px;
-    background: radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 62%);
+    background: radial-gradient(circle at 50% 45%, var(--transferGlow), transparent 62%);
     margin-top: auto;
     flex: 0 0 auto;
 }
@@ -657,56 +669,56 @@ body {
 
 .transfer-orbit-ring {
     fill: none;
-    stroke: rgba(255, 240, 200, 0.14);
+    stroke: var(--transferOrbit);
     stroke-width: 3;
 }
 
 .transfer-trajectory {
     fill: none;
-    stroke: #3ea0ff;
+    stroke: var(--transferArc);
     stroke-width: 3;
     stroke-linecap: round;
 }
 
 .transfer-intercept-mark {
     fill: none;
-    stroke: #f4db3d;
+    stroke: var(--transferAngle);
     stroke-width: 3;
     stroke-linecap: round;
 }
 
 .transfer-intercept-point {
-    fill: #f4db3d;
-    filter: drop-shadow(0 0 4px rgba(244, 219, 61, 0.45));
+    fill: var(--transferAngle);
+    filter: drop-shadow(0 0 4px var(--transferAngleGlow));
 }
 
 .transfer-center-body {
-    filter: drop-shadow(0 0 10px rgba(255, 190, 70, 0.28));
+    filter: drop-shadow(0 0 10px var(--transferCenterGlow));
 }
 
 .transfer-body {
-    stroke: rgba(8, 10, 20, 0.55);
+    stroke: var(--transferBodyStroke);
     stroke-width: 2;
 }
 
 /* ─── BREAKDOWN TOGGLE ────────────────────────────────────────── */
 .breakdown-toggle {
     font-size: 12px;
-    color: var(--text-muted);
+    color: var(--mutedTxt);
 }
 
 /* ─── DROPDOWN ────────────────────────────────────────────────── */
 .dropdown {
     display: none;
     position: absolute;
-    background-color: var(--bg-dropdown);
+    background-color: var(--cardBg);
     min-width: 220px;
     width: max-content;
     max-width: min(420px, calc(100vw - 32px));
     overflow: visible;
     white-space: nowrap;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 24px var(--cardShadow);
+    border: 1px solid var(--cardBorder);
     border-radius: 12px;
     top: 0;
     left: 0;
@@ -722,10 +734,10 @@ body {
     align-items: center;
     gap: 10px;
     padding: 7px 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid var(--rowBorder);
     font-family: var(--font-ui);
     font-size: clamp(0.85rem, 1.0vw, 1.05rem);
-    color: rgb(190, 190, 190);
+    color: var(--cardTxt);
 }
 
 .dropdown-entry-marker {
@@ -734,7 +746,7 @@ body {
     height: 8px;
     border-radius: 999px;
     background-color: currentColor;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+    box-shadow: 0 0 0 1px var(--swatchRing);
 }
 
 .dropdown-entry-marker.is-empty {
@@ -747,8 +759,8 @@ body {
     height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-top: 9px solid white;
-    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.35));
+    border-top: 9px solid var(--aeroIndicator);
+    filter: drop-shadow(0 0 3px var(--aeroGlow));
     margin-left: 2px;
 }
 
@@ -768,22 +780,22 @@ body {
 }
 
 .dropdown-entry--end {
-    color: #e05555;
-    background: rgba(255, 0, 0, 0.1);
+    color: var(--endTxt);
+    background: var(--endBg);
 }
 
 .dropdown-entry--start {
-    color: rgb(50, 255, 50);
-    background: rgba(0, 255, 0, 0.1);
+    color: var(--startTxt);
+    background: var(--startBg);
 }
 
 .dropdown-entry--surface {
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
+    color: var(--titleTxt);
+    background: var(--surfaceBg);
 }
 
 .dropdown-entry--zeroed {
-    color: var(--text-muted);
+    color: var(--mutedTxt);
 }
 
 .dropdown-entry-value {
@@ -804,11 +816,11 @@ body {
     min-width: 0;
     max-width: calc(100% - 32px);
     padding: 12px 14px;
-    background-color: var(--bg-dropdown);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: var(--cardBg);
+    box-shadow: 0 12px 24px var(--cardShadow);
+    border: 1px solid var(--cardBorder);
     border-radius: 12px;
-    color: rgb(190, 190, 190);
+    color: var(--cardTxt);
     font-family: var(--font-ui);
     z-index: 25;
     pointer-events: none;
@@ -827,7 +839,7 @@ body {
 }
 
 .planet-info-card__title {
-    color: white;
+    color: var(--titleTxt);
     font-size: clamp(1rem, 1.15vw, 1.2rem);
     font-weight: 700;
 }
@@ -848,7 +860,7 @@ body {
     display: inline-block;
     flex: 0 0 auto;
     border-radius: 999px;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+    box-shadow: 0 0 0 1px var(--swatchRing);
 }
 
 .planet-info-card__swatch--body {
@@ -870,13 +882,13 @@ body {
 }
 
 .planet-info-card__label {
-    color: var(--text-muted);
+    color: var(--mutedTxt);
 }
 
 .planet-info-card__value {
     min-width: 0;
     overflow-wrap: anywhere;
-    color: rgb(214, 220, 230);
+    color: var(--cardValTxt);
 }
 
 @media (hover: none), (pointer: coarse) {
@@ -892,17 +904,17 @@ body {
 }
 
 .map-node circle {
-    fill: #3a3a4a;
+    fill: var(--mapNode);
     transition: fill 0.15s ease, filter 0.15s ease;
 }
 
 .map-node:hover circle {
-    fill: #55556a;
+    fill: var(--mapNodeHover);
     filter: brightness(1.2);
 }
 
 .map-node.is-active circle {
-    fill: #b0c4de;
+    fill: var(--mapNodeActive);
 }
 
 .map-node.has-atmo-glow circle {
@@ -910,31 +922,31 @@ body {
 }
 
 .map-node text {
-    fill: #ccc;
+    fill: var(--mapNodeTxt);
     font-family: var(--font-ui);
     font-size: 11px;
     pointer-events: none;
 }
 
 .map-node.is-active text {
-    fill: #111;
+    fill: var(--mapNodeActiveTxt);
 }
 
 /* dim on selection */
 .dv-map.has-selection .map-node:not(.is-active) circle {
-    fill: #262634;
+    fill: var(--mapRouteNode);
 }
 
 .dv-map.has-selection .map-node:not(.is-active) text {
-    fill: #8b8b98;
+    fill: var(--mapMutedNode);
 }
 
 .dv-map.has-selection .map-node.is-route:not(.is-active) circle {
-    fill: #3a3a4a;
+    fill: var(--mapNode);
 }
 
 .dv-map.has-selection .map-node.is-route:not(.is-active) text {
-    fill: #ccc;
+    fill: var(--mapNodeTxt);
 }
 
 .dv-map.has-selection .map-node.has-atmo-glow:not(.is-active):not(.is-route) circle {
@@ -942,14 +954,14 @@ body {
 }
 
 .map-label {
-    fill: var(--text-primary);
+    fill: var(--txt);
     font-family: var(--font-ui);
     font-size: 15px;
     pointer-events: none;
 }
 
 .dv-map.has-selection .map-label {
-    fill: #8a8a98;
+    fill: var(--mapLabel);
 }
 
 /* ─── MAP PATHS ───────────────────────────────────────────────── */
@@ -977,7 +989,7 @@ body {
 
 /* ─── AEROBRAKE INDICATORS ────────────────────────────────────── */
 .aerobrake-indicator {
-    fill: white;
+    fill: var(--aeroIndicator);
     opacity: 1;
     transition: opacity 0.15s ease, filter 0.15s ease;
     pointer-events: none;
@@ -991,7 +1003,7 @@ body {
 /* Active indicators stay fully visible */
 .dv-map.has-selection .aerobrake-indicator.is-active {
     opacity: 1;
-    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.55));
+    filter: drop-shadow(0 0 4px var(--aeroIndicatorGlow)) drop-shadow(0 0 10px var(--aeroIndicatorGlowSoft));
 }
 
 /* ─── ANIMATED OVERLAYS ───────────────────────────────────────── */
@@ -1058,12 +1070,12 @@ body {
 
 /* ─── INTERPLANETARY HUB NODE ─────────────────────────────────── */
 .map-node--hub circle {
-    fill: #22222e;
+    fill: var(--mapHub);
     stroke-width: 2;
 }
 
 .map-node--hub text {
-    fill: #c8c8d4;
+    fill: var(--mapHubTxt);
     font-family: var(--font-ui);
     font-size: clamp(0.75rem, 1.2vw, 1rem);
     pointer-events: none;
@@ -1071,13 +1083,13 @@ body {
 }
 
 .map-node--hub:hover circle {
-    fill: #2e2e3e;
+    fill: var(--mapHubHover);
     filter: brightness(1.15);
 }
 
 /* Hub is highlighted when it's part of the active route */
 .dv-map.has-selection .map-node--hub.is-route circle {
-    fill: #3a3a50;
+    fill: var(--mapHubRoute);
     stroke-width: 2.5;
 }
 
@@ -1093,7 +1105,7 @@ body {
 
 #version-info {
     font-size: 10px;
-    color: rgb(198, 213, 234);
+    color: var(--versionTxt);
 }
 
 @media (min-width: 1200px) and (max-height: 950px) {

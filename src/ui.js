@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMapVersionControls();
     loadPack('stock');
     initSlider();
+    initThemeToggle();
     initDescriptionPanelToggle();
     initPlanetInfoCard();
     _initMobileLayoutSync();
@@ -28,6 +29,27 @@ const PACK_CONFIG = {
 const MOBILE_MAP_SCROLL_EXPANSION = 1.5;
 const MOBILE_MAP_VIEWBOX_EXPANSION = 1.18;
 const PLANET_INFO_HOVER_DELAY_MS = 1000;
+const THEME_STORAGE_KEY = 'deltaVTheme';
+
+function initThemeToggle() {
+    const button = document.getElementById('theme-toggle');
+    if (!button) return;
+
+    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+    _setLightMode(storedTheme === 'light', button);
+
+    button.addEventListener('click', () => {
+        const isLightMode = !document.body.classList.contains('is-light-mode');
+        _setLightMode(isLightMode, button);
+        window.localStorage.setItem(THEME_STORAGE_KEY, isLightMode ? 'light' : 'dark');
+    });
+}
+
+function _setLightMode(isLightMode, button) {
+    document.body.classList.toggle('is-light-mode', isLightMode);
+    button.setAttribute('aria-pressed', String(isLightMode));
+    button.textContent = isLightMode ? 'Dark Mode' : 'Light Mode';
+}
 
 function initDescriptionPanelToggle() {
     const content = document.querySelector('.content');
