@@ -30,6 +30,7 @@ const MOBILE_MAP_SCROLL_EXPANSION = 1.5;
 const MOBILE_MAP_VIEWBOX_EXPANSION = 1.18;
 const PLANET_INFO_HOVER_DELAY_MS = 1000;
 const THEME_STORAGE_KEY = 'deltaVTheme';
+const DESCRIPTION_PANEL_STORAGE_KEY = 'deltaVDescriptionPanel';
 
 function initThemeToggle() {
     const button = document.getElementById('theme-toggle');
@@ -56,11 +57,13 @@ function initDescriptionPanelToggle() {
     const button = document.getElementById('description-toggle');
     if (!content || !button) return;
 
+    const storedState = window.localStorage.getItem(DESCRIPTION_PANEL_STORAGE_KEY);
+    _setDescriptionPanelCollapsed(storedState === 'collapsed', content, button);
+
     button.addEventListener('click', () => {
-        const isCollapsed = content.classList.toggle('is-description-collapsed');
-        button.setAttribute('aria-expanded', String(!isCollapsed));
-        button.setAttribute('aria-label', isCollapsed ? 'Show description panel' : 'Hide description panel');
-        button.title = isCollapsed ? 'Show description panel' : 'Hide description panel';
+        const isCollapsed = !content.classList.contains('is-description-collapsed');
+        _setDescriptionPanelCollapsed(isCollapsed, content, button);
+        window.localStorage.setItem(DESCRIPTION_PANEL_STORAGE_KEY, isCollapsed ? 'collapsed' : 'expanded');
     });
 
     content.addEventListener('transitionend', (event) => {
@@ -70,6 +73,13 @@ function initDescriptionPanelToggle() {
         _syncMobileMapViewport();
         _refreshTransferUi();
     });
+}
+
+function _setDescriptionPanelCollapsed(isCollapsed, content, button) {
+    content.classList.toggle('is-description-collapsed', isCollapsed);
+    button.setAttribute('aria-expanded', String(!isCollapsed));
+    button.setAttribute('aria-label', isCollapsed ? 'Show description panel' : 'Hide description panel');
+    button.title = isCollapsed ? 'Show description panel' : 'Hide description panel';
 }
 
 function initPlanetInfoCard() {
