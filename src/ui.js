@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMapVersionControls();
     loadPack('stock');
     initSlider();
+    initDescriptionPanelToggle();
     _initMobileLayoutSync();
 });
 
@@ -25,6 +26,27 @@ const PACK_CONFIG = {
 };
 const MOBILE_MAP_SCROLL_EXPANSION = 1.5;
 const MOBILE_MAP_VIEWBOX_EXPANSION = 1.18;
+
+function initDescriptionPanelToggle() {
+    const content = document.querySelector('.content');
+    const button = document.getElementById('description-toggle');
+    if (!content || !button) return;
+
+    button.addEventListener('click', () => {
+        const isCollapsed = content.classList.toggle('is-description-collapsed');
+        button.setAttribute('aria-expanded', String(!isCollapsed));
+        button.setAttribute('aria-label', isCollapsed ? 'Show description panel' : 'Hide description panel');
+        button.title = isCollapsed ? 'Show description panel' : 'Hide description panel';
+    });
+
+    content.addEventListener('transitionend', (event) => {
+        if (event.target !== document.getElementById('description-panel')) return;
+        if (event.propertyName !== 'flex-basis') return;
+
+        _syncMobileMapViewport();
+        _refreshTransferUi();
+    });
+}
 
 function initMapVersionControls() {
     _setActivePackToggle(_activePackId);

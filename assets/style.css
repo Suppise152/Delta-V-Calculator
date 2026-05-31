@@ -26,6 +26,7 @@
     --banner-h: 17%;
     --left-w: 30%;
     --right-w: 70%;
+    --description-toggle-size: 38px;
 
     /* right panel split */
     --map-h: 55%;
@@ -137,16 +138,80 @@ body {
     min-height: 0;
     width: 100%;
     overflow: hidden;
+    position: relative;
 }
 
 /* ─── LEFT PANEL ──────────────────────────────────────────────── */
 .panel-left {
     flex: 0 0 var(--left-w);
+    max-width: var(--left-w);
     min-height: 0;
     background-color: var(--bg-left);
     padding: 0 20px;
     overflow-y: auto;
     direction: rtl;
+    transition:
+        flex-basis 320ms ease,
+        max-width 320ms ease,
+        padding 320ms ease,
+        opacity 220ms ease,
+        transform 320ms ease;
+}
+
+.content.is-description-collapsed .panel-left {
+    flex-basis: 0;
+    max-width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    opacity: 0;
+    transform: translateX(-18px);
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.description-toggle {
+    position: absolute;
+    top: 10px;
+    left: calc(var(--left-w) - var(--description-toggle-size) - 12px);
+    z-index: 30;
+    width: var(--description-toggle-size);
+    height: var(--description-toggle-size);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: rgba(28, 28, 38, 0.88);
+    border: 1px solid rgba(198, 213, 234, 0.28);
+    border-radius: 4px;
+    cursor: pointer;
+    transition:
+        left 320ms ease,
+        background-color 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
+}
+
+.description-toggle:hover {
+    background: rgba(59, 140, 207, 0.92);
+    border-color: rgba(198, 213, 234, 0.75);
+}
+
+.description-toggle:focus-visible {
+    outline: 2px solid rgb(198, 213, 234);
+    outline-offset: 2px;
+}
+
+.description-toggle span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: rgb(198, 213, 234);
+    border-radius: 999px;
+}
+
+.content.is-description-collapsed .description-toggle {
+    left: 12px;
 }
 
 .panel-left h2 {

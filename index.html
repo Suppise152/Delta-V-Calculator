@@ -34,7 +34,7 @@
 
     <main class="content">
 
-        <aside class="panel-left">
+        <aside class="panel-left" id="description-panel">
             <details class="debug-panel" id="calc-debug-panel">
                 <summary>Calculation Debug</summary>
                 <div class="debug-output" id="calc-debug"></div>
@@ -157,11 +157,17 @@
             </ol>
         </aside>
 
+        <button type="button" class="description-toggle" id="description-toggle" aria-label="Hide description panel" aria-expanded="true" aria-controls="description-panel" title="Hide description panel">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
         <section class="panel-right">
 
             <div class="map-container" id="map-container">
                 <footer class="site-footer">
-                    <span id="version-info">Version 2.0.2</span>
+                    <span id="version-info">Version 2.1.0</span>
                 </footer>
                 <div class="map-placeholder" id="map-placeholder">
                     <span>Map loading...</span>

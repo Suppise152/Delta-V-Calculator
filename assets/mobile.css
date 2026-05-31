@@ -40,6 +40,10 @@
         display: none;
     }
 
+    .description-toggle {
+        display: none;
+    }
+
     .panel-right {
         flex: 0 0 100%;
         height: 100%;
