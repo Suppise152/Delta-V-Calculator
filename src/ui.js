@@ -7,8 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof initAnalytics === 'function') {
         initAnalytics();
     }
+    _activePackId = _getStoredPackId();
     initMapVersionControls();
-    loadPack('stock');
+    loadPack(_activePackId);
     initSlider();
     initThemeToggle();
     initDescriptionPanelToggle();
@@ -31,6 +32,12 @@ const MOBILE_MAP_VIEWBOX_EXPANSION = 1.18;
 const PLANET_INFO_HOVER_DELAY_MS = 1000;
 const THEME_STORAGE_KEY = 'deltaVTheme';
 const DESCRIPTION_PANEL_STORAGE_KEY = 'deltaVDescriptionPanel';
+const MAP_PACK_STORAGE_KEY = 'deltaVMapPack';
+
+function _getStoredPackId() {
+    const storedPackId = window.localStorage.getItem(MAP_PACK_STORAGE_KEY);
+    return PACK_CONFIG[storedPackId] ? storedPackId : 'stock';
+}
 
 function initThemeToggle() {
     const button = document.getElementById('theme-toggle');
@@ -285,14 +292,16 @@ function initMapVersionControls() {
 }
 
 async function loadPack(packId) {
-    const config = PACK_CONFIG[packId] || PACK_CONFIG.stock;
+    const nextPackId = PACK_CONFIG[packId] ? packId : 'stock';
+    const config = PACK_CONFIG[nextPackId];
 
     try {
         if (_loadedSystemData && _loadedDataPackId === config.dataPackId) {
-            _activePackId = packId;
+            _activePackId = nextPackId;
             _originBodyId = _loadedSystemData.meta?.originBody ?? null;
             setMapLayout(config.mapId);
-            _setActivePackToggle(packId);
+            _setActivePackToggle(nextPackId);
+            window.localStorage.setItem(MAP_PACK_STORAGE_KEY, nextPackId);
             _syncMobileMapViewport();
             _refreshOutputs();
             return;
@@ -302,14 +311,15 @@ async function loadPack(packId) {
         const data = _normalizeLoadedPackData(await res.json());
         _loadedDataPackId = config.dataPackId;
         _loadedSystemData = data;
-        _activePackId = packId;
+        _activePackId = nextPackId;
         _originBodyId = data.meta?.originBody ?? null;
         initMap(data, { mapId: config.mapId });
-        _setActivePackToggle(packId);
+        _setActivePackToggle(nextPackId);
+        window.localStorage.setItem(MAP_PACK_STORAGE_KEY, nextPackId);
         _syncMobileMapViewport();
         _refreshOutputs();
     } catch (e) {
-        console.error('Failed to load pack:', packId, e);
+        console.error('Failed to load pack:', nextPackId, e);
         const c = document.getElementById('map-container');
         c.innerHTML = '<div class="map-placeholder"><span>Failed to load map data.</span></div>';
     }
