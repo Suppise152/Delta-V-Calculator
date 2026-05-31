@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/colours.css">
     <link rel="stylesheet" href="assets/style.css">
     <link rel="stylesheet" href="assets/mobile.css">
     <script>
@@ -34,7 +35,8 @@
 
     <main class="content">
 
-        <aside class="panel-left">
+        <aside class="panel-left" id="description-panel">
+            <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Light Mode</button>
             <details class="debug-panel" id="calc-debug-panel">
                 <summary>Calculation Debug</summary>
                 <div class="debug-output" id="calc-debug"></div>
@@ -157,12 +159,19 @@
             </ol>
         </aside>
 
+        <button type="button" class="description-toggle" id="description-toggle" aria-label="Hide description panel" aria-expanded="true" aria-controls="description-panel" title="Hide description panel">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
         <section class="panel-right">
 
             <div class="map-container" id="map-container">
                 <footer class="site-footer">
-                    <span id="version-info">Version 2.0.2</span>
+                    <span id="version-info">Version 2.1.0</span>
                 </footer>
+                <div class="planet-info-card" id="planet-info-card" aria-hidden="true"></div>
                 <div class="map-placeholder" id="map-placeholder">
                     <span>Map loading...</span>
                 </div>

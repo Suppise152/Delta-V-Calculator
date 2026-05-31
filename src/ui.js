@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initMapVersionControls();
     loadPack('stock');
     initSlider();
+    initThemeToggle();
+    initDescriptionPanelToggle();
+    initPlanetInfoCard();
     _initMobileLayoutSync();
 });
 
@@ -25,6 +28,247 @@ const PACK_CONFIG = {
 };
 const MOBILE_MAP_SCROLL_EXPANSION = 1.5;
 const MOBILE_MAP_VIEWBOX_EXPANSION = 1.18;
+const PLANET_INFO_HOVER_DELAY_MS = 1000;
+const THEME_STORAGE_KEY = 'deltaVTheme';
+
+function initThemeToggle() {
+    const button = document.getElementById('theme-toggle');
+    if (!button) return;
+
+    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+    _setLightMode(storedTheme === 'light', button);
+
+    button.addEventListener('click', () => {
+        const isLightMode = !document.body.classList.contains('is-light-mode');
+        _setLightMode(isLightMode, button);
+        window.localStorage.setItem(THEME_STORAGE_KEY, isLightMode ? 'light' : 'dark');
+    });
+}
+
+function _setLightMode(isLightMode, button) {
+    document.body.classList.toggle('is-light-mode', isLightMode);
+    button.setAttribute('aria-pressed', String(isLightMode));
+    button.textContent = isLightMode ? 'Dark Mode' : 'Light Mode';
+}
+
+function initDescriptionPanelToggle() {
+    const content = document.querySelector('.content');
+    const button = document.getElementById('description-toggle');
+    if (!content || !button) return;
+
+    button.addEventListener('click', () => {
+        const isCollapsed = content.classList.toggle('is-description-collapsed');
+        button.setAttribute('aria-expanded', String(!isCollapsed));
+        button.setAttribute('aria-label', isCollapsed ? 'Show description panel' : 'Hide description panel');
+        button.title = isCollapsed ? 'Show description panel' : 'Hide description panel';
+    });
+
+    content.addEventListener('transitionend', (event) => {
+        if (event.target !== document.getElementById('description-panel')) return;
+        if (event.propertyName !== 'flex-basis') return;
+
+        _syncMobileMapViewport();
+        _refreshTransferUi();
+    });
+}
+
+function initPlanetInfoCard() {
+    const mapContainer = document.getElementById('map-container');
+    const card = document.getElementById('planet-info-card');
+    if (!mapContainer || !card) return;
+
+    let hoverTimer = null;
+    let activeNode = null;
+
+    const clearHoverTimer = () => {
+        if (!hoverTimer) return;
+        window.clearTimeout(hoverTimer);
+        hoverTimer = null;
+    };
+
+    const hideCard = () => {
+        clearHoverTimer();
+        activeNode = null;
+        card.classList.remove('is-open');
+        card.setAttribute('aria-hidden', 'true');
+    };
+
+    mapContainer.addEventListener('pointerover', (event) => {
+        if (!_canShowPlanetInfoCard()) return;
+
+        const node = event.target.closest?.('.map-node');
+        if (!node || !mapContainer.contains(node) || node.dataset.nodeKey !== 'land') return;
+        if (node === activeNode) return;
+
+        clearHoverTimer();
+        card.classList.remove('is-open');
+        activeNode = node;
+
+        hoverTimer = window.setTimeout(() => {
+            if (activeNode !== node) return;
+            _showPlanetInfoCard(card, mapContainer, node);
+        }, PLANET_INFO_HOVER_DELAY_MS);
+    });
+
+    mapContainer.addEventListener('pointerout', (event) => {
+        const node = event.target.closest?.('.map-node');
+        if (!node || node !== activeNode) return;
+        if (event.relatedTarget && node.contains(event.relatedTarget)) return;
+        hideCard();
+    });
+
+    mapContainer.addEventListener('scroll', hideCard);
+    window.addEventListener('resize', hideCard);
+}
+
+function _showPlanetInfoCard(card, mapContainer, node) {
+    if (!_canShowPlanetInfoCard()) return;
+
+    const body = _loadedSystemData?.bodies?.find((candidate) => candidate.id === node.dataset.bodyId);
+    if (!body) return;
+
+    card.replaceChildren(_createPlanetInfoContent(body));
+    card.classList.add('is-open');
+    card.setAttribute('aria-hidden', 'false');
+    _positionPlanetInfoCard(card, mapContainer, node);
+}
+
+function _createPlanetInfoContent(body) {
+    const fragment = document.createDocumentFragment();
+
+    const header = document.createElement('div');
+    header.className = 'planet-info-card__header';
+
+    const title = document.createElement('div');
+    title.className = 'planet-info-card__title';
+    title.textContent = body.label || body.id;
+    header.appendChild(title);
+
+    const swatches = _createPlanetInfoSwatches(body);
+    if (swatches) header.appendChild(swatches);
+
+    fragment.appendChild(header);
+
+    const rows = document.createElement('div');
+    rows.className = 'planet-info-card__rows';
+
+    [
+        ['Atmosphere', _formatAtmosphere(body)],
+        ['DV to orbit', _formatDv(body.surface?.dvToOrbit)],
+        ['Satellites', _formatSatellites(body)],
+        ['Host body', _formatHostBody(body)],
+        ['Radius', _formatDistance(body.physics?.radius)],
+    ].forEach(([label, value]) => {
+        const labelEl = document.createElement('div');
+        labelEl.className = 'planet-info-card__label';
+        labelEl.textContent = label;
+
+        const valueEl = document.createElement('div');
+        valueEl.className = 'planet-info-card__value';
+        valueEl.textContent = value;
+
+        rows.append(labelEl, valueEl);
+    });
+
+    fragment.appendChild(rows);
+    return fragment;
+}
+
+function _createPlanetInfoSwatches(body) {
+    const swatches = document.createElement('div');
+    swatches.className = 'planet-info-card__swatches';
+
+    swatches.appendChild(_createBodySwatch(body, 'planet-info-card__swatch--body'));
+
+    const satellites = Array.isArray(body.moons) ? body.moons : [];
+    if (satellites.length) {
+        const satelliteSwatches = document.createElement('div');
+        satelliteSwatches.className = 'planet-info-card__satellite-swatches';
+
+        satellites.forEach((satelliteId) => {
+            const satellite = _getBodyById(satelliteId);
+            if (satellite) {
+                satelliteSwatches.appendChild(_createBodySwatch(satellite, 'planet-info-card__swatch--satellite'));
+            }
+        });
+
+        if (satelliteSwatches.children.length) {
+            swatches.appendChild(satelliteSwatches);
+        }
+    }
+
+    return swatches;
+}
+
+function _createBodySwatch(body, extraClass) {
+    const swatch = document.createElement('span');
+    swatch.className = `planet-info-card__swatch ${extraClass}`;
+    swatch.style.backgroundColor = body.mapColour || '#888888';
+    swatch.title = body.label || body.id;
+    swatch.setAttribute('aria-label', body.label || body.id);
+    return swatch;
+}
+
+function _positionPlanetInfoCard(card, mapContainer, node) {
+    const nodeRect = node.getBoundingClientRect();
+    const containerRect = mapContainer.getBoundingClientRect();
+    const gap = 12;
+
+    let left = nodeRect.right - containerRect.left + gap + mapContainer.scrollLeft;
+    let top = nodeRect.top - containerRect.top + mapContainer.scrollTop;
+
+    const maxLeft = Math.max(gap, mapContainer.clientWidth - card.offsetWidth - gap);
+    const maxTop = Math.max(gap, mapContainer.clientHeight - card.offsetHeight - gap);
+
+    if (left > maxLeft) {
+        left = nodeRect.left - containerRect.left - card.offsetWidth - gap + mapContainer.scrollLeft;
+    }
+
+    card.style.left = `${Math.round(Math.max(gap, Math.min(left, maxLeft)))}px`;
+    card.style.top = `${Math.round(Math.max(gap, Math.min(top, maxTop)))}px`;
+}
+
+function _formatAtmosphere(body) {
+    const height = Number(body.physics?.atmosphereHeight);
+    if (!Number.isFinite(height) || height <= 0) return 'None';
+    return _formatDistance(height);
+}
+
+function _formatDistance(meters) {
+    const value = Number(meters);
+    if (!Number.isFinite(value)) return 'Unknown';
+    if (value === 0) return '0 m';
+    if (Math.abs(value) >= 1000) return `${(value / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} km`;
+    return `${value.toLocaleString()} m`;
+}
+
+function _formatDv(dv) {
+    const value = Number(dv);
+    return Number.isFinite(value) ? `${value.toLocaleString()} m/s` : 'Unknown';
+}
+
+function _formatSatellites(body) {
+    const satellites = Array.isArray(body.moons) ? body.moons : [];
+    if (!satellites.length) return 'None';
+
+    return satellites
+        .map((satelliteId) => _getBodyById(satelliteId)?.label || satelliteId)
+        .join(', ');
+}
+
+function _formatHostBody(body) {
+    if (!body.parent) return 'None';
+    return _getBodyById(body.parent)?.label || body.parent;
+}
+
+function _getBodyById(bodyId) {
+    return _loadedSystemData?.bodies?.find((candidate) => candidate.id === bodyId) || null;
+}
+
+function _canShowPlanetInfoCard() {
+    if (_isMobilePortraitViewport()) return false;
+    return !window.matchMedia('(hover: none), (pointer: coarse)').matches;
+}
 
 function initMapVersionControls() {
     _setActivePackToggle(_activePackId);

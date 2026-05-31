@@ -218,6 +218,8 @@
             const node = _el('g', {
                 id: `node_${body.id}_${nodeKey}`,
                 class: hasGlow ? 'map-node has-atmo-glow' : 'map-node',
+                'data-body-id': body.id,
+                'data-node-key': nodeKey,
             });
 
             if (hasGlow) {

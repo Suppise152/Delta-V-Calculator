@@ -1,0 +1,155 @@
+:root {
+    --pageBg: rgb(28, 28, 38);
+    --descBg: rgb(2, 0, 14);
+    --mainBg: rgb(28, 28, 38);
+    --mapBg: rgb(28, 28, 38);
+    --ctrlBg: rgb(23, 23, 31);
+    --cardBg: #2b2e3f;
+    --inputBg: transparent;
+
+    --txt: lightgray;
+    --descTxt: lightgray;
+    --mutedTxt: grey;
+    --inputTxt: lightgray;
+    --cardTxt: rgb(190, 190, 190);
+    --cardValTxt: rgb(214, 220, 230);
+    --titleTxt: white;
+
+    --accent: rgb(59, 140, 207);
+    --bannerBg: #3b8ccf;
+    --bannerTxt: white;
+    --panelBorder: #2b2e3f;
+    --sepBorder: rgba(255, 255, 255, 0.07);
+    --inputBorder: #444;
+    --cardBorder: rgba(255, 255, 255, 0.08);
+    --rowBorder: rgba(255, 255, 255, 0.06);
+    --cardShadow: rgba(0, 0, 0, 0.45);
+
+    --btnTxt: white;
+    --toggleBg: rgba(28, 28, 38, 0.88);
+    --toggleBorder: rgba(198, 213, 234, 0.28);
+    --toggleHoverBg: rgba(59, 140, 207, 0.92);
+    --toggleHoverBorder: rgba(198, 213, 234, 0.75);
+    --toggleLine: rgb(198, 213, 234);
+
+    --scrollThumb: #262736;
+    --scrollThumbHover: #333333;
+    --mobileScrollTrack: rgba(255, 255, 255, 0.08);
+    --mobileScrollThumb: rgba(59, 140, 207, 0.92);
+    --mobileScrollBorder: rgba(16, 18, 28, 0.95);
+    --mobileScrollHover: #66b0ec;
+    --mobileScrollFirefox: rgba(167, 179, 189, 0.92);
+
+    --debugBg: rgba(255, 255, 255, 0.03);
+    --transferGlow: rgba(255, 255, 255, 0.03);
+    --transferOrbit: rgba(255, 240, 200, 0.14);
+    --transferArc: #3ea0ff;
+    --transferAngle: #f4db3d;
+    --transferAngleGlow: rgba(244, 219, 61, 0.45);
+    --transferCenterGlow: rgba(255, 190, 70, 0.28);
+    --transferBodyStroke: rgba(8, 10, 20, 0.55);
+
+    --endTxt: #bf2424;
+    --endBg: rgba(255, 0, 0, 0.2);
+    --startTxt: rgb(37, 185, 37);
+    --startBg: rgba(0, 255, 0, 0.2);
+    --surfaceBg: rgba(255, 255, 255, 0.1);
+    --swatchRing: rgba(255, 255, 255, 0.18);
+    --aeroGlow: rgba(255, 255, 255, 0.35);
+
+    --nodeBg: #3a3a4a;
+    --nodeTxt: #ccc;
+    --nodeHoverBg: #55556a;
+    --nodeSelBg: #b0c4de;
+    --nodeSelTxt: #111;
+    --nodeDimBg: #262634;
+    --nodeDimTxt: #8b8b98;
+    --nodeRouteBg: #3a3a4a;
+    --nodeRouteTxt: #ccc;
+    --mapLabel: #8a8a98;
+    --mapHub: #22222e;
+    --mapHubTxt: #c8c8d4;
+    --mapHubHover: #2e2e3e;
+    --mapHubRoute: #3a3a50;
+    --pathDimFilter: brightness(0.48) saturate(0.8);
+    --pathRouteFilter: brightness(0.82) saturate(1);
+    --pathDimOpacity: 1;
+    --pathRouteOpacity: 1;
+    --aeroIndicator: white;
+    --aeroIndicatorGlow: rgba(255, 255, 255, 0.9);
+    --aeroIndicatorGlowSoft: rgba(255, 255, 255, 0.55);
+
+    --versionTxt: rgb(198, 213, 234);
+}
+
+body.is-light-mode {
+    --pageBg: rgb(241, 249, 255);
+    --descBg: rgb(191, 218, 238);
+    --mainBg: rgb(241, 249, 255);
+    --mapBg: rgb(241, 249, 255);
+    --ctrlBg: rgb(224, 232, 239);
+
+    --cardBg: #ffffff;
+    --inputBg: transparent;
+
+    --txt: #1f2430;
+    --descTxt: #111827;
+    --mutedTxt: #4b5563;
+    --inputTxt: #111827;
+    --cardTxt: #1f2937;
+    --cardValTxt: #111827;
+    --titleTxt: #0f172a;
+
+    --panelBorder: #d7dde8;
+    --sepBorder: rgba(17, 24, 39, 0.14);
+    --inputBorder: #64748b;
+    --cardBorder: rgba(17, 24, 39, 0.16);
+    --rowBorder: rgba(17, 24, 39, 0.1);
+    --cardShadow: rgba(15, 23, 42, 0.2);
+
+    --btnTxt: #ffffff;
+    --toggleBg: rgba(255, 255, 255, 0.92);
+    --toggleBorder: rgba(17, 24, 39, 0.22);
+    --toggleHoverBg: rgba(59, 140, 207, 0.92);
+    --toggleHoverBorder: rgba(17, 24, 39, 0.28);
+    --toggleLine: #1f2937;
+
+    --scrollThumb: #f5f7f9;
+    --scrollThumbHover: #b2b4b7;
+    --mobileScrollTrack: rgba(17, 24, 39, 0.08);
+    --mobileScrollBorder: rgba(255, 255, 255, 0.95);
+
+    --debugBg: rgba(17, 24, 39, 0.04);
+    --transferGlow: rgba(17, 24, 39, 0.03);
+    --transferOrbit: rgba(87, 68, 28, 0.22);
+    --transferBodyStroke: rgba(255, 255, 255, 0.75);
+
+    --surfaceBg: rgba(17, 24, 39, 0.08);
+    --swatchRing: rgba(17, 24, 39, 0.28);
+    --aeroGlow: rgba(17, 24, 39, 0.3);
+
+    --nodeBg: #d8dee9;
+    --nodeTxt: #111827;
+    --nodeHoverBg: #c7d2e2;
+    --nodeSelBg: #67a6f4;
+    --nodeSelTxt: #ffffff;
+    --nodeDimBg: #9ca1aa;
+    --nodeDimTxt: #1b263c;
+    --nodeRouteBg: #e2e8f0;
+    --nodeRouteTxt: #111827;
+    --mapLabel: #475569;
+    --mapHub: #e5e7eb;
+    --mapHubTxt: #111827;
+    --mapHubHover: #d1d5db;
+    --mapHubRoute: #cbd5e1;
+    --pathDimFilter: brightness(0.65) saturate(0.45);
+    --pathRouteFilter: brightness(0.80) saturate(0.95);
+    --pathDimOpacity: 1;
+    --pathRouteOpacity: 1;
+
+    --aeroIndicator: white;
+    --aeroIndicatorGlow: rgba(162, 162, 162, 0.9);
+    --aeroIndicatorGlowSoft: rgba(255, 255, 255, 0.55);
+
+    --versionTxt: #334155;
+}
