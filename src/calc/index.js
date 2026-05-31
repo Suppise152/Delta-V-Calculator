@@ -259,7 +259,14 @@
             ? options?.aeroLowOrbitDest
             : options?.aeroLowOrbitOrigin;
 
-        if (interceptToggle && (branchResult.branchType === 'flyby_to_capture' || branchResult.branchType === 'orbit_to_surface')) {
+        if (
+            interceptToggle
+            && (
+                branchResult.branchType === 'flyby_to_capture'
+                || branchResult.branchType === 'orbit_to_surface'
+                || _isReturnMoonToAtmosphericOriginOrbitSegment(segment, routeContext, bodies)
+            )
+        ) {
             return { zeroed: true, mode: 'intercept' };
         }
 
@@ -268,6 +275,23 @@
         }
 
         return { zeroed: false, mode: null };
+    }
+
+    function _isReturnMoonToAtmosphericOriginOrbitSegment(segment, routeContext, bodies) {
+        if (routeContext?.direction !== 'return') return false;
+        if (!['land', 'orbit'].includes(routeContext?.endPoint?.node)) return false;
+
+        const originBodyId = routeContext?.endPoint?.body;
+        const originBody = originBodyId ? bodies?.[originBodyId] : null;
+        const sourceBody = segment?.from?.bodyId ? bodies?.[segment.from.bodyId] : null;
+        if (!originBody?.surface?.canAerobrake || sourceBody?.parent !== originBodyId) return false;
+
+        return (
+            segment.bodyId === originBodyId
+            && segment.to.bodyId === originBodyId
+            && segment.to.nodeKey === 'orbit'
+            && segment.nodeKey === 'orbit'
+        );
     }
 
     Object.assign(api, {

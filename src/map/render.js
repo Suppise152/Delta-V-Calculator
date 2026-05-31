@@ -145,6 +145,53 @@
         });
     }
 
+    function _drawReturnHostAerobrakeIndicator(group, body, context) {
+        const parentBody = context.bodies[body.parent];
+        if (!parentBody?.surface?.canAerobrake) return;
+        if (parentBody.id !== context.pointA?.body) return;
+        if (!['land', 'orbit'].includes(context.pointA?.node)) return;
+
+        const parentKeys = _getNodeKeys(parentBody);
+        const parentOrbitKey = parentKeys.includes('orbit') ? 'orbit' : null;
+        const bodyKeys = _getNodeKeys(body);
+        const firstBodyKey = bodyKeys[0];
+        if (!parentOrbitKey || !firstBodyKey) return;
+
+        const parentOrbitPos = _getPosition(context, `${parentBody.id}_${parentOrbitKey}`);
+        const bodyFirstPos = _getPosition(context, `${body.id}_${firstBodyKey}`);
+        if (!parentOrbitPos || !bodyFirstPos) return;
+
+        let dirX = parentOrbitPos.x - bodyFirstPos.x;
+        let dirY = parentOrbitPos.y - bodyFirstPos.y;
+        const len = Math.sqrt((dirX * dirX) + (dirY * dirY));
+        if (len === 0) return;
+
+        dirX /= len;
+        dirY /= len;
+
+        const tipOffset = NODE_R + 1;
+        const tipX = parentOrbitPos.x - (dirX * tipOffset);
+        const tipY = parentOrbitPos.y - (dirY * tipOffset);
+        const baseX = tipX - (dirX * INDICATOR_HEIGHT);
+        const baseY = tipY - (dirY * INDICATOR_HEIGHT);
+        const perpX = -dirY * (INDICATOR_WIDTH / 2);
+        const perpY = dirX * (INDICATOR_WIDTH / 2);
+        const points = [
+            tipX, tipY,
+            baseX + perpX, baseY + perpY,
+            baseX - perpX, baseY - perpY,
+        ].join(' ');
+
+        group.appendChild(_el('polygon', {
+            points,
+            fill: 'white',
+            class: 'aerobrake-indicator aerobrake-indicator--return-host',
+            id: `indicator_${parentBody.id}_${parentOrbitKey}_from_${body.id}`,
+            'data-return-aerobrake-trunk': `trunk_${body.id}`,
+            'data-return-aerobrake-parent': parentBody.id,
+        }));
+    }
+
     function _drawBodyNodes(group, body, context) {
         const nodeKeys = _getNodeKeys(body);
         const colour = body.mapColour || '#888888';
@@ -244,6 +291,7 @@
         context.systemData.bodies.forEach(body => {
             _drawBodyPaths(pathsGroup, body, context);
             _drawAerobrakeIndicators(indicatorsGroup, body, context);
+            _drawReturnHostAerobrakeIndicator(indicatorsGroup, body, context);
             _drawBodyNodes(nodesGroup, body, context);
         });
 
@@ -318,7 +366,7 @@
         state.activeNodeEl = null;
     }
 
-    function activateAerobrakeIndicators(aNodes, bNodes, roundTrip, returnOnly) {
+    function activateAerobrakeIndicators(aNodes, bNodes, roundTrip, returnOnly, routeSegments = [], pointA = null) {
         const aerobrakeArrivalOrbit = document.getElementById('aeroLowOrbitDest')?.checked ?? false;
         const aerobrakeArrivalIntercept = document.getElementById('aeroInterceptDest')?.checked ?? false;
         const aerobrakeReturnOrbit = document.getElementById('aeroLowOrbitOrigin')?.checked ?? false;
@@ -346,13 +394,23 @@
 
         if (roundTrip || returnOnly) {
             if (aerobrakeReturnIntercept) {
+                const returnHostAerobrakeIndicatorIds = _getReturnHostAerobrakeIndicatorIds(routeSegments, pointA);
+                const suppressOriginOrbitIndicator = returnHostAerobrakeIndicatorIds.length > 0;
                 aNodes.forEach(nodeId => {
                     const parts = nodeId.split('_');
                     const nodeKey = parts[2];
                     if (['orbit', 'land'].includes(nodeKey)) {
+                        if (
+                            suppressOriginOrbitIndicator
+                            && parts[1] === pointA?.body
+                            && nodeKey === 'orbit'
+                        ) {
+                            return;
+                        }
                         activeIndicators.push(`indicator_${parts[1]}_${nodeKey}`);
                     }
                 });
+                activeIndicators.push(...returnHostAerobrakeIndicatorIds);
             } else if (aerobrakeReturnOrbit) {
                 aNodes.forEach(nodeId => {
                     const parts = nodeId.split('_');
@@ -367,6 +425,22 @@
             const el = document.getElementById(id);
             if (el) el.classList.add('is-active');
         });
+    }
+
+    function _getReturnHostAerobrakeIndicatorIds(routeSegments, pointA) {
+        if (!pointA?.body || !['land', 'orbit'].includes(pointA?.node)) return [];
+
+        const indicatorIds = [];
+        routeSegments.forEach(segment => {
+            document
+                .querySelectorAll('.aerobrake-indicator[data-return-aerobrake-trunk]')
+                .forEach(indicator => {
+                    if (indicator.getAttribute('data-return-aerobrake-trunk') !== segment.id) return;
+                    if (indicator.getAttribute('data-return-aerobrake-parent') !== pointA.body) return;
+                    if (indicator.id) indicatorIds.push(indicator.id);
+                });
+        });
+        return indicatorIds;
     }
 
     function collectAerobrakeNodeIds(bodies) {
@@ -583,7 +657,7 @@
             });
         }
 
-        renderApi.activateAerobrakeIndicators(routeData.aNodes, routeData.bNodes, roundTrip, returnOnly);
+        renderApi.activateAerobrakeIndicators(routeData.aNodes, routeData.bNodes, roundTrip, returnOnly, routeData.segmentIds, _pointA);
     }
 
     function setActiveNode(bodyId, nodeKey) {
