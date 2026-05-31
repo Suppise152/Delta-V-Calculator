@@ -57,18 +57,24 @@
     --swatchRing: rgba(255, 255, 255, 0.18);
     --aeroGlow: rgba(255, 255, 255, 0.35);
 
-    --mapNode: #3a3a4a;
-    --mapNodeHover: #55556a;
-    --mapNodeActive: #b0c4de;
-    --mapNodeTxt: #ccc;
-    --mapNodeActiveTxt: #111;
-    --mapRouteNode: #262634;
-    --mapMutedNode: #8b8b98;
+    --nodeBg: #3a3a4a;
+    --nodeTxt: #ccc;
+    --nodeHoverBg: #55556a;
+    --nodeSelBg: #b0c4de;
+    --nodeSelTxt: #111;
+    --nodeDimBg: #262634;
+    --nodeDimTxt: #8b8b98;
+    --nodeRouteBg: #3a3a4a;
+    --nodeRouteTxt: #ccc;
     --mapLabel: #8a8a98;
     --mapHub: #22222e;
     --mapHubTxt: #c8c8d4;
     --mapHubHover: #2e2e3e;
     --mapHubRoute: #3a3a50;
+    --pathDimFilter: brightness(0.48) saturate(0.8);
+    --pathRouteFilter: brightness(0.82) saturate(1);
+    --pathDimOpacity: 1;
+    --pathRouteOpacity: 1;
     --aeroIndicator: white;
     --aeroIndicatorGlow: rgba(255, 255, 255, 0.9);
     --aeroIndicatorGlowSoft: rgba(255, 255, 255, 0.55);
@@ -122,8 +128,27 @@ body.is-light-mode {
     --swatchRing: rgba(17, 24, 39, 0.28);
     --aeroGlow: rgba(17, 24, 39, 0.3);
 
+    --nodeBg: #d8dee9;
+    --nodeTxt: #111827;
+    --nodeHoverBg: #c7d2e2;
+    --nodeSelBg: #67a6f4;
+    --nodeSelTxt: #ffffff;
+    --nodeDimBg: #9ca1aa;
+    --nodeDimTxt: #1b263c;
+    --nodeRouteBg: #e2e8f0;
+    --nodeRouteTxt: #111827;
+    --mapLabel: #475569;
+    --mapHub: #e5e7eb;
+    --mapHubTxt: #111827;
+    --mapHubHover: #d1d5db;
+    --mapHubRoute: #cbd5e1;
+    --pathDimFilter: brightness(0.65) saturate(0.45);
+    --pathRouteFilter: brightness(0.80) saturate(0.95);
+    --pathDimOpacity: 1;
+    --pathRouteOpacity: 1;
+
     --aeroIndicator: white;
-    --aeroIndicatorGlow: rgba(255, 255, 255, 0.9);
+    --aeroIndicatorGlow: rgba(162, 162, 162, 0.9);
     --aeroIndicatorGlowSoft: rgba(255, 255, 255, 0.55);
 
     --versionTxt: #334155;

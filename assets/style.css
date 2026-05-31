@@ -904,17 +904,17 @@ body {
 }
 
 .map-node circle {
-    fill: var(--mapNode);
+    fill: var(--nodeBg);
     transition: fill 0.15s ease, filter 0.15s ease;
 }
 
 .map-node:hover circle {
-    fill: var(--mapNodeHover);
+    fill: var(--nodeHoverBg);
     filter: brightness(1.2);
 }
 
 .map-node.is-active circle {
-    fill: var(--mapNodeActive);
+    fill: var(--nodeSelBg);
 }
 
 .map-node.has-atmo-glow circle {
@@ -922,31 +922,31 @@ body {
 }
 
 .map-node text {
-    fill: var(--mapNodeTxt);
+    fill: var(--nodeTxt);
     font-family: var(--font-ui);
     font-size: 11px;
     pointer-events: none;
 }
 
 .map-node.is-active text {
-    fill: var(--mapNodeActiveTxt);
+    fill: var(--nodeSelTxt);
 }
 
 /* dim on selection */
 .dv-map.has-selection .map-node:not(.is-active) circle {
-    fill: var(--mapRouteNode);
+    fill: var(--nodeDimBg);
 }
 
 .dv-map.has-selection .map-node:not(.is-active) text {
-    fill: var(--mapMutedNode);
+    fill: var(--nodeDimTxt);
 }
 
 .dv-map.has-selection .map-node.is-route:not(.is-active) circle {
-    fill: var(--mapNode);
+    fill: var(--nodeRouteBg);
 }
 
 .dv-map.has-selection .map-node.is-route:not(.is-active) text {
-    fill: var(--mapNodeTxt);
+    fill: var(--nodeRouteTxt);
 }
 
 .dv-map.has-selection .map-node.has-atmo-glow:not(.is-active):not(.is-route) circle {
@@ -971,20 +971,23 @@ body {
     fill: none;
     opacity: 1;
     stroke-opacity: 1;
-    transition: opacity 0.2s ease;
+    filter: none;
+    transition: opacity 0.2s ease, filter 0.2s ease, stroke-opacity 0.2s ease;
     pointer-events: none;
 }
 
-/* Dim base paths when a selection is active */
+/* Darken base paths when a selection is active. */
 .dv-map.has-selection .map-path {
-    opacity: 0.50;
-    stroke-opacity: 0.50;
+    opacity: var(--pathDimOpacity);
+    stroke-opacity: 1;
+    filter: var(--pathDimFilter);
 }
 
 /* Keep selected base paths dim so the animated overlay is the only lit layer */
 .dv-map.has-selection .map-path.is-route {
-    opacity: 0.75;
-    stroke-opacity: 0.75;
+    opacity: var(--pathRouteOpacity);
+    stroke-opacity: 1;
+    filter: var(--pathRouteFilter);
 }
 
 /* ─── AEROBRAKE INDICATORS ────────────────────────────────────── */
