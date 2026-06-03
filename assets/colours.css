@@ -71,8 +71,6 @@
     --mapHubTxt: #c8c8d4;
     --mapHubHover: #2e2e3e;
     --mapHubRoute: #3a3a50;
-    --pathDimFilter: brightness(0.48) saturate(0.8);
-    --pathRouteFilter: brightness(0.82) saturate(1);
     --pathDimOpacity: 1;
     --pathRouteOpacity: 1;
     --aeroIndicator: white;
@@ -142,8 +140,6 @@ body.is-light-mode {
     --mapHubTxt: #111827;
     --mapHubHover: #d1d5db;
     --mapHubRoute: #cbd5e1;
-    --pathDimFilter: brightness(0.65) saturate(0.45);
-    --pathRouteFilter: brightness(0.80) saturate(0.95);
     --pathDimOpacity: 1;
     --pathRouteOpacity: 1;
 

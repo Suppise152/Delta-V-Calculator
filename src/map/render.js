@@ -29,6 +29,23 @@
         return context.layout.positions[key] || null;
     }
 
+    function _mixHexWithBlack(hex, amount) {
+        const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
+        if (!match) return hex || '#888888';
+
+        const channels = match.slice(1).map(value => parseInt(value, 16));
+        const mixed = channels.map(channel => Math.round(channel * amount));
+        return `#${mixed.map(channel => channel.toString(16).padStart(2, '0')).join('')}`;
+    }
+
+    function _pathStyle(colour) {
+        return [
+            `--pathColour: ${colour}`,
+            `--pathDimColour: ${_mixHexWithBlack(colour, 0.48)}`,
+            `--pathRouteColour: ${_mixHexWithBlack(colour, 0.82)}`,
+        ].join('; ');
+    }
+
     function _getTrunkStart(context, body) {
         if (!body.parent || body.parent === context.centralBody) {
             return _getPosition(context, 'interplanetary');
@@ -64,6 +81,7 @@
             x2: firstPos.x,
             y2: firstPos.y,
             stroke: colour,
+            style: _pathStyle(colour),
             'stroke-width': PATH_STROKE_W,
         }));
     }
@@ -85,6 +103,7 @@
                 x2: toPos.x,
                 y2: toPos.y,
                 stroke: colour,
+                style: _pathStyle(colour),
                 'stroke-width': PATH_STROKE_W,
             }));
         }
