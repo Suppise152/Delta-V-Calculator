@@ -122,13 +122,6 @@
         scrollbar-color: var(--mobileScrollFirefox) var(--cardBorder);
     }
 
-    .dv-map.has-selection .map-path:not(.is-route) {
-        stroke: var(--pathDimStroke);
-        filter: none;
-        opacity: 1;
-        stroke-opacity: 1;
-    }
-
     /* ─── CONTROLS BAR ────────────────────────────────────────── */
     .controls-bar {
         flex: 1 1 auto;
