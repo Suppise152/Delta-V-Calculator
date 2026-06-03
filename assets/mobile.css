@@ -105,6 +105,17 @@
         right: 8px;
     }
 
+    .theme-toggle--mobile {
+        display: block;
+        position: fixed;
+        top: calc(17vh + 8px);
+        left: 8px;
+        z-index: 30;
+        margin: 0;
+        padding: 5px 8px;
+        font-size: 0.75rem;
+    }
+
     /* Firefox scrollbar */
     .map-container {
         scrollbar-width: auto;

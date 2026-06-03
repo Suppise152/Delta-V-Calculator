@@ -40,23 +40,27 @@ function _getStoredPackId() {
 }
 
 function initThemeToggle() {
-    const button = document.getElementById('theme-toggle');
-    if (!button) return;
+    const buttons = Array.from(document.querySelectorAll('.theme-toggle'));
+    if (!buttons.length) return;
 
     const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-    _setLightMode(storedTheme === 'light', button);
+    _setLightMode(storedTheme === 'light', buttons);
 
-    button.addEventListener('click', () => {
-        const isLightMode = !document.body.classList.contains('is-light-mode');
-        _setLightMode(isLightMode, button);
-        window.localStorage.setItem(THEME_STORAGE_KEY, isLightMode ? 'light' : 'dark');
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const isLightMode = !document.body.classList.contains('is-light-mode');
+            _setLightMode(isLightMode, buttons);
+            window.localStorage.setItem(THEME_STORAGE_KEY, isLightMode ? 'light' : 'dark');
+        });
     });
 }
 
-function _setLightMode(isLightMode, button) {
+function _setLightMode(isLightMode, buttons) {
     document.body.classList.toggle('is-light-mode', isLightMode);
-    button.setAttribute('aria-pressed', String(isLightMode));
-    button.textContent = isLightMode ? 'Dark Mode' : 'Light Mode';
+    buttons.forEach((button) => {
+        button.setAttribute('aria-pressed', String(isLightMode));
+        button.textContent = isLightMode ? 'Dark Mode' : 'Light Mode';
+    });
 }
 
 function initDescriptionPanelToggle() {

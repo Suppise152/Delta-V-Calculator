@@ -168,6 +168,10 @@ body {
     outline-offset: 2px;
 }
 
+.theme-toggle--mobile {
+    display: none;
+}
+
 .content.is-description-collapsed .panel-left {
     flex-basis: 0;
     max-width: 0;
