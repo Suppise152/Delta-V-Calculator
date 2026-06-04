@@ -426,7 +426,12 @@ function onNodeClick(bodyId, nodeKey) {
         });
     }
 
-    setPointB(bodyId, nodeKey);
+    if (_activeEndpointRole === 'origin') {
+        setPointA(bodyId, nodeKey);
+        _syncFromLowOrbitToggle(nodeKey);
+    } else {
+        setPointB(bodyId, nodeKey);
+    }
     _refreshEndpointSelectorUi();
     _refreshOutputs();
 }
@@ -518,11 +523,13 @@ function handleToggleChange(id) {
             break;
 
         case 'fromLO':
-            if (!_originBodyId) break;
+            const originBodyId = _getCurrentOriginBodyId();
+            if (!originBodyId) break;
+
             if (fromLOToggle.checked) {
-                setPointA(_originBodyId, 'orbit');
+                setPointA(originBodyId, _resolveOriginToggleNode(originBodyId, 'orbit'));
             } else {
-                setPointA(_originBodyId, 'land');
+                setPointA(originBodyId, _resolveOriginToggleNode(originBodyId, 'land'));
             }
             _refreshEndpointSelectorUi();
             _refreshOutputs();
@@ -571,6 +578,26 @@ function handleToggleChange(id) {
             break;
         }
     }
+}
+
+function _getCurrentOriginBodyId() {
+    const selection = typeof getSelectedPoints === 'function' ? getSelectedPoints() : null;
+    return selection?.pointA?.body || _originBodyId;
+}
+
+function _resolveOriginToggleNode(bodyId, preferredNodeKey) {
+    const bodies = typeof getBodies === 'function' ? getBodies() : null;
+    const nodes = bodies?.[bodyId]?.nodes || {};
+    if (nodes[preferredNodeKey] !== undefined) return preferredNodeKey;
+
+    const fallbackNode = Object.keys(nodes).find((key) => key !== 'comment');
+    return fallbackNode || preferredNodeKey;
+}
+
+function _syncFromLowOrbitToggle(nodeKey) {
+    const fromLOToggle = document.getElementById('fromLO');
+    if (!fromLOToggle || !['orbit', 'land'].includes(nodeKey)) return;
+    fromLOToggle.checked = nodeKey === 'orbit';
 }
 
 function handleMapPackChange(packId) {
