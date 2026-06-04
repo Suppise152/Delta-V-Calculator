@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSlider();
     initThemeToggle();
     initDescriptionPanelToggle();
+    initEndpointSelectorControls();
     initPlanetInfoCard();
     _initMobileLayoutSync();
 });
@@ -21,6 +22,7 @@ let _originBodyId = null;
 let _loadedDataPackId = null;
 let _loadedSystemData = null;
 let _activePackId = 'stock';
+let _activeEndpointRole = 'destination';
 
 const PACK_CONFIG = {
     stock: { dataPackId: 'stock', mapId: 'stock' },
@@ -33,6 +35,7 @@ const PLANET_INFO_HOVER_DELAY_MS = 1000;
 const THEME_STORAGE_KEY = 'deltaVTheme';
 const DESCRIPTION_PANEL_STORAGE_KEY = 'deltaVDescriptionPanel';
 const MAP_PACK_STORAGE_KEY = 'deltaVMapPack';
+const ENDPOINT_EMPTY_COLOUR = '#6f7580';
 
 function _getStoredPackId() {
     const storedPackId = window.localStorage.getItem(MAP_PACK_STORAGE_KEY);
@@ -91,6 +94,72 @@ function _setDescriptionPanelCollapsed(isCollapsed, content, button) {
     button.setAttribute('aria-expanded', String(!isCollapsed));
     button.setAttribute('aria-label', isCollapsed ? 'Show description panel' : 'Hide description panel');
     button.title = isCollapsed ? 'Show description panel' : 'Hide description panel';
+}
+
+function initEndpointSelectorControls() {
+    document.querySelectorAll('.endpoint-selector__node').forEach((button) => {
+        button.addEventListener('click', () => {
+            _setActiveEndpointRole(button.dataset.endpointRole || 'destination');
+        });
+    });
+
+    _setActiveEndpointRole('destination');
+    _refreshEndpointSelectorUi();
+}
+
+function _setActiveEndpointRole(role) {
+    _activeEndpointRole = role === 'origin' ? 'origin' : 'destination';
+
+    document.querySelectorAll('.endpoint-selector__node').forEach((button) => {
+        const isSelected = button.dataset.endpointRole === _activeEndpointRole;
+        button.classList.toggle('is-selected', isSelected);
+        button.setAttribute('aria-pressed', String(isSelected));
+    });
+}
+
+function _refreshEndpointSelectorUi() {
+    const selection = typeof getSelectedPoints === 'function' ? getSelectedPoints() : null;
+    const originBody = _getEndpointBody(selection?.pointA, true);
+    const destinationBody = _getEndpointBody(selection?.pointB, false);
+
+    _setEndpointDisplay('origin', originBody, originBody?.label || 'Kerbin');
+    _setEndpointDisplay('destination', destinationBody, destinationBody?.label || 'None');
+    _setActiveEndpointRole(_activeEndpointRole);
+}
+
+function _getEndpointBody(point, useOriginFallback) {
+    if (point?.body) {
+        return _getBodyById(point.body);
+    }
+
+    if (!useOriginFallback) return null;
+
+    const originId = _loadedSystemData?.meta?.originBody || _originBodyId || 'kerbin';
+    return _getBodyById(originId);
+}
+
+function _setEndpointDisplay(role, body, fallbackLabel) {
+    const target = document.getElementById(`endpoint-${role}-target`);
+    const node = document.getElementById(`endpoint-${role}-node`);
+    const label = body?.label || fallbackLabel;
+    const roleLabel = role === 'origin' ? 'Origin' : 'Destination';
+    const displayLabel = `${roleLabel}: ${label}`;
+    const colour = body?.mapColour || (role === 'origin' ? '#4A90D9' : ENDPOINT_EMPTY_COLOUR);
+
+    if (target) {
+        const value = target.querySelector('.endpoint-selector__value');
+        if (value) {
+            value.textContent = label;
+        } else {
+            target.textContent = displayLabel;
+        }
+        target.setAttribute('aria-label', displayLabel);
+    }
+
+    if (node) {
+        node.style.setProperty('--endpoint-colour', colour);
+        node.setAttribute('aria-label', displayLabel);
+    }
 }
 
 function initPlanetInfoCard() {
@@ -307,6 +376,8 @@ async function loadPack(packId) {
             _setActivePackToggle(nextPackId);
             window.localStorage.setItem(MAP_PACK_STORAGE_KEY, nextPackId);
             _syncMobileMapViewport();
+            _syncEndpointSelectorScale();
+            _refreshEndpointSelectorUi();
             _refreshOutputs();
             return;
         }
@@ -321,6 +392,8 @@ async function loadPack(packId) {
         _setActivePackToggle(nextPackId);
         window.localStorage.setItem(MAP_PACK_STORAGE_KEY, nextPackId);
         _syncMobileMapViewport();
+        _syncEndpointSelectorScale();
+        _refreshEndpointSelectorUi();
         _refreshOutputs();
     } catch (e) {
         console.error('Failed to load pack:', nextPackId, e);
@@ -354,6 +427,7 @@ function onNodeClick(bodyId, nodeKey) {
     }
 
     setPointB(bodyId, nodeKey);
+    _refreshEndpointSelectorUi();
     _refreshOutputs();
 }
 
@@ -418,6 +492,7 @@ function handleClearSelection() {
     }
 
     _refreshOutputs();
+    _refreshEndpointSelectorUi();
 }
 
 function handleToggleChange(id) {
@@ -449,6 +524,7 @@ function handleToggleChange(id) {
             } else {
                 setPointA(_originBodyId, 'land');
             }
+            _refreshEndpointSelectorUi();
             _refreshOutputs();
             break;
 
@@ -610,6 +686,7 @@ function _getRedundancyMultiplier() {
 function _initMobileLayoutSync() {
     ['load', 'resize', 'orientationchange'].forEach((eventName) => {
         window.addEventListener(eventName, _syncMobileMapViewport);
+        window.addEventListener(eventName, _syncEndpointSelectorScale);
     });
 }
 
@@ -623,6 +700,7 @@ function _syncMobileMapViewport() {
 
     if (!_isMobilePortraitViewport()) {
         mapSvg.style.removeProperty('--mobile-map-width');
+        _syncEndpointSelectorScale();
         return;
     }
 
@@ -635,6 +713,24 @@ function _syncMobileMapViewport() {
     const targetWidth = Math.ceil(mapContainer.clientWidth * widthRatio * MOBILE_MAP_SCROLL_EXPANSION);
     mapSvg.style.setProperty('--mobile-map-width', `${targetWidth}px`);
     _centerMobileMapScroll(mapContainer);
+    _syncEndpointSelectorScale();
+}
+
+function _syncEndpointSelectorScale() {
+    const selector = document.getElementById('endpoint-selector');
+    const mapSvg = document.getElementById('map-container')?.querySelector('.dv-map');
+    if (!selector || !mapSvg) return;
+
+    const viewBox = mapSvg.dataset.baseViewBox || mapSvg.getAttribute('viewBox');
+    const values = viewBox?.trim().split(/\s+/).map(Number);
+    if (!values || values.length !== 4 || values.some((value) => !Number.isFinite(value))) return;
+
+    const [, , viewBoxWidth, viewBoxHeight] = values;
+    const rect = mapSvg.getBoundingClientRect();
+    if (viewBoxWidth <= 0 || viewBoxHeight <= 0 || rect.width <= 0 || rect.height <= 0) return;
+
+    const scale = Math.min(rect.width / viewBoxWidth, rect.height / viewBoxHeight);
+    selector.style.setProperty('--endpoint-map-scale', scale.toFixed(4));
 }
 
 function _isMobilePortraitViewport() {

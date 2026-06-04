@@ -331,6 +331,92 @@ body {
     font-size: clamp(0.95rem, 1.1vw, 1.15rem);
 }
 
+.endpoint-selector {
+    --endpoint-map-scale: 1;
+    --endpoint-node-size: calc(40px * var(--endpoint-map-scale));
+    --endpoint-font-size: calc(15px * var(--endpoint-map-scale));
+    --endpoint-row-gap: calc(10px * var(--endpoint-map-scale));
+    --endpoint-node-text-gap: calc(12px * var(--endpoint-map-scale));
+    --endpoint-label-width: calc(112px * var(--endpoint-map-scale));
+    --endpoint-label-value-gap: calc(8px * var(--endpoint-map-scale));
+    position: absolute;
+    inset: auto auto 16px 18px;
+    z-index: 18;
+    display: flex;
+    flex-direction: column;
+    gap: var(--endpoint-row-gap);
+    align-items: flex-start;
+    font-family: var(--font-ui);
+    font-size: var(--endpoint-font-size);
+    line-height: 1.1;
+    pointer-events: none;
+}
+
+.endpoint-selector__node {
+    --endpoint-colour: #6f7580;
+    --endpoint-glow: transparent;
+    width: var(--endpoint-node-size);
+    height: var(--endpoint-node-size);
+    flex: 0 0 var(--endpoint-node-size);
+    padding: 0;
+    border: 1.5px solid color-mix(in srgb, var(--endpoint-colour) 80%, white);
+    border-radius: 999px;
+    background: var(--endpoint-colour);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.endpoint-selector__node:hover {
+    filter: brightness(1.12);
+}
+
+.endpoint-selector__node:focus-visible {
+    outline: 2px solid var(--toggleLine);
+    outline-offset: 3px;
+}
+
+.endpoint-selector__node.is-selected {
+    box-shadow:
+        0 0 5px var(--endpoint-glow),
+        0 0 11px color-mix(in srgb, var(--endpoint-glow) 72%, transparent),
+        0 0 18px color-mix(in srgb, var(--endpoint-glow) 42%, transparent);
+}
+
+.endpoint-selector__node--origin {
+    --endpoint-glow: #4a90ff;
+}
+
+.endpoint-selector__node--destination {
+    --endpoint-glow: #ff9b38;
+}
+
+.endpoint-selector__target {
+    display: grid;
+    grid-template-columns: var(--endpoint-label-width) max-content;
+    column-gap: var(--endpoint-label-value-gap);
+    align-items: center;
+    min-width: 0;
+    font-size: var(--endpoint-font-size);
+    line-height: inherit;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.endpoint-selector__row {
+    display: flex;
+    align-items: center;
+    gap: var(--endpoint-node-text-gap);
+}
+
+.endpoint-selector__label {
+    color: var(--mutedTxt);
+}
+
+.endpoint-selector__value {
+    color: var(--titleTxt);
+}
+
 /* ─── CONTROLS BAR — fixed height bottom strip ────────────────── */
 .controls-bar {
     flex: 0 0 28vh;

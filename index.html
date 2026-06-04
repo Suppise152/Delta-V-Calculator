@@ -169,9 +169,25 @@
 
             <div class="map-container" id="map-container">
                 <footer class="site-footer">
-                    <span id="version-info">Version 2.1.3</span>
+                    <span id="version-info">Version 2.2.0.dev</span>
                 </footer>
                 <button type="button" class="theme-toggle theme-toggle--mobile" id="theme-toggle-mobile" aria-pressed="false">Light Mode</button>
+                <div class="endpoint-selector" id="endpoint-selector" aria-label="Route endpoint selector">
+                    <div class="endpoint-selector__row">
+                        <button type="button" class="endpoint-selector__node endpoint-selector__node--destination" id="endpoint-destination-node" data-endpoint-role="destination" aria-pressed="true"></button>
+                        <span class="endpoint-selector__target" id="endpoint-destination-target">
+                            <span class="endpoint-selector__label">Destination:</span>
+                            <span class="endpoint-selector__value">None</span>
+                        </span>
+                    </div>
+                    <div class="endpoint-selector__row">
+                        <button type="button" class="endpoint-selector__node endpoint-selector__node--origin" id="endpoint-origin-node" data-endpoint-role="origin" aria-pressed="false"></button>
+                        <span class="endpoint-selector__target" id="endpoint-origin-target">
+                            <span class="endpoint-selector__label">Origin:</span>
+                            <span class="endpoint-selector__value">Kerbin</span>
+                        </span>
+                    </div>
+                </div>
                 <div class="planet-info-card" id="planet-info-card" aria-hidden="true"></div>
                 <div class="map-placeholder" id="map-placeholder">
                     <span>Map loading...</span>
