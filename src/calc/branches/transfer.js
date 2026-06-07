@@ -1,6 +1,10 @@
 (function attachDeltaVCalcTransferBranches(global) {
     const api = global.DeltaVCalc = global.DeltaVCalc || {};
 
+    /**
+     * Inputs: route segment, body lookup, system metadata, and evaluation options.
+     * Outputs: branch result for interplanetary or moon intercept transfer.
+     */
     function calculateEscapeInterceptBranch(segment, bodies, meta, options) {
         const body = bodies[segment.bodyId];
         if (!body) {
@@ -135,6 +139,10 @@
         };
     }
 
+    /**
+     * Inputs: target top-level body, central body, and metadata.
+     * Outputs: context shaped like interplanetary arrival from central low orbit.
+     */
     function _computeCentralBodyOriginArrivalContext(targetBody, centralBody, meta) {
         const context = api.computeCentralBodyTransferContext(targetBody, centralBody, meta);
         return {
@@ -149,6 +157,10 @@
         };
     }
 
+    /**
+     * Inputs: route segment, body lookup, metadata, and evaluation options.
+     * Outputs: branch result for escaping a moon toward a different top-level destination.
+     */
     function calculateMoonHostEscapeBranch(segment, bodies, meta, options) {
         const hostBody = bodies[segment.bodyId];
         const moonBody = bodies[segment.from.bodyId];
@@ -199,6 +211,10 @@
         };
     }
 
+    /**
+     * Inputs: direct moon transfer segment, body lookup, and metadata.
+     * Outputs: branch result with escape, intercept, and capture breakdown entries.
+     */
     function calculateDirectMoonTransferBranch(segment, bodies, meta) {
         const originMoon = bodies[segment.originBodyId || segment.from.bodyId];
         const targetMoon = bodies[segment.targetBodyId || segment.to.bodyId];
@@ -281,6 +297,10 @@
         };
     }
 
+    /**
+     * Inputs: route segment, body lookup, metadata, and evaluation options.
+     * Outputs: branch result for transfers involving the central body's low orbit.
+     */
     function calculateCentralBodyTransferBranch(segment, bodies, meta, options) {
         const centralBody = bodies[meta?.centralBody];
         if (!centralBody) {
@@ -342,6 +362,10 @@
         };
     }
 
+    /**
+     * Inputs: route segment and branch type label.
+     * Outputs: zero-DV unresolved branch result.
+     */
     function _emptyBranchResult(segment, branchType) {
         return {
             dv: 0,
@@ -354,6 +378,10 @@
         };
     }
 
+    /**
+     * Inputs: starting body id, body lookup, and system metadata.
+     * Outputs: top-level body id used for transfer context.
+     */
     function _resolveTransferOriginTopLevelBody(startBodyId, bodies, meta) {
         let currentBodyId = startBodyId;
         while (currentBodyId && bodies[currentBodyId]) {

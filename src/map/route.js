@@ -1,8 +1,16 @@
 (function attachMapRoute(global) {
+    /**
+     * Inputs: body data object.
+     * Outputs: ordered route node keys excluding metadata comments.
+     */
     function _getNodeKeys(body) {
         return Object.keys(body?.nodes || {}).filter(key => key !== 'comment');
     }
 
+    /**
+     * Inputs: route context, body/node endpoints, and route id accumulators.
+     * Outputs: mutates accumulators with intra-body path and node ids.
+     */
     function _collectBodyPath(context, bodyId, fromNode, toNode, segmentIds, routeNodeIds) {
         const body = context.bodies[bodyId];
         if (!body) return;
@@ -28,6 +36,10 @@
         }
     }
 
+    /**
+     * Inputs: route context, start body/node, ancestor body, and accumulators.
+     * Outputs: mutates accumulators with path ids from a body toward an ancestor.
+     */
     function _walkToAncestor(context, bodyId, nodeKey, ancestor, segs, nodes) {
         if (bodyId === ancestor) return;
 
@@ -66,6 +78,10 @@
         _walkToAncestor(context, parent, nextKey, ancestor, segs, nodes);
     }
 
+    /**
+     * Inputs: route context and body id.
+     * Outputs: body id chain from selected body up toward the top-level host.
+     */
     function _ancestorChain(context, bodyId) {
         const chain = [];
         let id = bodyId;
@@ -80,6 +96,10 @@
         return chain;
     }
 
+    /**
+     * Inputs: route context and body id.
+     * Outputs: top-level body id under the central body.
+     */
     function _topLevelBody(context, bodyId) {
         let body = context.bodies[bodyId];
         while (body && body.parent && body.parent !== context.centralBody) {
@@ -88,11 +108,20 @@
         return body ? body.id : bodyId;
     }
 
+    /**
+     * Inputs: body data.
+     * Outputs: preferred node key for attaching child routes to the host.
+     */
     function _getOrbitAttachNode(body) {
         const nodeKeys = _getNodeKeys(body);
         return nodeKeys.includes('orbit') ? 'orbit' : nodeKeys[0];
     }
 
+    /**
+     * Inputs: map route context with selected endpoints, body lookup, and central body.
+     * Outputs: route path ids, route node ids, and endpoint-side node groups.
+     * Purpose: translates selected endpoints into SVG ids used for route highlighting.
+     */
     function collectRoute(context) {
         const pA = context.pointA;
         const pB = context.pointB;
@@ -256,6 +285,10 @@
         return { segmentIds, routeNodeIds, aNodes, bNodes };
     }
 
+    /**
+     * Inputs: map route context.
+     * Outputs: true when the visible route crosses interplanetary space.
+     */
     function routePassesThroughIPS(context) {
         return _topLevelBody(context, context.pointA.body) !== _topLevelBody(context, context.pointB.body);
     }

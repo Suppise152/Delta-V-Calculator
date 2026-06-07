@@ -6,6 +6,10 @@
         stateId,
     } = api;
 
+    /**
+     * Inputs: route graph, source/target state ids, route cost, and edge descriptor.
+     * Outputs: mutates graph by appending one directed edge.
+     */
     function addDirectedEdge(graph, fromId, toId, dv, descriptor) {
         if (!graph.has(fromId)) graph.set(fromId, []);
         if (!graph.has(toId)) graph.set(toId, []);
@@ -22,11 +26,19 @@
         });
     }
 
+    /**
+     * Inputs: route graph, two state ids, route cost, and descriptors for each direction.
+     * Outputs: mutates graph by adding forward and reverse directed edges.
+     */
     function addBidirectionalEdge(graph, fromId, toId, dv, forwardDescriptor, reverseDescriptor) {
         addDirectedEdge(graph, fromId, toId, dv, forwardDescriptor);
         addDirectedEdge(graph, toId, fromId, dv, reverseDescriptor);
     }
 
+    /**
+     * Inputs: route graph, body data, and ordered node keys.
+     * Outputs: mutates graph with intra-body branch edges.
+     */
     function addBodyChainEdges(graph, body, nodeKeys) {
         for (let index = 0; index < nodeKeys.length - 1; index += 1) {
             const currentKey = nodeKeys[index];
@@ -45,6 +57,10 @@
         }
     }
 
+    /**
+     * Inputs: route graph, top-level body, node keys, and fallback interplanetary branch DV.
+     * Outputs: mutates graph with surface/orbit/interplanetary transitions.
+     */
     function addTopLevelBodyEdges(graph, body, nodeKeys, ipsBranchDV) {
         const firstKey = nodeKeys[0];
         const orbitKey = nodeKeys.includes('orbit') ? 'orbit' : null;
@@ -101,6 +117,11 @@
         );
     }
 
+    /**
+     * Inputs: body lookup, system metadata, and fallback interplanetary branch DV.
+     * Outputs: complete route graph used for pathfinding.
+     * Purpose: converts the loaded system data into navigable calculation states.
+     */
     function buildRouteGraph(bodies, meta, ipsBranchDV) {
         const graph = new Map();
         const centralBodyId = meta?.centralBody ?? null;
@@ -179,6 +200,10 @@
         return graph;
     }
 
+    /**
+     * Inputs: route graph, body lookup, and central body id.
+     * Outputs: mutates graph with direct same-host moon transfer edges.
+     */
     function addSiblingMoonTransferEdges(graph, bodies, centralBodyId) {
         const moonsByHost = new Map();
 

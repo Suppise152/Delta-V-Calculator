@@ -2,11 +2,19 @@
     let _pendingEvents = [];
     let _flushTimerId = null;
 
+    /**
+     * Inputs: none.
+     * Outputs: starts queued analytics dispatch when GoatCounter is available.
+     */
     function initAnalytics() {
         if (_flushTimerId != null) return;
         _flushTimerId = global.setInterval(_flushPendingEvents, 250);
     }
 
+    /**
+     * Inputs: clicked body id, node key, and UI context.
+     * Outputs: queues or sends one analytics pageview payload.
+     */
     function trackNodeInteraction(bodyId, nodeKey, context = {}) {
         const path = _buildNodeInteractionPath(bodyId, nodeKey, context.packId);
         if (!path) return;
@@ -20,6 +28,10 @@
         _sendOrQueue(payload);
     }
 
+    /**
+     * Inputs: body id, node key, and active pack id.
+     * Outputs: normalized analytics path for a node interaction.
+     */
     function _buildNodeInteractionPath(bodyId, nodeKey, packId) {
         const bodyPart = _sanitizePathSegment(bodyId);
         const nodePart = _sanitizePathSegment(nodeKey);
@@ -29,6 +41,10 @@
         return `${bodyPart}-${nodePart}-${packPart}`;
     }
 
+    /**
+     * Inputs: body id, node key, and interaction context.
+     * Outputs: human-readable analytics title.
+     */
     function _buildNodeInteractionTitle(bodyId, nodeKey, context) {
         const bodyLabel = context.bodyLabel || bodyId;
         const nodeLabel = _nodeLabel(nodeKey);
@@ -36,6 +52,10 @@
         return `${bodyLabel} ${nodeLabel} on ${packLabel}`;
     }
 
+    /**
+     * Inputs: raw path segment value.
+     * Outputs: URL-safe lowercase segment.
+     */
     function _sanitizePathSegment(value) {
         return String(value || '')
             .trim()
@@ -44,6 +64,10 @@
             .replace(/^-+|-+$/g, '');
     }
 
+    /**
+     * Inputs: node key.
+     * Outputs: display label used in analytics titles.
+     */
     function _nodeLabel(nodeKey) {
         return {
             land: 'Land',
@@ -54,6 +78,10 @@
         }[nodeKey] || nodeKey;
     }
 
+    /**
+     * Inputs: analytics payload.
+     * Outputs: sends immediately or stores until GoatCounter is ready.
+     */
     function _sendOrQueue(payload) {
         if (global.goatcounter?.count) {
             global.goatcounter.count(payload);
@@ -63,6 +91,10 @@
         _pendingEvents.push(payload);
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: sends all queued analytics payloads and stops the flush timer.
+     */
     function _flushPendingEvents() {
         if (!global.goatcounter?.count || !_pendingEvents.length) return;
 

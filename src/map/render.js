@@ -6,29 +6,53 @@
     const INDICATOR_WIDTH = PATH_STROKE_W;
     const SVG_NS = 'http://www.w3.org/2000/svg';
 
+    /**
+     * Inputs: SVG tag name and attribute map.
+     * Outputs: SVG element with attributes applied.
+     */
     function _el(tag, attrs = {}) {
         const el = document.createElementNS(SVG_NS, tag);
         Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
         return el;
     }
 
+    /**
+     * Inputs: node key.
+     * Outputs: short label rendered inside a map node.
+     */
     function _nodeLabel(key) {
         return { intercept: 'Fly-by', flyby: 'Fly-by', orbit: 'Orbit', land: 'Land', escape: 'Escape' }[key] || key;
     }
 
+    /**
+     * Inputs: body data and node key.
+     * Outputs: true when the node should show atmospheric landing glow.
+     */
     function _shouldGlowTerminalNode(body, nodeKey) {
         if (!body.surface?.canAerobrake) return false;
         return nodeKey === 'land';
     }
 
+    /**
+     * Inputs: body data object.
+     * Outputs: ordered node keys excluding metadata comments.
+     */
     function _getNodeKeys(body) {
         return Object.keys(body?.nodes || {}).filter(key => key !== 'comment');
     }
 
+    /**
+     * Inputs: render context and position key.
+     * Outputs: layout coordinate or null.
+     */
     function _getPosition(context, key) {
         return context.layout.positions[key] || null;
     }
 
+    /**
+     * Inputs: render context.
+     * Outputs: host body id for the current origin branch, or null.
+     */
     function _getPointABranchHostId(context) {
         const pointABody = context.bodies?.[context.pointA?.body];
         if (!pointABody) return null;
@@ -40,6 +64,10 @@
         return pointABody.id;
     }
 
+    /**
+     * Inputs: hex color and brightness multiplier.
+     * Outputs: darker hex color.
+     */
     function _mixHexWithBlack(hex, amount) {
         const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
         if (!match) return hex || '#888888';
@@ -49,6 +77,10 @@
         return `#${mixed.map(channel => channel.toString(16).padStart(2, '0')).join('')}`;
     }
 
+    /**
+     * Inputs: base route color.
+     * Outputs: inline CSS custom properties for path states.
+     */
     function _pathStyle(colour) {
         return [
             `--pathColour: ${colour}`,
@@ -57,6 +89,10 @@
         ].join('; ');
     }
 
+    /**
+     * Inputs: render context and body.
+     * Outputs: coordinate where that body's trunk path starts.
+     */
     function _getTrunkStart(context, body) {
         if (!body.parent || body.parent === context.centralBody) {
             return _getPosition(context, 'interplanetary');
@@ -76,6 +112,10 @@
         return parentKey ? _getPosition(context, `${body.parent}_${parentKey}`) : null;
     }
 
+    /**
+     * Inputs: SVG group, body, color, and render context.
+     * Outputs: appends the body trunk line when positions exist.
+     */
     function _drawTrunkLine(group, body, colour, context) {
         const nodeKeys = _getNodeKeys(body);
         const firstPos = _getPosition(context, `${body.id}_${nodeKeys[0]}`);
@@ -97,6 +137,10 @@
         }));
     }
 
+    /**
+     * Inputs: SVG group, body data, and render context.
+     * Outputs: appends intra-body path lines and trunk line.
+     */
     function _drawBodyPaths(group, body, context) {
         const nodeKeys = _getNodeKeys(body);
         const colour = body.mapColour || '#888888';
@@ -122,6 +166,10 @@
         _drawTrunkLine(group, body, colour, context);
     }
 
+    /**
+     * Inputs: SVG group, body data, and render context.
+     * Outputs: appends aerobrake indicator polygons for atmospheric bodies.
+     */
     function _drawAerobrakeIndicators(group, body, context) {
         if (!body.surface?.canAerobrake) return;
 
@@ -175,6 +223,10 @@
         });
     }
 
+    /**
+     * Inputs: SVG group, moon body, and render context.
+     * Outputs: appends special return aerobrake indicator for host-orbit arrivals.
+     */
     function _drawReturnHostAerobrakeIndicator(group, body, context) {
         const parentBody = context.bodies[body.parent];
         if (!parentBody?.surface?.canAerobrake) return;
@@ -222,6 +274,10 @@
         }));
     }
 
+    /**
+     * Inputs: SVG group, body data, and render context.
+     * Outputs: appends body label and clickable node groups.
+     */
     function _drawBodyNodes(group, body, context) {
         const nodeKeys = _getNodeKeys(body);
         const colour = body.mapColour || '#888888';
@@ -282,6 +338,10 @@
         });
     }
 
+    /**
+     * Inputs: SVG group, system metadata, and render context.
+     * Outputs: appends interplanetary hub node.
+     */
     function _drawHubNode(group, meta, context) {
         const pos = _getPosition(context, 'interplanetary');
         const colour = meta.interplanetaryNode?.mapColour || '#c8c8d4';
@@ -305,6 +365,11 @@
         group.appendChild(hub);
     }
 
+    /**
+     * Inputs: render context with system data, layout, bodies, and click handler.
+     * Outputs: complete SVG map element.
+     * Purpose: constructs the static map before route highlighting is applied.
+     */
     function buildSvg(context) {
         const svg = _el('svg', {
             viewBox: context.layout.viewBox,
@@ -331,6 +396,10 @@
         return svg;
     }
 
+    /**
+     * Inputs: route segment ids, path group, direction, overlay state, and round-trip flag.
+     * Outputs: appends animated route overlays and records affected elements.
+     */
     function spawnOverlays(segmentIds, pathsGroup, direction, overlayState, isRoundTrip = false) {
         const duration = 0.9;
         const laneOffset = PATH_STROKE_W * 0.28;
@@ -383,6 +452,10 @@
         });
     }
 
+    /**
+     * Inputs: current map overlay/highlight state.
+     * Outputs: removes route overlays and active CSS classes from the DOM.
+     */
     function clearActive(state) {
         if (state.mapSvgEl) state.mapSvgEl.classList.remove('has-selection');
         state.overlayEls.forEach(el => el.remove());
@@ -398,6 +471,10 @@
         state.activeNodeEl = null;
     }
 
+    /**
+     * Inputs: endpoint-side node ids, trip mode flags, route segments, and origin point.
+     * Outputs: marks the applicable aerobrake indicators active.
+     */
     function activateAerobrakeIndicators(aNodes, bNodes, roundTrip, returnOnly, routeSegments = [], pointA = null) {
         const aerobrakeArrivalOrbit = document.getElementById('aeroLowOrbitDest')?.checked ?? false;
         const aerobrakeArrivalIntercept = document.getElementById('aeroInterceptDest')?.checked ?? false;
@@ -459,6 +536,10 @@
         });
     }
 
+    /**
+     * Inputs: visible route segments and origin point.
+     * Outputs: special return-host aerobrake indicator ids.
+     */
     function _getReturnHostAerobrakeIndicatorIds(routeSegments, pointA) {
         if (!pointA?.body || !['land', 'orbit'].includes(pointA?.node)) return [];
 
@@ -475,6 +556,10 @@
         return indicatorIds;
     }
 
+    /**
+     * Inputs: body lookup.
+     * Outputs: node ids that can display aerobrake indicators.
+     */
     function collectAerobrakeNodeIds(bodies) {
         const nodeIds = [];
 
@@ -519,10 +604,18 @@
     let _routePathEls = [];
     let _activeNodeEl = null;
 
+    /**
+     * Inputs: body data object.
+     * Outputs: ordered node keys excluding metadata comments.
+     */
     function _getNodeKeys(body) {
         return Object.keys(body?.nodes || {}).filter(key => key !== 'comment');
     }
 
+    /**
+     * Inputs: selected point.
+     * Outputs: boolean indicating whether the point exists in the active system.
+     */
     function _isValidPoint(point) {
         if (!point?.body) return false;
         if (point.body === 'interplanetary') return true;
@@ -532,6 +625,10 @@
         return _getNodeKeys(body).includes(point.node);
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: default origin point for the active system.
+     */
     function _getDefaultPointA() {
         const originId = _systemData?.meta?.originBody;
         const originBody = originId ? _bodies[originId] : null;
@@ -542,6 +639,10 @@
         return { body: originId, node: landKey };
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: rebuilds and swaps the active map SVG in the DOM.
+     */
     function _replaceSvg() {
         const container = document.getElementById('map-container');
         const placeholder = document.getElementById('map-placeholder');
@@ -563,6 +664,10 @@
         _mapSvgEl = svg;
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: current route context for map route collection.
+     */
     function _getRouteContext() {
         return {
             bodies: _bodies,
@@ -572,6 +677,10 @@
         };
     }
 
+    /**
+     * Inputs: loaded system data and map initialization options.
+     * Outputs: initializes map state, rebuilds SVG, and refreshes highlights.
+     */
     function initMap(systemData, options = {}) {
         const preservedPointA = options.preserveSelection ? { ..._pointA } : null;
         const preservedPointB = options.preserveSelection ? { ..._pointB } : null;
@@ -592,6 +701,10 @@
         refreshMapDisplay();
     }
 
+    /**
+     * Inputs: map pack/layout id.
+     * Outputs: switches active layout and rebuilds the map if data is loaded.
+     */
     function setMapLayout(mapId) {
         if (!mapId) return;
         _activeMapId = mapId;
@@ -602,23 +715,39 @@
         }
     }
 
+    /**
+     * Inputs: origin body id and node key.
+     * Outputs: updates origin selection and rebuilds route-sensitive map geometry.
+     */
     function setPointA(bodyId, nodeKey) {
         _pointA = { body: bodyId, node: nodeKey };
         _replaceSvg();
         refreshMapDisplay();
     }
 
+    /**
+     * Inputs: destination body id and node key.
+     * Outputs: updates destination selection and refreshes map highlighting.
+     */
     function setPointB(bodyId, nodeKey) {
         _pointB = { body: bodyId, node: nodeKey };
         refreshMapDisplay();
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: restores default origin and clears destination.
+     */
     function resetSelection() {
         _pointA = _getDefaultPointA();
         _pointB = { body: null, node: null };
         refreshMapDisplay();
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: updates active node, route overlays, and aerobrake indicators.
+     */
     function refreshMapDisplay() {
         renderApi.clearActive({
             mapSvgEl: _mapSvgEl,
@@ -693,18 +822,34 @@
         renderApi.activateAerobrakeIndicators(routeData.aNodes, routeData.bNodes, roundTrip, returnOnly, routeData.segmentIds, _pointA);
     }
 
+    /**
+     * Inputs: destination body id and node key.
+     * Outputs: compatibility wrapper that sets Point B.
+     */
     function setActiveNode(bodyId, nodeKey) {
         setPointB(bodyId, nodeKey);
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: active system metadata.
+     */
     function getSystemMeta() {
         return _systemMeta;
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: active body lookup.
+     */
     function getBodies() {
         return _bodies;
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: copies of selected origin and destination points.
+     */
     function getSelectedPoints() {
         return {
             pointA: { ..._pointA },
@@ -712,6 +857,10 @@
         };
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: active map pack/layout id.
+     */
     function getActiveMapId() {
         return _activeMapId;
     }

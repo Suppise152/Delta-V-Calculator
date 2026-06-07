@@ -87,6 +87,10 @@
         eeloo_label: { x: 1000, y: 490 },
     };
 
+    /**
+     * Inputs: position map, x/y offsets, and keys to leave unchanged.
+     * Outputs: shifted copy of the position map.
+     */
     function _shiftPositions(positions, dx, dy = 0, excludeKeys = []) {
         return Object.fromEntries(Object.entries(positions).map(([key, pos]) => {
             if (excludeKeys.includes(key)) return [key, { ...pos }];
@@ -324,10 +328,18 @@
         },
     };
 
+    /**
+     * Inputs: map pack/layout id.
+     * Outputs: matching layout descriptor, falling back to stock.
+     */
     function getMapLayout(mapId) {
         return MAP_LAYOUTS[mapId] || MAP_LAYOUTS.stock;
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: all map layout descriptors as an array.
+     */
     function getMapLayouts() {
         return Object.values(MAP_LAYOUTS);
     }

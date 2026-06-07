@@ -37,6 +37,10 @@
         });
     });
 
+    /**
+     * Inputs: breakdown entries.
+     * Outputs: renders the delta-v breakdown dropdown.
+     */
     function renderBreakdown(breakdown = []) {
         const dropdown = document.getElementById('dv-dropdown');
         if (!dropdown) return;
@@ -56,6 +60,10 @@
         }
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: toggles breakdown dropdown visibility.
+     */
     function toggleDropdown() {
         const dropdown = document.getElementById('dv-dropdown');
         const toggle = document.getElementById('toggle8');
@@ -68,6 +76,10 @@
         }
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: hides the breakdown dropdown.
+     */
     function closeDropdown() {
         const dropdown = document.getElementById('dv-dropdown');
         const toggle = document.getElementById('toggle8');
@@ -77,6 +89,10 @@
         toggle.checked = false;
     }
 
+    /**
+     * Inputs: sentinel text and optional extra class.
+     * Outputs: dropdown row element.
+     */
     function _createSentinelEntry(text, extraClass = '') {
         const entry = document.createElement('div');
         entry.className = `dropdown-entry ${extraClass}`.trim();
@@ -84,6 +100,10 @@
         return entry;
     }
 
+    /**
+     * Inputs: breakdown item and redundancy multiplier.
+     * Outputs: dropdown row element for one delta-v entry.
+     */
     function _createBreakdownEntry(item, multiplier) {
         const entry = document.createElement('div');
         const classes = ['dropdown-entry'];
@@ -117,6 +137,10 @@
         return entry;
     }
 
+    /**
+     * Inputs: breakdown item and redundancy multiplier.
+     * Outputs: delta-v value element with raw value styling when needed.
+     */
     function _createDvValue(item, multiplier) {
         const value = document.createElement('span');
         const adjustedValue = _formatEntryDv(item.dv, multiplier);
@@ -136,16 +160,28 @@
         return value;
     }
 
+    /**
+     * Inputs: raw delta-v and redundancy multiplier.
+     * Outputs: rounded formatted delta-v string.
+     */
     function _formatEntryDv(dv, multiplier) {
         const adjustedDv = Math.round(((Number(dv) * multiplier) || 0) / 10) * 10;
         return `${adjustedDv.toLocaleString()} m/s`;
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: current redundancy multiplier from shared state or UI.
+     */
     function _getRedundancyMultiplier() {
         const options = typeof getCalculationOptions === 'function' ? getCalculationOptions() : null;
         return Number.isFinite(options?.redundancyMultiplier) ? options.redundancyMultiplier : 1;
     }
 
+    /**
+     * Inputs: body id.
+     * Outputs: map marker color for that body, or fallback null.
+     */
     function _getMarkerColour(bodyId) {
         if (!bodyId) return null;
 
@@ -153,6 +189,10 @@
         return bodies?.[bodyId]?.mapColour || null;
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: positions dropdown relative to the delta-v display.
+     */
     function _positionDropdown() {
         const dropdown = document.getElementById('dv-dropdown');
         const dvDisplay = document.getElementById('dV_display');

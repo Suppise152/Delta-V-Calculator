@@ -7,6 +7,10 @@
         panel.hidden = !DEBUG_VIEW_ENABLED;
     });
 
+    /**
+     * Inputs: calculation result or null.
+     * Outputs: renders calculation debug details into the debug panel.
+     */
     function renderDebugView(result = null) {
         const panel = document.getElementById('calc-debug-panel');
         const output = document.getElementById('calc-debug');
@@ -30,6 +34,10 @@
         _renderRouteDebug(output, result.debug.route, 'Route');
     }
 
+    /**
+     * Inputs: container element, route debug payload, and heading text.
+     * Outputs: appends route debug DOM nodes.
+     */
     function _renderRouteDebug(container, routeDebug, headingText) {
         const section = document.createElement('section');
         section.className = 'debug-section';
@@ -55,6 +63,10 @@
         container.appendChild(section);
     }
 
+    /**
+     * Inputs: evaluated debug segment and index.
+     * Outputs: DOM node describing that segment.
+     */
     function _createSegmentEntry(entry, index) {
         const wrapper = document.createElement('div');
         wrapper.className = 'debug-entry';
@@ -85,6 +97,10 @@
         return wrapper;
     }
 
+    /**
+     * Inputs: branch debug object.
+     * Outputs: ordered text detail lines.
+     */
     function _collectDebugLines(debug) {
         const lines = [];
         const preferredKeys = [
@@ -120,22 +136,38 @@
         return lines;
     }
 
+    /**
+     * Inputs: segment descriptor.
+     * Outputs: compact from-to segment label.
+     */
     function _formatSegment(segment) {
         const from = _formatNode(segment?.from);
         const to = _formatNode(segment?.to);
         return `${from} -> ${to}`;
     }
 
+    /**
+     * Inputs: parsed route node object.
+     * Outputs: compact node label.
+     */
     function _formatNode(node) {
         if (!node) return '?';
         if (node.bodyId === 'interplanetary') return 'Interplanetary';
         return `${node.bodyId}.${node.nodeKey}`;
     }
 
+    /**
+     * Inputs: delta-v value.
+     * Outputs: formatted m/s string.
+     */
     function _formatDv(value) {
         return `${Number(value || 0).toFixed(2)} m/s`;
     }
 
+    /**
+     * Inputs: debug value and key.
+     * Outputs: display-formatted value.
+     */
     function _formatValue(value, key) {
         if (typeof value === 'boolean') return value ? 'true' : 'false';
         if (typeof value === 'number') {
@@ -150,6 +182,10 @@
         return String(value);
     }
 
+    /**
+     * Inputs: debug object key.
+     * Outputs: human-readable label.
+     */
     function _labelForKey(key) {
         return key
             .replace(/([a-z])([A-Z])/g, '$1 $2')

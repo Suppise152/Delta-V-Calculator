@@ -8,6 +8,10 @@
         isValidPoint,
     } = api;
 
+    /**
+     * Inputs: partial calculation options from UI or caller.
+     * Outputs: normalized options with defaults and booleans applied.
+     */
     function normalizeCalculationOptions(options = {}) {
         return {
             ipsBranchDV: Number.isFinite(options.ipsBranchDV) ? options.ipsBranchDV : DEFAULT_IPS_BRANCH_DV,
@@ -21,6 +25,11 @@
         };
     }
 
+    /**
+     * Inputs: route endpoints, options, body lookup, and system metadata.
+     * Outputs: total DV, breakdown entries, transfer angles, and debug route data.
+     * Purpose: top-level calculation pipeline for one-way, return-only, or round-trip routes.
+     */
     function calculateRoute(pointA, pointB, options = {}, bodies = {}, meta = {}) {
         if (!isValidPoint(pointA, bodies) || !isValidPoint(pointB, bodies)) {
             return emptyResult();
@@ -78,6 +87,10 @@
         };
     }
 
+    /**
+     * Inputs: route segments, body lookup, metadata, normalized options, and route direction context.
+     * Outputs: evaluated breakdown and debug segment list.
+     */
     function evaluateRouteSegments(segments, bodies, meta, options, routeContext) {
         const breakdown = [];
         const debugSegments = [];
@@ -115,6 +128,10 @@
         };
     }
 
+    /**
+     * Inputs: segment, branch result, adjusted DV, aerobrake adjustment, and body lookup.
+     * Outputs: display-ready breakdown entries for that segment.
+     */
     function buildSegmentBreakdownEntries(segment, branchResult, adjustedDv, aerobrakeAdjustment, bodies) {
         if (Array.isArray(branchResult.breakdownEntries) && branchResult.breakdownEntries.length) {
             return branchResult.breakdownEntries.map((entry) => {
@@ -144,6 +161,11 @@
         }];
     }
 
+    /**
+     * Inputs: segment, body lookup, metadata, and evaluation options.
+     * Outputs: branch result containing DV, branch type, and debug data.
+     * Purpose: dispatches a route segment to the specialized calculation branch.
+     */
     function evaluateSegmentBranch(segment, bodies, meta, options) {
         if (segment.branchType === 'direct_moon_transfer') {
             return api.calculateDirectMoonTransferBranch(segment, bodies, meta, options);
@@ -176,6 +198,10 @@
         return api.calculateBodyChainBranch(segment, bodies);
     }
 
+    /**
+     * Inputs: route segment.
+     * Outputs: true when segment is same-body surface/orbit movement.
+     */
     function _isSurfaceOrbitSegment(segment) {
         const fromNode = segment.from.nodeKey;
         const toNode = segment.to.nodeKey;
@@ -188,6 +214,10 @@
         );
     }
 
+    /**
+     * Inputs: route segment.
+     * Outputs: true when segment represents orbit-to-escape movement.
+     */
     function _isOrbitEscapeSegment(segment) {
         return (
             (
@@ -204,6 +234,10 @@
         );
     }
 
+    /**
+     * Inputs: route segment, body lookup, and metadata.
+     * Outputs: true when segment represents escape/interplanetary intercept work.
+     */
     function _isEscapeInterceptSegment(segment, bodies, meta) {
         const targetBody = bodies[segment.to.bodyId];
         const targetIsMoon = targetBody?.parent && targetBody.parent !== meta?.centralBody;
@@ -225,6 +259,10 @@
         );
     }
 
+    /**
+     * Inputs: route segment, body lookup, and metadata.
+     * Outputs: true when escaping from a moon through its top-level host.
+     */
     function _isMoonHostEscapeSegment(segment, bodies, meta) {
         if (segment.to.bodyId !== api.INTERPLANETARY_ID || segment.nodeKey !== 'escape') {
             return false;
@@ -242,6 +280,10 @@
         );
     }
 
+    /**
+     * Inputs: route segment.
+     * Outputs: true when segment captures from flyby/intercept to low orbit.
+     */
     function _isFlybyCaptureSegment(segment) {
         return (
             segment.from.bodyId === segment.to.bodyId
@@ -250,6 +292,10 @@
         );
     }
 
+    /**
+     * Inputs: route segment and metadata.
+     * Outputs: true when segment moves between central low orbit and interplanetary space.
+     */
     function _isCentralBodyTransferSegment(segment, meta) {
         const centralBodyId = meta?.centralBody;
         if (!centralBodyId) return false;
@@ -268,6 +314,10 @@
         );
     }
 
+    /**
+     * Inputs: segment, branch result, route context, options, and body lookup.
+     * Outputs: aerobrake zeroing decision and mode.
+     */
     function getAerobrakeAdjustment(segment, branchResult, routeContext, options, bodies) {
         const isForward = routeContext?.direction === 'forward';
         const appliesToDestination = segment.bodyId === routeContext?.endPoint?.body;
@@ -308,6 +358,10 @@
         return { zeroed: false, mode: null };
     }
 
+    /**
+     * Inputs: route segment, route context, and body lookup.
+     * Outputs: true for moon-return segments that can aerobrake into atmospheric origin orbit.
+     */
     function _isReturnMoonToAtmosphericOriginOrbitSegment(segment, routeContext, bodies) {
         if (routeContext?.direction !== 'return') return false;
         if (!['land', 'orbit'].includes(routeContext?.endPoint?.node)) return false;

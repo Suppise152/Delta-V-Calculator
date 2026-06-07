@@ -1,6 +1,10 @@
 (function attachDeltaVCalcLocalBranches(global) {
     const api = global.DeltaVCalc = global.DeltaVCalc || {};
 
+    /**
+     * Inputs: route segment, body lookup, and system metadata.
+     * Outputs: branch result for surface-to-orbit or orbit-to-surface.
+     */
     function calculateSurfaceOrbitBranch(segment, bodies, meta) {
         const body = bodies[segment.bodyId];
         if (!body) return _emptyBranchResult(segment, 'surface_orbit');
@@ -34,6 +38,10 @@
         return _emptyBranchResult(segment, 'surface_orbit');
     }
 
+    /**
+     * Inputs: primary configured value and fallback value.
+     * Outputs: finite configured DV, falling back to zero.
+     */
     function _configuredDv(primaryValue, fallbackValue) {
         const primary = Number(primaryValue);
         if (primaryValue != null && Number.isFinite(primary)) return primary;
@@ -42,6 +50,10 @@
         return Number.isFinite(fallback) ? fallback : 0;
     }
 
+    /**
+     * Inputs: route segment, body lookup, and evaluation options.
+     * Outputs: branch result for local or host-relative orbit escape.
+     */
     function calculateOrbitEscapeBranch(segment, bodies, options) {
         const body = bodies[segment.bodyId];
         if (!body) return _emptyBranchResult(segment, 'orbit_escape');
@@ -98,6 +110,10 @@
         return _emptyBranchResult(segment, 'orbit_escape');
     }
 
+    /**
+     * Inputs: route segment, body lookup, metadata, and evaluation options.
+     * Outputs: branch result for capture from flyby/intercept to low orbit.
+     */
     function calculateFlybyCaptureBranch(segment, bodies, meta, options) {
         const body = bodies[segment.bodyId];
         if (!body) return _emptyBranchResult(segment, 'flyby_capture');
@@ -163,6 +179,10 @@
         return _emptyBranchResult(segment, 'flyby_capture');
     }
 
+    /**
+     * Inputs: route segment and body lookup.
+     * Outputs: branch result using configured node-to-node body data.
+     */
     function calculateBodyChainBranch(segment, bodies) {
         const body = bodies[segment.bodyId];
         if (!body) return _emptyBranchResult(segment, 'body_chain');
@@ -177,6 +197,10 @@
         };
     }
 
+    /**
+     * Inputs: route segment and branch type label.
+     * Outputs: zero-DV unresolved branch result.
+     */
     function _emptyBranchResult(segment, branchType) {
         return {
             dv: 0,
@@ -189,6 +213,10 @@
         };
     }
 
+    /**
+     * Inputs: starting body id, body lookup, and system metadata.
+     * Outputs: top-level body id used for transfer context.
+     */
     function _resolveTransferOriginTopLevelBody(startBodyId, bodies, meta) {
         let currentBodyId = startBodyId;
         while (currentBodyId && bodies[currentBodyId]) {
@@ -201,6 +229,10 @@
         return startBodyId;
     }
 
+    /**
+     * Inputs: target top-level body, central body, and metadata.
+     * Outputs: arrival-style transfer context for central-body routes.
+     */
     function _computeCentralBodyOriginArrivalContext(targetBody, centralBody, meta) {
         const context = api.computeCentralBodyTransferContext(targetBody, centralBody, meta);
         return {

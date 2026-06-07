@@ -17,6 +17,10 @@ let transferSizingFrame = null;
 
 TRANSFER_RESIZE_EVENTS.forEach((eventName) => window.addEventListener(eventName, _syncTransferDiagramSizes));
 
+/**
+ * Inputs: current global bodies, selection, metadata, and calculation state.
+ * Outputs: refreshes transfer angle fields and phase diagrams.
+ */
 function refreshTransferDisplay() {
     const bodies = typeof getBodies === 'function' ? getBodies() : null;
     const selection = typeof getSelectedPoints === 'function' ? getSelectedPoints() : null;
@@ -61,6 +65,10 @@ function refreshTransferDisplay() {
     _syncTransferDiagramSizes();
 }
 
+/**
+ * Inputs: transfer block elements, model, mode, visibility flag, body lookup, and phase angle.
+ * Outputs: renders or clears one transfer phase diagram block.
+ */
 function _renderTransferBlock(blockEl, angleEl, diagramEl, transferModel, mode, isVisible, bodies, phaseAngle) {
     if (!isVisible || !Number.isFinite(phaseAngle)) {
         _clearTransferBlock(angleEl, diagramEl);
@@ -74,12 +82,20 @@ function _renderTransferBlock(blockEl, angleEl, diagramEl, transferModel, mode, 
     diagramEl.appendChild(_buildTransferDiagramSvg(transferModel, mode, bodies, phaseAngle));
 }
 
+/**
+ * Inputs: angle input element and diagram container.
+ * Outputs: resets one transfer block to placeholder state.
+ */
 function _clearTransferBlock(angleEl, diagramEl) {
     angleEl.value = TRANSFER_PLACEHOLDER;
     diagramEl.classList.add('is-empty');
     diagramEl.innerHTML = '';
 }
 
+/**
+ * Inputs: current DOM dimensions.
+ * Outputs: updates CSS sizing variables and layout mode for transfer diagrams.
+ */
 function _syncTransferDiagramSizes() {
     if (transferSizingFrame !== null) {
         window.cancelAnimationFrame(transferSizingFrame);
@@ -188,14 +204,26 @@ function _syncTransferDiagramSizes() {
     });
 }
 
+/**
+ * Inputs: current viewport media query state.
+ * Outputs: true when the mobile portrait transfer layout should be forced.
+ */
 function _isMobilePortraitLayout() {
     return window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches;
 }
 
+/**
+ * Inputs: endpoint body ids, body lookup, and central body id.
+ * Outputs: transfer-window model or null.
+ */
 function _buildTransferModel(pointABodyId, pointBBodyId, bodies, centralBodyId) {
     return window.DeltaVCalc?.resolveTransferWindowModel?.(pointABodyId, pointBBodyId, bodies, centralBodyId) || null;
 }
 
+/**
+ * Inputs: transfer model, diagram mode, body lookup, and phase angle.
+ * Outputs: SVG element for the phase diagram.
+ */
 function _buildTransferDiagramSvg(transferModel, mode, bodies, phaseAngle) {
     const svg = document.createElementNS(TRANSFER_SVG_NS, 'svg');
     svg.setAttribute('viewBox', '0 0 220 220');
@@ -270,10 +298,18 @@ function _buildTransferDiagramSvg(transferModel, mode, bodies, phaseAngle) {
     return svg;
 }
 
+/**
+ * Inputs: none.
+ * Outputs: fixed inner and outer orbit radii for the diagram.
+ */
 function _resolveOrbitRadii() {
     return { inner: 48, outer: 78 };
 }
 
+/**
+ * Inputs: center point, start/end radii, and start/end angles.
+ * Outputs: SVG path data for the transfer arc.
+ */
 function _buildTransferArcPath(center, startRadius, endRadius, startAngleDeg, endAngleDeg) {
     const a = (startRadius + endRadius) / 2;
     const b = Math.sqrt(startRadius * endRadius);
@@ -294,6 +330,10 @@ function _buildTransferArcPath(center, startRadius, endRadius, startAngleDeg, en
     return `M ${points.join(' L ')}`;
 }
 
+/**
+ * Inputs: center point, radius, and angle in degrees.
+ * Outputs: cartesian point on that polar coordinate.
+ */
 function _polarPoint(center, radius, angleDeg) {
     const angleRad = (angleDeg * Math.PI) / 180;
     return {
@@ -302,6 +342,10 @@ function _polarPoint(center, radius, angleDeg) {
     };
 }
 
+/**
+ * Inputs: raw phase angle.
+ * Outputs: compact display string or placeholder.
+ */
 function _formatPhaseAngle(angle) {
     if (!Number.isFinite(angle)) return TRANSFER_PLACEHOLDER;
 
@@ -313,6 +357,10 @@ function _formatPhaseAngle(angle) {
     return rounded.toFixed(1);
 }
 
+/**
+ * Inputs: SVG tag name and attribute map.
+ * Outputs: SVG element with attributes applied.
+ */
 function _svgNode(tag, attrs) {
     const node = document.createElementNS(TRANSFER_SVG_NS, tag);
     Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
