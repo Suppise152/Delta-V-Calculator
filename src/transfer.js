@@ -202,19 +202,6 @@ function _buildTransferDiagramSvg(transferModel, mode, bodies, phaseAngle) {
     svg.setAttribute('class', 'transfer-diagram-svg');
     svg.setAttribute('aria-label', `${transferModel.centerLabel} transfer diagram`);
 
-    const defs = document.createElementNS(TRANSFER_SVG_NS, 'defs');
-    const gradient = document.createElementNS(TRANSFER_SVG_NS, 'radialGradient');
-    gradient.setAttribute('id', `transfer-core-${mode}`);
-    gradient.setAttribute('cx', '40%');
-    gradient.setAttribute('cy', '35%');
-    gradient.setAttribute('r', '65%');
-
-    gradient.appendChild(_svgNode('stop', { offset: '0%', 'stop-color': '#fffa86' }));
-    gradient.appendChild(_svgNode('stop', { offset: '65%', 'stop-color': '#ffb321' }));
-    gradient.appendChild(_svgNode('stop', { offset: '100%', 'stop-color': '#ef6515' }));
-    defs.appendChild(gradient);
-    svg.appendChild(defs);
-
     const center = { x: 110, y: 110 };
     const radii = _resolveOrbitRadii();
     const fromIsInner = transferModel.fromOrbitRadius <= transferModel.toOrbitRadius;
@@ -260,8 +247,8 @@ function _buildTransferDiagramSvg(transferModel, mode, bodies, phaseAngle) {
         cx: center.x,
         cy: center.y,
         r: transferModel.centerBodyId === 'kerbol' ? TRANSFER_KERBOL_CENTER_BODY_RADIUS : TRANSFER_CENTER_BODY_RADIUS,
-        fill: `url(#transfer-core-${mode})`,
-        class: 'transfer-center-body',
+        fill: bodies[transferModel.centerBodyId]?.mapColour || TRANSFER_BODY_A_COLOUR,
+        class: 'transfer-center-body transfer-body',
     }));
 
     svg.appendChild(_svgNode('circle', {
