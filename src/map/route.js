@@ -88,6 +88,11 @@
         return body ? body.id : bodyId;
     }
 
+    function _getOrbitAttachNode(body) {
+        const nodeKeys = _getNodeKeys(body);
+        return nodeKeys.includes('orbit') ? 'orbit' : nodeKeys[0];
+    }
+
     function collectRoute(context) {
         const pA = context.pointA;
         const pB = context.pointB;
@@ -171,6 +176,15 @@
 
         const bSegs = [];
         _walkToAncestor(context, pB.body, pB.node, lca, bSegs, bNodes);
+        if (pB.body === lca && pA.body !== lca && aChain.includes(lca)) {
+            const hostBody = context.bodies[lca];
+            const attachNode = _getOrbitAttachNode(hostBody);
+            if (attachNode && pB.node !== attachNode) {
+                _collectBodyPath(context, lca, attachNode, pB.node, bSegs, bNodes);
+            } else if (attachNode) {
+                bNodes.push(`node_${lca}_${attachNode}`);
+            }
+        }
 
         const aSegs = [];
         if (pA.body !== lca) {
