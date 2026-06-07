@@ -199,6 +199,88 @@
         };
     }
 
+    function calculateDirectMoonTransferBranch(segment, bodies, meta) {
+        const originMoon = bodies[segment.originBodyId || segment.from.bodyId];
+        const targetMoon = bodies[segment.targetBodyId || segment.to.bodyId];
+        const hostBody = bodies[segment.hostBodyId || originMoon?.parent];
+
+        if (
+            !originMoon
+            || !targetMoon
+            || !hostBody
+            || originMoon.id === targetMoon.id
+            || originMoon.parent !== targetMoon.parent
+            || originMoon.parent !== hostBody.id
+            || originMoon.parent === meta?.centralBody
+        ) {
+            return _emptyBranchResult(segment, 'direct_moon_transfer');
+        }
+
+        const context = api.computeInterplanetaryContext(originMoon, targetMoon, meta, hostBody);
+        const originMu = Number(api.getPhysics(originMoon).mu) || 0;
+        const targetMu = Number(api.getPhysics(targetMoon).mu) || 0;
+        const originPeriapsis = api.lowOrbitRadius(originMoon, meta);
+        const targetPeriapsis = api.lowOrbitRadius(targetMoon, meta);
+        const targetOrbitSpeed = Math.sqrt(targetMu / targetPeriapsis);
+        const departureBurn = api.hyperbolicDepartureBurn(
+            originMu,
+            originPeriapsis,
+            context.vinfDepartCoplanar,
+        );
+        const planeChange = api.planeChangeDeltaV(context.originSpeed, context.planeAngle);
+        const captureBurn = api.hyperbolicCaptureBurn(
+            targetMu,
+            targetPeriapsis,
+            context.vinfArriveCombined,
+            targetOrbitSpeed,
+        );
+        const dv = departureBurn + planeChange + captureBurn;
+
+        if (!Number.isFinite(dv)) {
+            return _emptyBranchResult(segment, 'direct_moon_transfer');
+        }
+
+        return {
+            dv,
+            branchType: 'direct_moon_transfer',
+            breakdownEntries: [
+                {
+                    bodyId: originMoon.id,
+                    nodeKey: 'escape',
+                    dv: departureBurn,
+                    markerBodyId: originMoon.id,
+                },
+                {
+                    bodyId: targetMoon.id,
+                    nodeKey: 'intercept',
+                    dv: planeChange,
+                    markerBodyId: hostBody.id,
+                },
+                {
+                    bodyId: targetMoon.id,
+                    nodeKey: 'orbit',
+                    dv: captureBurn,
+                    markerBodyId: targetMoon.id,
+                },
+            ],
+            debug: {
+                source: 'formula.direct_moon_interplanetary_context',
+                originMoonId: originMoon.id,
+                targetMoonId: targetMoon.id,
+                hostBodyId: hostBody.id,
+                departureBurn,
+                planeChange,
+                captureBurn,
+                originLowOrbitAltitudeMeters: api.getLowOrbitAltitude(originMoon, meta),
+                originLowOrbitRadiusMeters: originPeriapsis,
+                targetLowOrbitAltitudeMeters: api.getLowOrbitAltitude(targetMoon, meta),
+                targetLowOrbitRadiusMeters: targetPeriapsis,
+                originOrbitRadiusMeters: context.originRadius,
+                targetOrbitRadiusMeters: context.targetRadius,
+            },
+        };
+    }
+
     function calculateCentralBodyTransferBranch(segment, bodies, meta, options) {
         const centralBody = bodies[meta?.centralBody];
         if (!centralBody) {
@@ -286,6 +368,7 @@
 
     Object.assign(api, {
         calculateCentralBodyTransferBranch,
+        calculateDirectMoonTransferBranch,
         calculateEscapeInterceptBranch,
         calculateMoonHostEscapeBranch,
     });

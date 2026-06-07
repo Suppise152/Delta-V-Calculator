@@ -15,6 +15,10 @@
             dv,
             bodyId: descriptor.bodyId,
             nodeKey: descriptor.nodeKey,
+            branchType: descriptor.branchType || null,
+            originBodyId: descriptor.originBodyId || null,
+            targetBodyId: descriptor.targetBodyId || null,
+            hostBodyId: descriptor.hostBodyId || null,
         });
     }
 
@@ -170,13 +174,53 @@
             }
         });
 
+        addSiblingMoonTransferEdges(graph, bodies, centralBodyId);
+
         return graph;
+    }
+
+    function addSiblingMoonTransferEdges(graph, bodies, centralBodyId) {
+        const moonsByHost = new Map();
+
+        Object.values(bodies || {}).forEach((body) => {
+            if (!body?.parent || body.parent === centralBodyId) return;
+            if (!getNodeKeys(body).includes('orbit')) return;
+
+            if (!moonsByHost.has(body.parent)) {
+                moonsByHost.set(body.parent, []);
+            }
+            moonsByHost.get(body.parent).push(body);
+        });
+
+        moonsByHost.forEach((moons, hostBodyId) => {
+            moons.forEach((originMoon) => {
+                moons.forEach((targetMoon) => {
+                    if (originMoon.id === targetMoon.id) return;
+
+                    addDirectedEdge(
+                        graph,
+                        stateId(originMoon.id, 'orbit'),
+                        stateId(targetMoon.id, 'orbit'),
+                        0,
+                        {
+                            bodyId: targetMoon.id,
+                            nodeKey: 'orbit',
+                            branchType: 'direct_moon_transfer',
+                            originBodyId: originMoon.id,
+                            targetBodyId: targetMoon.id,
+                            hostBodyId,
+                        },
+                    );
+                });
+            });
+        });
     }
 
     Object.assign(api, {
         addBidirectionalEdge,
         addBodyChainEdges,
         addDirectedEdge,
+        addSiblingMoonTransferEdges,
         addTopLevelBodyEdges,
         buildRouteGraph,
     });

@@ -87,16 +87,13 @@
             const branchResult = evaluateSegmentBranch(segment, bodies, meta, evaluationOptions);
             const aerobrakeAdjustment = getAerobrakeAdjustment(segment, branchResult, routeContext, options, bodies);
             const adjustedDv = aerobrakeAdjustment.zeroed ? 0 : branchResult.dv;
-            const body = bodies[segment.bodyId];
-            breakdown.push({
-                label: api.formatEntryLabel(body, segment.nodeKey),
-                dv: adjustedDv,
-                rawDv: branchResult.dv,
-                type: segment.nodeKey,
-                markerBodyId: api.resolveMarkerBodyId(body, segment.nodeKey),
-                zeroed: aerobrakeAdjustment.zeroed,
-                aerobrake: aerobrakeAdjustment.zeroed ? aerobrakeAdjustment.mode : null,
-            });
+            breakdown.push(...buildSegmentBreakdownEntries(
+                segment,
+                branchResult,
+                adjustedDv,
+                aerobrakeAdjustment,
+                bodies,
+            ));
             debugSegments.push({
                 segment,
                 branchType: branchResult.branchType,
@@ -118,7 +115,40 @@
         };
     }
 
+    function buildSegmentBreakdownEntries(segment, branchResult, adjustedDv, aerobrakeAdjustment, bodies) {
+        if (Array.isArray(branchResult.breakdownEntries) && branchResult.breakdownEntries.length) {
+            return branchResult.breakdownEntries.map((entry) => {
+                const body = bodies[entry.bodyId];
+                const nodeKey = entry.nodeKey;
+                return {
+                    label: entry.label || api.formatEntryLabel(body, nodeKey),
+                    dv: entry.dv,
+                    rawDv: entry.rawDv ?? entry.dv,
+                    type: nodeKey,
+                    markerBodyId: entry.markerBodyId ?? api.resolveMarkerBodyId(body, nodeKey),
+                    zeroed: false,
+                    aerobrake: null,
+                };
+            });
+        }
+
+        const body = bodies[segment.bodyId];
+        return [{
+            label: api.formatEntryLabel(body, segment.nodeKey),
+            dv: adjustedDv,
+            rawDv: branchResult.dv,
+            type: segment.nodeKey,
+            markerBodyId: api.resolveMarkerBodyId(body, segment.nodeKey),
+            zeroed: aerobrakeAdjustment.zeroed,
+            aerobrake: aerobrakeAdjustment.zeroed ? aerobrakeAdjustment.mode : null,
+        }];
+    }
+
     function evaluateSegmentBranch(segment, bodies, meta, options) {
+        if (segment.branchType === 'direct_moon_transfer') {
+            return api.calculateDirectMoonTransferBranch(segment, bodies, meta, options);
+        }
+
         if (_isSurfaceOrbitSegment(segment)) {
             return api.calculateSurfaceOrbitBranch(segment, bodies, meta, options);
         }
@@ -202,12 +232,13 @@
 
         const moonBody = bodies[segment.from.bodyId];
         const hostBody = bodies[segment.bodyId];
+        const moonPrimaryNode = moonBody ? api.getNodeKeys(moonBody)[0] : null;
         return Boolean(
             moonBody
             && hostBody
             && moonBody.parent === hostBody.id
             && hostBody.parent === meta?.centralBody
-            && segment.from.nodeKey === segment.primaryNodeKey
+            && segment.from.nodeKey === moonPrimaryNode
         );
     }
 

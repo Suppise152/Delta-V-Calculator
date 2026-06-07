@@ -43,12 +43,16 @@
         }
 
         const centralBodyId = meta?.centralBody;
-        const currentIsMoonRoot = (
+        const currentPrimaryNode = _getPrimaryNodeKey(currentBody);
+        const currentIsMoonTransferNode = (
             currentBody.parent
             && currentBody.parent !== centralBodyId
-            && currentState.nodeKey === _getPrimaryNodeKey(currentBody)
+            && (
+                currentState.nodeKey === currentPrimaryNode
+                || currentState.nodeKey === 'orbit'
+            )
         );
-        if (!currentIsMoonRoot) return edges;
+        if (!currentIsMoonTransferNode) return edges;
 
         const targetIsSameHostSystem = targetState.bodyId === currentBody.parent || targetHostId === currentBody.parent;
         return [...edges].sort((left, right) => (
@@ -59,9 +63,10 @@
 
     function _edgePriority(edge, currentBody, targetIsSameHostSystem) {
         if (targetIsSameHostSystem) {
-            if (edge.to === stateId(currentBody.parent, 'orbit')) return 0;
-            if (edge.to === api.INTERPLANETARY_ID) return 2;
-            return 1;
+            if (edge.branchType === 'direct_moon_transfer') return 0;
+            if (edge.to === stateId(currentBody.parent, 'orbit')) return 1;
+            if (edge.to === api.INTERPLANETARY_ID) return 3;
+            return 2;
         }
 
         if (edge.to === api.INTERPLANETARY_ID) return 0;
@@ -124,6 +129,10 @@
                 bodyId: edge.bodyId,
                 nodeKey: edge.nodeKey,
                 primaryNodeKey: nodeKeys[0] || edge.nodeKey,
+                branchType: edge.branchType || null,
+                originBodyId: edge.originBodyId || null,
+                targetBodyId: edge.targetBodyId || null,
+                hostBodyId: edge.hostBodyId || null,
             });
         }
 

@@ -29,6 +29,17 @@
         return context.layout.positions[key] || null;
     }
 
+    function _getPointABranchHostId(context) {
+        const pointABody = context.bodies?.[context.pointA?.body];
+        if (!pointABody) return null;
+
+        if (pointABody.parent && pointABody.parent !== context.centralBody) {
+            return pointABody.parent;
+        }
+
+        return pointABody.id;
+    }
+
     function _mixHexWithBlack(hex, amount) {
         const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
         if (!match) return hex || '#888888';
@@ -55,7 +66,7 @@
         const parentKeys = _getNodeKeys(parentBody);
         const orbitKey = parentKeys.includes('orbit') ? 'orbit' : parentKeys[0];
 
-        if (body.parent === context.pointA.body) {
+        if (body.parent === _getPointABranchHostId(context)) {
             return _getPosition(context, `${body.parent}_${orbitKey}`);
         }
 
@@ -167,7 +178,7 @@
     function _drawReturnHostAerobrakeIndicator(group, body, context) {
         const parentBody = context.bodies[body.parent];
         if (!parentBody?.surface?.canAerobrake) return;
-        if (parentBody.id !== context.pointA?.body) return;
+        if (parentBody.id !== _getPointABranchHostId(context)) return;
         if (!['land', 'orbit'].includes(context.pointA?.node)) return;
 
         const parentKeys = _getNodeKeys(parentBody);
@@ -593,7 +604,8 @@
 
     function setPointA(bodyId, nodeKey) {
         _pointA = { body: bodyId, node: nodeKey };
-        if (_pointB.body) refreshMapDisplay();
+        _replaceSvg();
+        refreshMapDisplay();
     }
 
     function setPointB(bodyId, nodeKey) {

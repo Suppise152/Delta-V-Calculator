@@ -429,6 +429,7 @@ function onNodeClick(bodyId, nodeKey) {
     if (_activeEndpointRole === 'origin') {
         setPointA(bodyId, nodeKey);
         _syncFromLowOrbitToggle(nodeKey);
+        _syncMobileMapViewport();
     } else {
         setPointB(bodyId, nodeKey);
     }
@@ -531,6 +532,7 @@ function handleToggleChange(id) {
             } else {
                 setPointA(originBodyId, _resolveOriginToggleNode(originBodyId, 'land'));
             }
+            _syncMobileMapViewport();
             _refreshEndpointSelectorUi();
             _refreshOutputs();
             break;
