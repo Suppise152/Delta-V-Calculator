@@ -284,12 +284,9 @@
      * Outputs: shared non-central host id, or null.
      */
     function _findSharedHost(bodyAId, bodyBId, bodies, centralBodyId) {
-        const bodyA = bodies?.[bodyAId];
-        const bodyB = bodies?.[bodyBId];
-        if (!bodyA?.parent || !bodyB?.parent) return null;
-        if (bodyA.parent !== bodyB.parent) return null;
-        if (bodyA.parent === centralBodyId) return null;
-        return bodyA.parent;
+        const bodyAHosts = _ancestorHostChain(bodyAId, bodies);
+        const bodyBHosts = new Set(_ancestorHostChain(bodyBId, bodies));
+        return bodyAHosts.find(hostId => hostId !== centralBodyId && bodyBHosts.has(hostId)) || null;
     }
 
     /**
@@ -304,10 +301,26 @@
             if (!body) return null;
             if (body.parent === centerBodyId) return currentId;
             if (!body.parent) return null;
-            currentId = body.transferAngleDiagram || body.parent;
+            currentId = body.parent;
         }
 
         return null;
+    }
+
+    /**
+     * Inputs: body id and body lookup.
+     * Outputs: parent chain from nearest host outward.
+     */
+    function _ancestorHostChain(bodyId, bodies) {
+        const chain = [];
+        let currentId = bodies?.[bodyId]?.parent || null;
+
+        while (currentId) {
+            chain.push(currentId);
+            currentId = bodies?.[currentId]?.parent || null;
+        }
+
+        return chain;
     }
 
     /**

@@ -65,6 +65,21 @@
     }
 
     /**
+     * Inputs: render context and body id.
+     * Outputs: true when the body is an ancestor of the current origin.
+     */
+    function _isPointAAncestorBody(context, bodyId) {
+        let currentId = context.bodies?.[context.pointA?.body]?.parent || null;
+
+        while (currentId && currentId !== context.centralBody) {
+            if (currentId === bodyId) return true;
+            currentId = context.bodies?.[currentId]?.parent || null;
+        }
+
+        return false;
+    }
+
+    /**
      * Inputs: hex color and brightness multiplier.
      * Outputs: darker hex color.
      */
@@ -102,7 +117,7 @@
         const parentKeys = _getNodeKeys(parentBody);
         const orbitKey = parentKeys.includes('orbit') ? 'orbit' : parentKeys[0];
 
-        if (body.parent === _getPointABranchHostId(context)) {
+        if (body.parent === _getPointABranchHostId(context) || _isPointAAncestorBody(context, body.id)) {
             return _getPosition(context, `${body.parent}_${orbitKey}`);
         }
 
