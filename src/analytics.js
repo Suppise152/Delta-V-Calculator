@@ -12,16 +12,16 @@
     }
 
     /**
-     * Inputs: clicked body id, node key, and UI context.
+     * Inputs: selected endpoints and UI context.
      * Outputs: queues or sends one analytics pageview payload.
      */
-    function trackNodeInteraction(bodyId, nodeKey, context = {}) {
-        const path = _buildNodeInteractionPath(bodyId, nodeKey, context.packId);
+    function trackNodeInteraction(selection, context = {}) {
+        const path = _buildNodeInteractionPath(selection, context);
         if (!path) return;
 
         const payload = {
             path,
-            title: _buildNodeInteractionTitle(bodyId, nodeKey, context),
+            title: _buildNodeInteractionTitle(selection, context),
             event: true,
         };
 
@@ -29,27 +29,37 @@
     }
 
     /**
-     * Inputs: body id, node key, and active pack id.
-     * Outputs: normalized analytics path for a node interaction.
+     * Inputs: selected endpoints and UI context.
+     * Outputs: normalized analytics path for a route interaction.
      */
-    function _buildNodeInteractionPath(bodyId, nodeKey, packId) {
-        const bodyPart = _sanitizePathSegment(bodyId);
-        const nodePart = _sanitizePathSegment(nodeKey);
-        const packPart = _sanitizePathSegment(packId || 'unknown');
+    function _buildNodeInteractionPath(selection, context) {
+        const pointA = selection?.pointA || {};
+        const pointB = selection?.pointB || {};
+        const parts = [
+            pointA.body,
+            pointA.node,
+            pointB.body,
+            pointB.node,
+            context.packId || 'unknown',
+            context.uiMode || 'unknown',
+        ].map(_sanitizePathSegment);
 
-        if (!bodyPart || !nodePart || !packPart) return null;
-        return `${bodyPart}-${nodePart}-${packPart}`;
+        if (parts.some((part) => !part)) return null;
+        return parts.join('-');
     }
 
     /**
-     * Inputs: body id, node key, and interaction context.
+     * Inputs: selected endpoints and interaction context.
      * Outputs: human-readable analytics title.
      */
-    function _buildNodeInteractionTitle(bodyId, nodeKey, context) {
-        const bodyLabel = context.bodyLabel || bodyId;
-        const nodeLabel = _nodeLabel(nodeKey);
+    function _buildNodeInteractionTitle(selection, context) {
+        const pointA = selection?.pointA || {};
+        const pointB = selection?.pointB || {};
+        const pointALabel = _pointLabel(pointA, context.bodyLabels);
+        const pointBLabel = _pointLabel(pointB, context.bodyLabels);
         const packLabel = String(context.packId || 'unknown').toUpperCase();
-        return `${bodyLabel} ${nodeLabel} on ${packLabel}`;
+        const uiModeLabel = context.uiMode === 'light' ? 'Light' : 'Dark';
+        return `${pointALabel} to ${pointBLabel} on ${packLabel} ${uiModeLabel}`;
     }
 
     /**
@@ -76,6 +86,15 @@
             intercept: 'Fly-by',
             escape: 'Escape',
         }[nodeKey] || nodeKey;
+    }
+
+    /**
+     * Inputs: endpoint and body label lookup.
+     * Outputs: display label for route analytics titles.
+     */
+    function _pointLabel(point, bodyLabels = {}) {
+        const bodyLabel = bodyLabels[point?.body] || point?.body || 'Unknown';
+        return `${bodyLabel} ${_nodeLabel(point?.node)}`;
     }
 
     /**

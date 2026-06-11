@@ -526,14 +526,6 @@ function _normalizeLoadedPackData(data) {
  * Outputs: updates active endpoint selection, analytics, map, and calculation outputs.
  */
 function onNodeClick(bodyId, nodeKey) {
-    if (typeof trackNodeInteraction === 'function') {
-        const bodies = typeof getBodies === 'function' ? getBodies() : null;
-        trackNodeInteraction(bodyId, nodeKey, {
-            packId: _activePackId,
-            bodyLabel: bodies?.[bodyId]?.label || bodyId,
-        });
-    }
-
     if (_activeEndpointRole === 'origin') {
         setPointA(bodyId, nodeKey);
         _syncFromLowOrbitToggle(nodeKey);
@@ -541,8 +533,35 @@ function onNodeClick(bodyId, nodeKey) {
     } else {
         setPointB(bodyId, nodeKey);
     }
+
+    if (typeof trackNodeInteraction === 'function') {
+        const bodies = typeof getBodies === 'function' ? getBodies() : null;
+        const selection = typeof getSelectedPoints === 'function' ? getSelectedPoints() : null;
+        trackNodeInteraction(selection, {
+            packId: _activePackId,
+            uiMode: _getActiveUiMode(),
+            bodyLabels: _getBodyLabelLookup(bodies),
+        });
+    }
+
     _refreshEndpointSelectorUi();
     _refreshOutputs();
+}
+
+/**
+ * Inputs: document body theme state.
+ * Outputs: analytics UI mode segment.
+ */
+function _getActiveUiMode() {
+    return document.body.classList.contains('is-light-mode') ? 'light' : 'dark';
+}
+
+/**
+ * Inputs: body data keyed by id.
+ * Outputs: analytics label lookup keyed by body id.
+ */
+function _getBodyLabelLookup(bodies) {
+    return Object.fromEntries(Object.entries(bodies || {}).map(([id, body]) => [id, body?.label || id]));
 }
 
 /**
