@@ -27,6 +27,7 @@
         "phobos": 1000,
         "deimos": 1000,
         "ceres": 100000,
+        "vesta": 100000,
         "jupiter": 2000000,
         "io": 100000,
         "europa": 100000,
@@ -38,6 +39,9 @@
         "dione": 100000,
         "rhea": 100000,
         "uranus": 1000000,
+        "miranda": 10000,
+        "ariel": 100000,
+        "umbriel": 100000,
         "titania": 100000,
         "oberon": 100000,
         "neptune": 1000000,
@@ -58,6 +62,7 @@
         "earth",
         "mars",
         "ceres",
+        "vesta",
         "jupiter",
         "saturn",
         "uranus",
@@ -367,6 +372,40 @@
         "atmosphereHeight": 0,
         "soiRadius": 76955695.24357031,
         "hillSphereRadius": 206398769.8333227
+      }
+    },
+    {
+      "id": "vesta",
+      "label": "Vesta",
+      "parent": "sol",
+      "moons": [],
+      "mapColour": "#9C8F78",
+      "orbit": {
+        "sma": 353400000000,
+        "eccentricity": 0.08874,
+        "inclination": 7.14,
+        "longitudeOfAscendingNode": 103.85,
+        "argumentOfPeriapsis": 150.65,
+        "siderealPeriod": 114544080,
+        "periapsisRadius": 322039284000.0,
+        "apoapsisRadius": 384760716000.0
+      },
+      "surface": {
+        "canAerobrake": false,
+        "dvToOrbit": 260,
+        "dvToLand": 260
+      },
+      "nodes": {
+        "intercept": 2380,
+        "orbit": 760,
+        "land": 260
+      },
+      "physics": {
+        "radius": 262700,
+        "mu": 17288000000.0,
+        "atmosphereHeight": 0,
+        "soiRadius": 39282560.956305645,
+        "hillSphereRadius": 113191237.34484868
       }
     },
     {
@@ -724,6 +763,9 @@
       "label": "Uranus",
       "parent": "sol",
       "moons": [
+        "miranda",
+        "ariel",
+        "umbriel",
         "titania",
         "oberon"
       ],
@@ -754,6 +796,108 @@
         "atmosphereHeight": 0,
         "soiRadius": 51761683904.77533,
         "hillSphereRadius": 66840897863.20437
+      }
+    },
+    {
+      "id": "miranda",
+      "label": "Miranda",
+      "parent": "uranus",
+      "moons": [],
+      "mapColour": "#AFA8A0",
+      "orbit": {
+        "sma": 129390000,
+        "eccentricity": 0.0013,
+        "inclination": 4.34,
+        "siderealPeriod": 122141,
+        "periapsisRadius": 129221793.0,
+        "apoapsisRadius": 129558207.00000001
+      },
+      "surface": {
+        "canAerobrake": false,
+        "dvToOrbit": 140,
+        "dvToLand": 140
+      },
+      "nodes": {
+        "intercept": 1260,
+        "orbit": 240,
+        "land": 140
+      },
+      "parentAerobrake": "uranus",
+      "transferAngleDiagram": "uranus",
+      "physics": {
+        "radius": 235800,
+        "mu": 4400000000.0,
+        "atmosphereHeight": 0,
+        "soiRadius": 461415.53896355804,
+        "hillSphereRadius": 817438.2027555126
+      }
+    },
+    {
+      "id": "ariel",
+      "label": "Ariel",
+      "parent": "uranus",
+      "moons": [],
+      "mapColour": "#B8B8B0",
+      "orbit": {
+        "sma": 191020000,
+        "eccentricity": 0.0012,
+        "inclination": 0.04,
+        "siderealPeriod": 217728,
+        "periapsisRadius": 190790776.0,
+        "apoapsisRadius": 191249224.00000003
+      },
+      "surface": {
+        "canAerobrake": false,
+        "dvToOrbit": 390,
+        "dvToLand": 390
+      },
+      "nodes": {
+        "intercept": 1220,
+        "orbit": 510,
+        "land": 390
+      },
+      "parentAerobrake": "uranus",
+      "transferAngleDiagram": "uranus",
+      "physics": {
+        "radius": 578900,
+        "mu": 86400000000.0,
+        "atmosphereHeight": 0,
+        "soiRadius": 2241273.0566283474,
+        "hillSphereRadius": 3256093.7260554233
+      }
+    },
+    {
+      "id": "umbriel",
+      "label": "Umbriel",
+      "parent": "uranus",
+      "moons": [],
+      "mapColour": "#807C78",
+      "orbit": {
+        "sma": 266000000,
+        "eccentricity": 0.0039,
+        "inclination": 0.13,
+        "siderealPeriod": 358050,
+        "periapsisRadius": 264962600.0,
+        "apoapsisRadius": 267037400.0
+      },
+      "surface": {
+        "canAerobrake": false,
+        "dvToOrbit": 375,
+        "dvToLand": 375
+      },
+      "nodes": {
+        "intercept": 1190,
+        "orbit": 495,
+        "land": 375
+      },
+      "parentAerobrake": "uranus",
+      "transferAngleDiagram": "uranus",
+      "physics": {
+        "radius": 584700,
+        "mu": 81500000000.0,
+        "atmosphereHeight": 0,
+        "soiRadius": 3048983.770901984,
+        "hillSphereRadius": 4434779.744184647
       }
     },
     {

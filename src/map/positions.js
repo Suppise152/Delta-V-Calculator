@@ -265,10 +265,15 @@
         deimos_land: { x: 100, y: 270 },
         deimos_label: { x: 20, y: 270 },
 
-        ceres_intercept: { x: 470, y: 160 },
-        ceres_orbit: { x: 300, y: 40 },
-        ceres_land: { x: 120, y: 40 },
-        ceres_label: { x: 40, y: 40 },
+        ceres_intercept: { x: 430, y: 160 },
+        ceres_orbit: { x: 300, y: 70 },
+        ceres_land: { x: 120, y: 70 },
+        ceres_label: { x: 40, y: 70 },
+
+        vesta_intercept: { x: 510, y: 160 },
+        vesta_orbit: { x: 300, y: 15 },
+        vesta_land: { x: 120, y: 15 },
+        vesta_label: { x: 40, y: 15 },
 
         jupiter_intercept: { x: 80, y: 256 },
         jupiter_orbit: { x: 330, y: 256 },
@@ -320,40 +325,55 @@
         enceladus_land: { x: 470, y: 30 },
         enceladus_label: { x: 435, y: -10 },
 
-        uranus_intercept: { x: 710, y: 360 },
-        uranus_orbit: { x: 910, y: 360 },
-        uranus_land: { x: 1050, y: 360 },
-        uranus_label: { x: 1080, y: 360 },
+        uranus_intercept: { x: 660, y: 390 },
+        uranus_orbit: { x: 930, y: 390 },
+        uranus_land: { x: 1080, y: 390 },
+        uranus_label: { x: 1110, y: 390 },
 
-        titania_intercept: { x: 776, y: 300 },
-        titania_orbit: { x: 842, y: 240 },
-        titania_land: { x: 940, y: 240 },
-        titania_label: { x: 970, y: 240 },
+        miranda_intercept: { x: 863, y: 450 },
+        miranda_orbit: { x: 930, y: 450 },
+        miranda_land: { x: 1020, y: 450 },
+        miranda_label: { x: 1050, y: 450 },
 
-        oberon_intercept: { x: 842, y: 300 },
-        oberon_orbit: { x: 930, y: 300 },
-        oberon_land: { x: 1020, y: 300 },
-        oberon_label: { x: 1050, y: 300 },
+        ariel_intercept: { x: 795, y: 450 },
+        ariel_orbit: { x: 860, y: 520 },
+        ariel_land: { x: 950, y: 520 },
+        ariel_label: { x: 980, y: 520 },
 
-        neptune_intercept: { x: 640, y: 460 },
-        neptune_orbit: { x: 820, y: 460 },
-        neptune_land: { x: 920, y: 570 },
-        neptune_label: { x: 950, y: 570 },
+        umbriel_intercept: { x: 727, y: 450 },
+        umbriel_orbit: { x: 840, y: 590 },
+        umbriel_land: { x: 930, y: 590 },
+        umbriel_label: { x: 960, y: 590 },
 
-        triton_intercept: { x: 730, y: 540 },
-        triton_orbit: { x: 780, y: 595 },
-        triton_land: { x: 780, y: 660 },
-        triton_label: { x: 820, y: 660 },
+        titania_intercept: { x: 760, y: 330 },
+        titania_orbit: { x: 842, y: 270 },
+        titania_land: { x: 940, y: 270 },
+        titania_label: { x: 970, y: 270 },
 
-        pluto_intercept: { x: 300, y: 600 },
-        pluto_orbit: { x: 430, y: 600 },
-        pluto_land: { x: 530, y: 600 },
-        pluto_label: { x: 565, y: 600 },
+        oberon_intercept: { x: 857, y: 330 },
+        oberon_orbit: { x: 930, y: 330 },
+        oberon_land: { x: 1020, y: 330 },
+        oberon_label: { x: 1050, y: 330 },
 
-        charon_intercept: { x: 365, y: 680 },
-        charon_orbit: { x: 470, y: 680 },
-        charon_land: { x: 560, y: 680 },
-        charon_label: { x: 600, y: 680 },
+        neptune_intercept: { x: 490, y: 520 },
+        neptune_orbit: { x: 680, y: 520 },
+        neptune_land: { x: 770, y: 640 },
+        neptune_label: { x: 770, y: 680 },
+
+        triton_intercept: { x: 580, y: 590 },
+        triton_orbit: { x: 580, y: 660 },
+        triton_land: { x: 650, y: 710 },
+        triton_label: { x: 680, y: 710 },
+
+        pluto_intercept: { x: 200, y: 600 },
+        pluto_orbit: { x: 320, y: 600 },
+        pluto_land: { x: 430, y: 600 },
+        pluto_label: { x: 460, y: 600 },
+
+        charon_intercept: { x: 265, y: 680 },
+        charon_orbit: { x: 370, y: 680 },
+        charon_land: { x: 450, y: 680 },
+        charon_label: { x: 480, y: 680 },
     };
 
     _shiftBodyPositions(RSS_POSITIONS, [
@@ -366,6 +386,7 @@
         'phobos',
         'deimos',
         'ceres',
+        'vesta',
     ], -500);
 
     const DEFAULT_VIEW_BOX = '0 -25 1000 810';
