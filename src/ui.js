@@ -23,6 +23,7 @@ let _loadedDataPackId = null;
 let _loadedSystemData = null;
 let _activePackId = 'stock';
 let _activeEndpointRole = 'destination';
+let _isEndpointModifierActive = false;
 
 const PACK_CONFIG = {
     stock: { dataPackId: 'stock', mapId: 'stock' },
@@ -127,6 +128,10 @@ function initEndpointSelectorControls() {
         });
     });
 
+    window.addEventListener('keydown', _handleEndpointModifierState);
+    window.addEventListener('keyup', _handleEndpointModifierState);
+    window.addEventListener('blur', _clearEndpointModifierState);
+
     _setActiveEndpointRole('destination');
     _refreshEndpointSelectorUi();
 }
@@ -137,12 +142,53 @@ function initEndpointSelectorControls() {
  */
 function _setActiveEndpointRole(role) {
     _activeEndpointRole = role === 'origin' ? 'origin' : 'destination';
+    _refreshEndpointSelectorState();
+}
+
+/**
+ * Inputs: invert flag.
+ * Outputs: endpoint role affected by the current click/modifier state.
+ */
+function _getEndpointRole(invertEndpoint = false) {
+    if (!invertEndpoint) return _activeEndpointRole;
+    return _activeEndpointRole === 'origin' ? 'destination' : 'origin';
+}
+
+/**
+ * Inputs: none.
+ * Outputs: updates selector button selected/pressed state.
+ */
+function _refreshEndpointSelectorState() {
+    const previewRole = _getEndpointRole(_isEndpointModifierActive);
 
     document.querySelectorAll('.endpoint-selector__node').forEach((button) => {
-        const isSelected = button.dataset.endpointRole === _activeEndpointRole;
-        button.classList.toggle('is-selected', isSelected);
-        button.setAttribute('aria-pressed', String(isSelected));
+        const buttonRole = button.dataset.endpointRole === 'origin' ? 'origin' : 'destination';
+        button.classList.toggle('is-selected', buttonRole === previewRole);
+        button.setAttribute('aria-pressed', String(buttonRole === _activeEndpointRole));
     });
+}
+
+/**
+ * Inputs: keyboard event.
+ * Outputs: refreshes endpoint selector preview while Ctrl/Cmd is held.
+ */
+function _handleEndpointModifierState(event) {
+    const isActive = Boolean(event.ctrlKey || event.metaKey);
+    if (_isEndpointModifierActive === isActive) return;
+
+    _isEndpointModifierActive = isActive;
+    _refreshEndpointSelectorState();
+}
+
+/**
+ * Inputs: none.
+ * Outputs: clears stuck modifier preview state after focus loss.
+ */
+function _clearEndpointModifierState() {
+    if (!_isEndpointModifierActive) return;
+
+    _isEndpointModifierActive = false;
+    _refreshEndpointSelectorState();
 }
 
 /**
@@ -156,7 +202,7 @@ function _refreshEndpointSelectorUi() {
 
     _setEndpointDisplay('origin', originBody, originBody?.label || 'Kerbin');
     _setEndpointDisplay('destination', destinationBody, destinationBody?.label || 'None');
-    _setActiveEndpointRole(_activeEndpointRole);
+    _refreshEndpointSelectorState();
 }
 
 /**
@@ -525,8 +571,10 @@ function _normalizeLoadedPackData(data) {
  * Inputs: clicked body id and node key.
  * Outputs: updates active endpoint selection, analytics, map, and calculation outputs.
  */
-function onNodeClick(bodyId, nodeKey) {
-    if (_activeEndpointRole === 'origin') {
+function onNodeClick(bodyId, nodeKey, options = {}) {
+    const endpointRole = _getEndpointRole(options.invertEndpoint);
+
+    if (endpointRole === 'origin') {
         setPointA(bodyId, nodeKey);
         _syncFromLowOrbitToggle(nodeKey);
         _syncMobileMapViewport();

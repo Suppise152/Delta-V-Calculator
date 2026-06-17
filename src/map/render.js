@@ -340,9 +340,11 @@
                 node.style.setProperty('--node-glow-color', colour);
             }
 
-            node.addEventListener('click', () => {
+            node.addEventListener('click', (event) => {
                 if (typeof context.onNodeClick === 'function') {
-                    context.onNodeClick(body.id, nodeKey);
+                    context.onNodeClick(body.id, nodeKey, {
+                        invertEndpoint: event.ctrlKey || event.metaKey,
+                    });
                 }
             });
 
