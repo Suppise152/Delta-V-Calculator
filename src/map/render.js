@@ -1,7 +1,8 @@
 (function attachMapRender(global) {
     const NODE_R = 20;
-    const NODE_R_HUB = 30;
-    const PATH_STROKE_W = 15;
+    const NODE_R_HUB = 40;
+    const PATH_STROKE_W = 17;
+    const SOLAR_BRANCH_STROKE_W = 23;
     const INDICATOR_HEIGHT = 18;
     const INDICATOR_WIDTH = PATH_STROKE_W;
     const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -39,6 +40,16 @@
      */
     function _getNodeKeys(body) {
         return Object.keys(body?.nodes || {}).filter(key => key !== 'comment');
+    }
+
+    /**
+     * Inputs: body data and render context.
+     * Outputs: stroke width for that body's path branch.
+     */
+    function _getBodyPathStrokeWidth(body, context) {
+        const isCentralBody = body.id === context.centralBody;
+        const isDirectIpsBranch = body.parent === context.centralBody;
+        return isCentralBody || isDirectIpsBranch ? SOLAR_BRANCH_STROKE_W : PATH_STROKE_W;
     }
 
     /**
@@ -134,6 +145,7 @@
     function _drawTrunkLine(group, body, colour, context) {
         const nodeKeys = _getNodeKeys(body);
         const firstPos = _getPosition(context, `${body.id}_${nodeKeys[0]}`);
+        const strokeWidth = _getBodyPathStrokeWidth(body, context);
         if (!firstPos) return;
 
         const originPos = _getTrunkStart(context, body);
@@ -148,7 +160,7 @@
             y2: firstPos.y,
             stroke: colour,
             style: _pathStyle(colour),
-            'stroke-width': PATH_STROKE_W,
+            'stroke-width': strokeWidth,
         }));
     }
 
@@ -159,6 +171,7 @@
     function _drawBodyPaths(group, body, context) {
         const nodeKeys = _getNodeKeys(body);
         const colour = body.mapColour || '#888888';
+        const strokeWidth = _getBodyPathStrokeWidth(body, context);
 
         for (let i = 0; i < nodeKeys.length - 1; i += 1) {
             const fromPos = _getPosition(context, `${body.id}_${nodeKeys[i]}`);
@@ -174,7 +187,7 @@
                 y2: toPos.y,
                 stroke: colour,
                 style: _pathStyle(colour),
-                'stroke-width': PATH_STROKE_W,
+                'stroke-width': strokeWidth,
             }));
         }
 
@@ -417,7 +430,6 @@
      */
     function spawnOverlays(segmentIds, pathsGroup, direction, overlayState, isRoundTrip = false) {
         const duration = 0.9;
-        const laneOffset = PATH_STROKE_W * 0.28;
 
         segmentIds.forEach((segment, index) => {
             const base = document.getElementById(segment.id);
@@ -440,6 +452,8 @@
             overlay.classList.add(travelForward ? 'flow-forward' : 'flow-return');
 
             if (isRoundTrip) {
+                const baseWidth = parseFloat(base.getAttribute('stroke-width')) || PATH_STROKE_W;
+                const laneOffset = baseWidth * 0.28;
                 const x1 = parseFloat(base.getAttribute('x1'));
                 const y1 = parseFloat(base.getAttribute('y1'));
                 const x2 = parseFloat(base.getAttribute('x2'));
@@ -455,7 +469,6 @@
 
                 overlay.setAttribute('transform', `translate(${tx.toFixed(2)}, ${ty.toFixed(2)})`);
 
-                const baseWidth = parseFloat(base.getAttribute('stroke-width')) || PATH_STROKE_W;
                 overlay.setAttribute('stroke-width', (baseWidth * 0.55).toFixed(1));
             }
 
