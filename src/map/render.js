@@ -771,6 +771,7 @@
     function resetSelection() {
         _pointA = _getDefaultPointA();
         _pointB = { body: null, node: null };
+        _replaceSvg();
         refreshMapDisplay();
     }
 
