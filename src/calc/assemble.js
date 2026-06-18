@@ -60,12 +60,23 @@
     function _sortEdgesForTarget(edges, currentId, targetState, targetHostId, bodies, meta) {
         const currentState = parseStateId(currentId);
         const currentBody = bodies?.[currentState.bodyId] || null;
+        const targetBody = bodies?.[targetState.bodyId] || null;
         if (!currentBody || currentState.nodeKey == null || !targetState?.bodyId) {
             return edges;
         }
 
         const centralBodyId = meta?.centralBody;
         const currentPrimaryNode = _getPrimaryNodeKey(currentBody);
+        if (
+            targetBody?.parent === currentBody.id
+            && currentState.nodeKey === currentPrimaryNode
+        ) {
+            return [...edges].sort((left, right) => (
+                _hostMoonTargetEdgePriority(left, currentBody, targetBody)
+                - _hostMoonTargetEdgePriority(right, currentBody, targetBody)
+            ));
+        }
+
         const currentIsMoonTransferNode = (
             currentBody.parent
             && currentBody.parent !== centralBodyId
@@ -77,10 +88,25 @@
         if (!currentIsMoonTransferNode) return edges;
 
         const targetIsSameHostSystem = targetState.bodyId === currentBody.parent || targetHostId === currentBody.parent;
-        return [...edges].sort((left, right) => (
+        const candidateEdges = targetIsSameHostSystem
+            ? edges
+            : edges.filter((edge) => edge.to !== stateId(currentBody.parent, 'orbit'));
+
+        return [...candidateEdges].sort((left, right) => (
             _edgePriority(left, currentBody, targetIsSameHostSystem)
             - _edgePriority(right, currentBody, targetIsSameHostSystem)
         ));
+    }
+
+    /**
+     * Inputs: edge, host body, and target moon.
+     * Outputs: numeric priority that reaches the target moon before host low orbit.
+     */
+    function _hostMoonTargetEdgePriority(edge, hostBody, targetMoon) {
+        if (edge.to === stateId(targetMoon.id, _getPrimaryNodeKey(targetMoon))) return 0;
+        if (edge.to === stateId(hostBody.id, 'orbit')) return 2;
+        if (edge.to === api.INTERPLANETARY_ID) return 3;
+        return 1;
     }
 
     /**
