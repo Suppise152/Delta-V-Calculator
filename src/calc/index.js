@@ -171,6 +171,10 @@
             return api.calculateDirectMoonTransferBranch(segment, bodies, meta, options);
         }
 
+        if (segment.branchType === 'direct_orbital_transfer') {
+            return api.calculateDirectOrbitalTransferBranch(segment, bodies, meta, options);
+        }
+
         if (_isSurfaceOrbitSegment(segment)) {
             return api.calculateSurfaceOrbitBranch(segment, bodies, meta, options);
         }

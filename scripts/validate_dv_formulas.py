@@ -125,7 +125,7 @@ function expectedEntriesForSegment(debugSegment) {
     )];
   }
 
-  if (branchType === 'direct_moon_transfer') {
+  if (branchType === 'direct_moon_transfer' || branchType === 'direct_orbital_transfer') {
     const originMoon = bodies[segment.originBodyId || segment.from.bodyId];
     const targetMoon = bodies[segment.targetBodyId || segment.to.bodyId];
     const targetNode = segment.primaryNodeKey || 'intercept';

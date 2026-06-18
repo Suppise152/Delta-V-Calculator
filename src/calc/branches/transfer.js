@@ -1,5 +1,6 @@
 (function attachDeltaVCalcTransferBranches(global) {
     const api = global.DeltaVCalc = global.DeltaVCalc || {};
+    const LOW_GRAVITY_ESCAPE_BUDGET_DV = 600;
 
     /**
      * Inputs: route segment, body lookup, system metadata, and evaluation options.
@@ -212,6 +213,37 @@
     }
 
     /**
+     * Inputs: direct top-level transfer segment, body lookup, and metadata.
+     * Outputs: branch result with escape, intercept, and capture breakdown entries.
+     */
+    function calculateDirectOrbitalTransferBranch(segment, bodies, meta) {
+        const originBody = bodies[segment.originBodyId || segment.from.bodyId];
+        const targetBody = bodies[segment.targetBodyId || segment.to.bodyId];
+        const centerBody = bodies[segment.transferCenterBodyId || meta?.centralBody];
+
+        if (
+            !originBody
+            || !targetBody
+            || !centerBody
+            || originBody.id === targetBody.id
+            || originBody.parent !== centerBody.id
+            || targetBody.parent !== centerBody.id
+        ) {
+            return _emptyBranchResult(segment, 'direct_orbital_transfer');
+        }
+
+        return _calculateDirectOrbitTransfer(
+            segment,
+            originBody,
+            targetBody,
+            centerBody,
+            meta,
+            'direct_orbital_transfer',
+            'formula.direct_orbital_interplanetary_context',
+        );
+    }
+
+    /**
      * Inputs: direct moon transfer segment, body lookup, and metadata.
      * Outputs: branch result with escape, intercept, and capture breakdown entries.
      */
@@ -232,69 +264,111 @@
             return _emptyBranchResult(segment, 'direct_moon_transfer');
         }
 
-        const context = api.computeInterplanetaryContext(originMoon, targetMoon, meta, hostBody);
-        const originMu = Number(api.getPhysics(originMoon).mu) || 0;
-        const targetMu = Number(api.getPhysics(targetMoon).mu) || 0;
-        const originPeriapsis = api.lowOrbitRadius(originMoon, meta);
-        const targetPeriapsis = api.lowOrbitRadius(targetMoon, meta);
-        const targetOrbitSpeed = Math.sqrt(targetMu / targetPeriapsis);
-        const departureBurn = api.hyperbolicDepartureBurn(
-            originMu,
-            originPeriapsis,
-            context.vinfDepartCoplanar,
+        return _calculateDirectOrbitTransfer(
+            segment,
+            originMoon,
+            targetMoon,
+            hostBody,
+            meta,
+            'direct_moon_transfer',
+            'formula.direct_moon_interplanetary_context',
         );
+    }
+
+    /**
+     * Inputs: origin/target orbiting bodies, their transfer center, and branch labels.
+     * Outputs: branch result using the shared direct transfer formula.
+     */
+    function _calculateDirectOrbitTransfer(segment, originBody, targetBody, centerBody, meta, branchType, source) {
+        const context = api.computeInterplanetaryContext(originBody, targetBody, meta, centerBody);
+        const originMu = Number(api.getPhysics(originBody).mu) || 0;
+        const originPeriapsis = api.lowOrbitRadius(originBody, meta);
+        const targetPeriapsis = api.lowOrbitRadius(targetBody, meta);
+        const localEscapeBurn = api.hyperbolicDepartureBurn(originMu, originPeriapsis, 0);
+        const useSoiBudget = _usesLowGravitySoiBudget(branchType, originBody, localEscapeBurn, meta);
+        const targetOrbitSpeed = Math.sqrt((Number(api.getPhysics(targetBody).mu) || 0) / targetPeriapsis);
+        const departureBurn = useSoiBudget
+            ? localEscapeBurn + context.vinfDepartCoplanar
+            : api.hyperbolicDepartureBurn(
+                originMu,
+                originPeriapsis,
+                context.vinfDepartCoplanar,
+            );
         const planeChange = api.planeChangeDeltaV(context.originSpeed, context.planeAngle);
-        const captureBurn = api.hyperbolicCaptureBurn(
-            targetMu,
-            targetPeriapsis,
-            context.vinfArriveCombined,
-            targetOrbitSpeed,
-        );
+        const captureBurn = useSoiBudget
+            ? context.vinfArriveCombined
+            : api.hyperbolicCaptureBurn(
+                Number(api.getPhysics(targetBody).mu) || 0,
+                targetPeriapsis,
+                context.vinfArriveCombined,
+                targetOrbitSpeed,
+            );
         const dv = departureBurn + planeChange + captureBurn;
+        const transferInjectionBurn = departureBurn - localEscapeBurn;
+        const interceptBurn = transferInjectionBurn + planeChange;
 
         if (!Number.isFinite(dv)) {
-            return _emptyBranchResult(segment, 'direct_moon_transfer');
+            return _emptyBranchResult(segment, branchType);
         }
 
         return {
             dv,
-            branchType: 'direct_moon_transfer',
+            branchType,
             breakdownEntries: [
                 {
-                    bodyId: originMoon.id,
+                    bodyId: originBody.id,
                     nodeKey: 'escape',
-                    dv: departureBurn,
-                    markerBodyId: originMoon.id,
+                    dv: localEscapeBurn,
+                    rawDv: departureBurn,
+                    markerBodyId: originBody.id,
                 },
                 {
-                    bodyId: targetMoon.id,
+                    bodyId: targetBody.id,
                     nodeKey: 'intercept',
-                    dv: planeChange,
-                    markerBodyId: hostBody.id,
+                    dv: interceptBurn,
+                    markerBodyId: centerBody.id,
                 },
                 {
-                    bodyId: targetMoon.id,
+                    bodyId: targetBody.id,
                     nodeKey: 'orbit',
                     dv: captureBurn,
-                    markerBodyId: targetMoon.id,
+                    markerBodyId: targetBody.id,
                 },
             ],
             debug: {
-                source: 'formula.direct_moon_interplanetary_context',
-                originMoonId: originMoon.id,
-                targetMoonId: targetMoon.id,
-                hostBodyId: hostBody.id,
+                source,
+                originBodyId: originBody.id,
+                targetBodyId: targetBody.id,
+                centerBodyId: centerBody.id,
+                budgetModel: useSoiBudget ? 'low_gravity_soi_budget' : 'hyperbolic_low_orbit',
+                localEscapeBurn,
+                departureVinf: context.vinfDepartCoplanar,
+                arrivalVinf: context.vinfArriveCombined,
                 departureBurn,
+                transferInjectionBurn,
+                interceptBurn,
                 planeChange,
                 captureBurn,
-                originLowOrbitAltitudeMeters: api.getLowOrbitAltitude(originMoon, meta),
+                originLowOrbitAltitudeMeters: api.getLowOrbitAltitude(originBody, meta),
                 originLowOrbitRadiusMeters: originPeriapsis,
-                targetLowOrbitAltitudeMeters: api.getLowOrbitAltitude(targetMoon, meta),
+                targetLowOrbitAltitudeMeters: api.getLowOrbitAltitude(targetBody, meta),
                 targetLowOrbitRadiusMeters: targetPeriapsis,
                 originOrbitRadiusMeters: context.originRadius,
                 targetOrbitRadiusMeters: context.targetRadius,
             },
         };
+    }
+
+    /**
+     * Inputs: direct transfer branch, origin body, local escape burn, and metadata.
+     * Outputs: true when low-gravity top-level departures should use SOI-budget terms.
+     */
+    function _usesLowGravitySoiBudget(branchType, originBody, localEscapeBurn, meta) {
+        return Boolean(
+            branchType === 'direct_orbital_transfer'
+            && originBody?.id !== meta?.originBody
+            && localEscapeBurn < LOW_GRAVITY_ESCAPE_BUDGET_DV
+        );
     }
 
     /**
@@ -397,6 +471,7 @@
     Object.assign(api, {
         calculateCentralBodyTransferBranch,
         calculateDirectMoonTransferBranch,
+        calculateDirectOrbitalTransferBranch,
         calculateEscapeInterceptBranch,
         calculateMoonHostEscapeBranch,
     });

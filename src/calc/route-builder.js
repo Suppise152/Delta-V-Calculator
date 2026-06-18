@@ -23,6 +23,7 @@
             originBodyId: descriptor.originBodyId || null,
             targetBodyId: descriptor.targetBodyId || null,
             hostBodyId: descriptor.hostBodyId || null,
+            transferCenterBodyId: descriptor.transferCenterBodyId || null,
         });
     }
 
@@ -195,9 +196,44 @@
             }
         });
 
+        addTopLevelBodyTransferEdges(graph, bodies, centralBodyId);
         addSiblingMoonTransferEdges(graph, bodies, centralBodyId);
 
         return graph;
+    }
+
+    /**
+     * Inputs: route graph, body lookup, and central body id.
+     * Outputs: mutates graph with direct top-level planet transfer edges.
+     */
+    function addTopLevelBodyTransferEdges(graph, bodies, centralBodyId) {
+        if (!centralBodyId) return;
+
+        const topLevelBodies = Object.values(bodies || {}).filter((body) => (
+            body?.parent === centralBodyId
+            && getNodeKeys(body).includes('orbit')
+        ));
+
+        topLevelBodies.forEach((originBody) => {
+            topLevelBodies.forEach((targetBody) => {
+                if (originBody.id === targetBody.id) return;
+
+                addDirectedEdge(
+                    graph,
+                    stateId(originBody.id, 'orbit'),
+                    stateId(targetBody.id, 'orbit'),
+                    0,
+                    {
+                        bodyId: targetBody.id,
+                        nodeKey: 'orbit',
+                        branchType: 'direct_orbital_transfer',
+                        originBodyId: originBody.id,
+                        targetBodyId: targetBody.id,
+                        transferCenterBodyId: centralBodyId,
+                    },
+                );
+            });
+        });
     }
 
     /**
@@ -246,6 +282,7 @@
         addBodyChainEdges,
         addDirectedEdge,
         addSiblingMoonTransferEdges,
+        addTopLevelBodyTransferEdges,
         addTopLevelBodyEdges,
         buildRouteGraph,
     });

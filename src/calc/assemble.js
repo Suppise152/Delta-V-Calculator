@@ -25,6 +25,7 @@
             const edges = _sortEdgesForTarget(graph.get(currentId) || [], currentId, targetState, targetHostId, bodies, meta);
 
             for (const edge of edges) {
+                if (_shouldSkipEdgeForTarget(edge, targetState, targetHostId)) continue;
                 if (previous.has(edge.to)) continue;
 
                 previous.set(edge.to, currentId);
@@ -37,6 +38,19 @@
         }
 
         return [];
+    }
+
+    /**
+     * Inputs: edge and final target context.
+     * Outputs: true when the edge would over-commit to a host body before reaching its moon.
+     */
+    function _shouldSkipEdgeForTarget(edge, targetState, targetHostId) {
+        return Boolean(
+            edge.branchType === 'direct_orbital_transfer'
+            && edge.targetBodyId
+            && targetState?.bodyId !== edge.targetBodyId
+            && targetHostId === edge.targetBodyId
+        );
     }
 
     /**
@@ -162,6 +176,7 @@
                 originBodyId: edge.originBodyId || null,
                 targetBodyId: edge.targetBodyId || null,
                 hostBodyId: edge.hostBodyId || null,
+                transferCenterBodyId: edge.transferCenterBodyId || null,
             });
         }
 

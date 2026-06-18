@@ -2,7 +2,7 @@
     const NODE_R = 20;
     const NODE_R_HUB = 40;
     const PATH_STROKE_W = 17;
-    const SOLAR_BRANCH_STROKE_W = 23;
+    const SOLAR_BRANCH_STROKE_W = 21;
     const INDICATOR_HEIGHT = 18;
     const INDICATOR_WIDTH = PATH_STROKE_W;
     const SVG_NS = 'http://www.w3.org/2000/svg';
