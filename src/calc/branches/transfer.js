@@ -1,6 +1,11 @@
 (function attachDeltaVCalcTransferBranches(global) {
     const api = global.DeltaVCalc = global.DeltaVCalc || {};
+    const LOW_GRAVITY_ESCAPE_BUDGET_DV = 600;
 
+    /**
+     * Inputs: route segment, body lookup, system metadata, and evaluation options.
+     * Outputs: branch result for interplanetary or moon intercept transfer.
+     */
     function calculateEscapeInterceptBranch(segment, bodies, meta, options) {
         const body = bodies[segment.bodyId];
         if (!body) {
@@ -135,6 +140,10 @@
         };
     }
 
+    /**
+     * Inputs: target top-level body, central body, and metadata.
+     * Outputs: context shaped like interplanetary arrival from central low orbit.
+     */
     function _computeCentralBodyOriginArrivalContext(targetBody, centralBody, meta) {
         const context = api.computeCentralBodyTransferContext(targetBody, centralBody, meta);
         return {
@@ -149,6 +158,10 @@
         };
     }
 
+    /**
+     * Inputs: route segment, body lookup, metadata, and evaluation options.
+     * Outputs: branch result for escaping a moon toward a different top-level destination.
+     */
     function calculateMoonHostEscapeBranch(segment, bodies, meta, options) {
         const hostBody = bodies[segment.bodyId];
         const moonBody = bodies[segment.from.bodyId];
@@ -199,6 +212,169 @@
         };
     }
 
+    /**
+     * Inputs: direct top-level transfer segment, body lookup, and metadata.
+     * Outputs: branch result with escape, intercept, and capture breakdown entries.
+     */
+    function calculateDirectOrbitalTransferBranch(segment, bodies, meta) {
+        const originBody = bodies[segment.originBodyId || segment.from.bodyId];
+        const targetBody = bodies[segment.targetBodyId || segment.to.bodyId];
+        const centerBody = bodies[segment.transferCenterBodyId || meta?.centralBody];
+
+        if (
+            !originBody
+            || !targetBody
+            || !centerBody
+            || originBody.id === targetBody.id
+            || originBody.parent !== centerBody.id
+            || targetBody.parent !== centerBody.id
+        ) {
+            return _emptyBranchResult(segment, 'direct_orbital_transfer');
+        }
+
+        return _calculateDirectOrbitTransfer(
+            segment,
+            originBody,
+            targetBody,
+            centerBody,
+            meta,
+            'direct_orbital_transfer',
+            'formula.direct_orbital_interplanetary_context',
+        );
+    }
+
+    /**
+     * Inputs: direct moon transfer segment, body lookup, and metadata.
+     * Outputs: branch result with escape, intercept, and capture breakdown entries.
+     */
+    function calculateDirectMoonTransferBranch(segment, bodies, meta) {
+        const originMoon = bodies[segment.originBodyId || segment.from.bodyId];
+        const targetMoon = bodies[segment.targetBodyId || segment.to.bodyId];
+        const hostBody = bodies[segment.hostBodyId || originMoon?.parent];
+
+        if (
+            !originMoon
+            || !targetMoon
+            || !hostBody
+            || originMoon.id === targetMoon.id
+            || originMoon.parent !== targetMoon.parent
+            || originMoon.parent !== hostBody.id
+            || originMoon.parent === meta?.centralBody
+        ) {
+            return _emptyBranchResult(segment, 'direct_moon_transfer');
+        }
+
+        return _calculateDirectOrbitTransfer(
+            segment,
+            originMoon,
+            targetMoon,
+            hostBody,
+            meta,
+            'direct_moon_transfer',
+            'formula.direct_moon_interplanetary_context',
+        );
+    }
+
+    /**
+     * Inputs: origin/target orbiting bodies, their transfer center, and branch labels.
+     * Outputs: branch result using the shared direct transfer formula.
+     */
+    function _calculateDirectOrbitTransfer(segment, originBody, targetBody, centerBody, meta, branchType, source) {
+        const context = api.computeInterplanetaryContext(originBody, targetBody, meta, centerBody);
+        const originMu = Number(api.getPhysics(originBody).mu) || 0;
+        const originPeriapsis = api.lowOrbitRadius(originBody, meta);
+        const targetPeriapsis = api.lowOrbitRadius(targetBody, meta);
+        const localEscapeBurn = api.hyperbolicDepartureBurn(originMu, originPeriapsis, 0);
+        const useSoiBudget = _usesLowGravitySoiBudget(branchType, originBody, localEscapeBurn, meta);
+        const targetOrbitSpeed = Math.sqrt((Number(api.getPhysics(targetBody).mu) || 0) / targetPeriapsis);
+        const departureBurn = useSoiBudget
+            ? localEscapeBurn + context.vinfDepartCoplanar
+            : api.hyperbolicDepartureBurn(
+                originMu,
+                originPeriapsis,
+                context.vinfDepartCoplanar,
+            );
+        const planeChange = api.planeChangeDeltaV(context.originSpeed, context.planeAngle);
+        const captureBurn = useSoiBudget
+            ? context.vinfArriveCombined
+            : api.hyperbolicCaptureBurn(
+                Number(api.getPhysics(targetBody).mu) || 0,
+                targetPeriapsis,
+                context.vinfArriveCombined,
+                targetOrbitSpeed,
+            );
+        const dv = departureBurn + planeChange + captureBurn;
+        const transferInjectionBurn = departureBurn - localEscapeBurn;
+        const interceptBurn = transferInjectionBurn + planeChange;
+
+        if (!Number.isFinite(dv)) {
+            return _emptyBranchResult(segment, branchType);
+        }
+
+        return {
+            dv,
+            branchType,
+            breakdownEntries: [
+                {
+                    bodyId: originBody.id,
+                    nodeKey: 'escape',
+                    dv: localEscapeBurn,
+                    rawDv: departureBurn,
+                    markerBodyId: originBody.id,
+                },
+                {
+                    bodyId: targetBody.id,
+                    nodeKey: 'intercept',
+                    dv: interceptBurn,
+                    markerBodyId: centerBody.id,
+                },
+                {
+                    bodyId: targetBody.id,
+                    nodeKey: 'orbit',
+                    dv: captureBurn,
+                    markerBodyId: targetBody.id,
+                },
+            ],
+            debug: {
+                source,
+                originBodyId: originBody.id,
+                targetBodyId: targetBody.id,
+                centerBodyId: centerBody.id,
+                budgetModel: useSoiBudget ? 'low_gravity_soi_budget' : 'hyperbolic_low_orbit',
+                localEscapeBurn,
+                departureVinf: context.vinfDepartCoplanar,
+                arrivalVinf: context.vinfArriveCombined,
+                departureBurn,
+                transferInjectionBurn,
+                interceptBurn,
+                planeChange,
+                captureBurn,
+                originLowOrbitAltitudeMeters: api.getLowOrbitAltitude(originBody, meta),
+                originLowOrbitRadiusMeters: originPeriapsis,
+                targetLowOrbitAltitudeMeters: api.getLowOrbitAltitude(targetBody, meta),
+                targetLowOrbitRadiusMeters: targetPeriapsis,
+                originOrbitRadiusMeters: context.originRadius,
+                targetOrbitRadiusMeters: context.targetRadius,
+            },
+        };
+    }
+
+    /**
+     * Inputs: direct transfer branch, origin body, local escape burn, and metadata.
+     * Outputs: true when low-gravity top-level departures should use SOI-budget terms.
+     */
+    function _usesLowGravitySoiBudget(branchType, originBody, localEscapeBurn, meta) {
+        return Boolean(
+            branchType === 'direct_orbital_transfer'
+            && originBody?.id !== meta?.originBody
+            && localEscapeBurn < LOW_GRAVITY_ESCAPE_BUDGET_DV
+        );
+    }
+
+    /**
+     * Inputs: route segment, body lookup, metadata, and evaluation options.
+     * Outputs: branch result for transfers involving the central body's low orbit.
+     */
     function calculateCentralBodyTransferBranch(segment, bodies, meta, options) {
         const centralBody = bodies[meta?.centralBody];
         if (!centralBody) {
@@ -260,6 +436,10 @@
         };
     }
 
+    /**
+     * Inputs: route segment and branch type label.
+     * Outputs: zero-DV unresolved branch result.
+     */
     function _emptyBranchResult(segment, branchType) {
         return {
             dv: 0,
@@ -272,6 +452,10 @@
         };
     }
 
+    /**
+     * Inputs: starting body id, body lookup, and system metadata.
+     * Outputs: top-level body id used for transfer context.
+     */
     function _resolveTransferOriginTopLevelBody(startBodyId, bodies, meta) {
         let currentBodyId = startBodyId;
         while (currentBodyId && bodies[currentBodyId]) {
@@ -286,6 +470,8 @@
 
     Object.assign(api, {
         calculateCentralBodyTransferBranch,
+        calculateDirectMoonTransferBranch,
+        calculateDirectOrbitalTransferBranch,
         calculateEscapeInterceptBranch,
         calculateMoonHostEscapeBranch,
     });

@@ -87,11 +87,25 @@
         eeloo_label: { x: 1000, y: 490 },
     };
 
+    /**
+     * Inputs: position map, x/y offsets, and keys to leave unchanged.
+     * Outputs: shifted copy of the position map.
+     */
     function _shiftPositions(positions, dx, dy = 0, excludeKeys = []) {
         return Object.fromEntries(Object.entries(positions).map(([key, pos]) => {
             if (excludeKeys.includes(key)) return [key, { ...pos }];
             return [key, { x: pos.x + dx, y: pos.y + dy }];
         }));
+    }
+
+    function _shiftBodyPositions(positions, bodyIds, dx, dy = 0) {
+        bodyIds.forEach((bodyId) => {
+            Object.keys(positions).forEach((key) => {
+                if (key === bodyId || key.startsWith(`${bodyId}_`)) {
+                    positions[key] = { x: positions[key].x + dx, y: positions[key].y + dy };
+                }
+            });
+        });
     }
 
     const OPM_POSITIONS = {
@@ -188,23 +202,28 @@
         neidon_label: { x: 850, y: 570 },
 
         nissee_intercept: { x: 600, y: 550 },
-        nissee_orbit: { x: 600, y: 640 },
-        nissee_land: { x: 600, y: 730 },
-        nissee_label: { x: 580, y: 770 },
+        nissee_orbit: { x: 650, y: 670 },
+        nissee_land: { x: 730, y: 710 },
+        nissee_label: { x: 765, y: 710 },
 
         thatmo_intercept: { x: 660, y: 550 },
-        thatmo_orbit: { x: 700, y: 640 },
-        thatmo_land: { x: 700, y: 730 },
-        thatmo_label: { x: 680, y: 770 },
+        thatmo_orbit: { x: 720, y: 620 },
+        thatmo_land: { x: 800, y: 660 },
+        thatmo_label: { x: 835, y: 660 },
 
-        plock_intercept: { x: 450, y: 580 },
-        plock_orbit: { x: 500, y: 660 },
-        plock_land: { x: 500, y: 730 },
-        plock_label: { x: 480, y: 770 },
+        plock_intercept: { x: 500, y: 540 },
+        plock_orbit: { x: 550, y: 630 },
+        plock_land: { x: 550, y: 720 },
+        plock_label: { x: 530, y: 760 },
+
+        karen_intercept: { x: 465, y: 605 },
+        karen_orbit: { x: 465, y: 685 },
+        karen_land: { x: 465, y: 765 },
+        karen_label: { x: 385, y: 765 },
     };
 
     const RSS_POSITIONS = {
-        interplanetary: { x: 493, y: 488 },
+        interplanetary: { x: OPM_POSITIONS.interplanetary.x, y: OPM_POSITIONS.interplanetary.y },
 
         sol_orbit: { x: 155, y: 490 },
         sol_land: { x: 5, y: 490 },
@@ -246,61 +265,129 @@
         deimos_land: { x: 100, y: 270 },
         deimos_label: { x: 20, y: 270 },
 
-        ceres_intercept: { x: 470, y: 160 },
-        ceres_orbit: { x: 300, y: 40 },
-        ceres_land: { x: 120, y: 40 },
-        ceres_label: { x: 40, y: 40 },
+        ceres_intercept: { x: 430, y: 160 },
+        ceres_orbit: { x: 300, y: 70 },
+        ceres_land: { x: 120, y: 70 },
+        ceres_label: { x: 40, y: 70 },
 
-        jupiter_intercept: { x: 650, y: 250 },
-        jupiter_orbit: { x: 890, y: 250 },
-        jupiter_land: { x: 1000, y: 200 },
-        jupiter_label: { x: 1030, y: 200 },
+        vesta_intercept: { x: 510, y: 160 },
+        vesta_orbit: { x: 300, y: 15 },
+        vesta_land: { x: 120, y: 15 },
+        vesta_label: { x: 40, y: 15 },
 
-        io_intercept: { x: 890, y: 180 },
-        io_orbit: { x: 890, y: 110 },
-        io_land: { x: 890, y: 30 },
-        io_label: { x: 880, y: -10 },
+        jupiter_intercept: { x: 80, y: 256 },
+        jupiter_orbit: { x: 330, y: 256 },
+        jupiter_land: { x: 400, y: 180 },
+        jupiter_label: { x: 385, y: 140 },
 
-        europa_intercept: { x: 810, y: 170 },
-        europa_orbit: { x: 810, y: 110 },
-        europa_land: { x: 810, y: 30 },
-        europa_label: { x: 790, y: -10 },
+        io_intercept: { x: 330, y: 190 },
+        io_orbit: { x: 330, y: 110 },
+        io_land: { x: 330, y: 32 },
+        io_label: { x: 320, y: -10 },
 
-        ganymede_intercept: { x: 730, y: 170 },
-        ganymede_orbit: { x: 730, y: 110 },
-        ganymede_land: { x: 730, y: 30 },
-        ganymede_label: { x: 700, y: -10 },
+        europa_intercept: { x: 246, y: 180 },
+        europa_orbit: { x: 246, y: 105 },
+        europa_land: { x: 246, y: 32 },
+        europa_label: { x: 226, y: -10 },
 
-        callisto_intercept: { x: 650, y: 180 },
-        callisto_orbit: { x: 650, y: 110 },
-        callisto_land: { x: 650, y: 30 },
-        callisto_label: { x: 620, y: -10 },
+        ganymede_intercept: { x: 163, y: 180 },
+        ganymede_orbit: { x: 163, y: 109 },
+        ganymede_land: { x: 163, y: 32 },
+        ganymede_label: { x: 135, y: -10 },
 
-        saturn_intercept: { x: 820, y: 330 },
-        saturn_orbit: { x: 1000, y: 330 },
-        saturn_land: { x: 1150, y: 330 },
-        saturn_label: { x: 1180, y: 330 },
+        callisto_intercept: { x: 80, y: 190 },
+        callisto_orbit: { x: 80, y: 107 },
+        callisto_land: { x: 80, y: 32 },
+        callisto_label: { x: 50, y: -10 },
 
-        titan_intercept: { x: 910, y: 390 },
-        titan_orbit: { x: 1030, y: 390 },
-        titan_land: { x: 1150, y: 390 },
-        titan_label: { x: 1180, y: 390 },
+        saturn_intercept: { x: 470, y: 260 },
+        saturn_orbit: { x: 720, y: 260 },
+        saturn_land: { x: 800, y: 190 },
+        saturn_label: { x: 780, y: 150 },
 
-        uranus_intercept: { x: 820, y: 460 },
-        uranus_orbit: { x: 1000, y: 460 },
-        uranus_land: { x: 1150, y: 460 },
-        uranus_label: { x: 1180, y: 460 },
+        titan_intercept: { x: 720, y: 190 },
+        titan_orbit: { x: 720, y: 100 },
+        titan_land: { x: 720, y: 30 },
+        titan_label: { x: 700, y: -10 },
 
-        neptune_intercept: { x: 820, y: 570 },
-        neptune_orbit: { x: 1000, y: 570 },
-        neptune_land: { x: 1150, y: 570 },
-        neptune_label: { x: 1180, y: 570 },
+        rhea_intercept: { x: 637, y: 180 },
+        rhea_orbit: { x: 637, y: 100 },
+        rhea_land: { x: 637, y: 30 },
+        rhea_label: { x: 617, y: -10 },
 
-        pluto_intercept: { x: 670, y: 580 },
-        pluto_orbit: { x: 670, y: 650 },
-        pluto_land: { x: 670, y: 720 },
-        pluto_label: { x: 650, y: 760 },
+        dione_intercept: { x: 554, y: 180 },
+        dione_orbit: { x: 554, y: 100 },
+        dione_land: { x: 554, y: 30 },
+        dione_label: { x: 534, y: -10 },
+
+        enceladus_intercept: { x: 470, y: 180 },
+        enceladus_orbit: { x: 470, y: 100 },
+        enceladus_land: { x: 470, y: 30 },
+        enceladus_label: { x: 435, y: -10 },
+
+        uranus_intercept: { x: 730, y: 360 },
+        uranus_orbit: { x: 1080, y: 360 },
+        uranus_land: { x: 1150, y: 470 },
+        uranus_label: { x: 1130, y: 510 },
+
+        miranda_intercept: { x: 740, y: 430 },
+        miranda_orbit: { x: 740, y: 520 },
+        miranda_land: { x: 740, y: 590 },
+        miranda_label: { x: 715, y: 630 },
+
+        ariel_intercept: { x: 823, y: 430 },
+        ariel_orbit: { x: 823, y: 520 },
+        ariel_land: { x: 823, y: 590 },
+        ariel_label: { x: 807, y: 630 },
+
+        umbriel_intercept: { x: 905, y: 430 },
+        umbriel_orbit: { x: 905, y: 520 },
+        umbriel_land: { x: 905, y: 590 },
+        umbriel_label: { x: 880, y: 630 },
+
+        titania_intercept: { x: 988, y: 430 },
+        titania_orbit: { x: 988, y: 520 },
+        titania_land: { x: 988, y: 590 },
+        titania_label: { x: 965, y: 630 },
+
+        oberon_intercept: { x: 1070, y: 430 },
+        oberon_orbit: { x: 1070, y: 520 },
+        oberon_land: { x: 1070, y: 590 },
+        oberon_label: { x: 1048, y: 630 },
+
+        neptune_intercept: { x: 430, y: 520 },
+        neptune_orbit: { x: 570, y: 520 },
+        neptune_land: { x: 640, y: 620 },
+        neptune_label: { x: 630, y: 660 },
+
+        triton_intercept: { x: 500, y: 590 },
+        triton_orbit: { x: 500, y: 660 },
+        triton_land: { x: 560, y: 710 },
+        triton_label: { x: 550, y: 750 },
+
+        pluto_intercept: { x: 140, y: 600 },
+        pluto_orbit: { x: 260, y: 600 },
+        pluto_land: { x: 370, y: 600 },
+        pluto_label: { x: 400, y: 600 },
+
+        charon_intercept: { x: 205, y: 680 },
+        charon_orbit: { x: 310, y: 680 },
+        charon_land: { x: 390, y: 680 },
+        charon_label: { x: 420, y: 680 },
     };
+
+    _shiftBodyPositions(RSS_POSITIONS, [
+        'sol',
+        'mercury',
+        'venus',
+        'earth',
+        'moon',
+        'mars',
+        'phobos',
+        'deimos',
+        'ceres',
+        'vesta',
+    ], -500);
 
     const DEFAULT_VIEW_BOX = '0 -25 1000 810';
     const MAP_LAYOUTS = {
@@ -313,21 +400,29 @@
         opm: {
             id: 'opm',
             label: 'OPM',
-            viewBox: '-300 -25 1300 810',
+            viewBox: '-550 -25 1700 820',
             positions: OPM_POSITIONS,
         },
         rss: {
             id: 'rss',
             label: 'RSS',
-            viewBox: DEFAULT_VIEW_BOX,
+            viewBox: '-610 -25 1780 820',
             positions: RSS_POSITIONS,
         },
     };
 
+    /**
+     * Inputs: map pack/layout id.
+     * Outputs: matching layout descriptor, falling back to stock.
+     */
     function getMapLayout(mapId) {
         return MAP_LAYOUTS[mapId] || MAP_LAYOUTS.stock;
     }
 
+    /**
+     * Inputs: none.
+     * Outputs: all map layout descriptors as an array.
+     */
     function getMapLayouts() {
         return Object.values(MAP_LAYOUTS);
     }

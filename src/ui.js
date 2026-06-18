@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSlider();
     initThemeToggle();
     initDescriptionPanelToggle();
+    initEndpointSelectorControls();
     initPlanetInfoCard();
     _initMobileLayoutSync();
 });
@@ -21,6 +22,8 @@ let _originBodyId = null;
 let _loadedDataPackId = null;
 let _loadedSystemData = null;
 let _activePackId = 'stock';
+let _activeEndpointRole = 'destination';
+let _isEndpointModifierActive = false;
 
 const PACK_CONFIG = {
     stock: { dataPackId: 'stock', mapId: 'stock' },
@@ -33,12 +36,21 @@ const PLANET_INFO_HOVER_DELAY_MS = 1000;
 const THEME_STORAGE_KEY = 'deltaVTheme';
 const DESCRIPTION_PANEL_STORAGE_KEY = 'deltaVDescriptionPanel';
 const MAP_PACK_STORAGE_KEY = 'deltaVMapPack';
+const ENDPOINT_EMPTY_COLOUR = '#6f7580';
 
+/**
+ * Inputs: localStorage state.
+ * Outputs: stored map pack id, falling back to stock.
+ */
 function _getStoredPackId() {
     const storedPackId = window.localStorage.getItem(MAP_PACK_STORAGE_KEY);
     return PACK_CONFIG[storedPackId] ? storedPackId : 'stock';
 }
 
+/**
+ * Inputs: theme toggle buttons and stored theme preference.
+ * Outputs: wires theme controls and applies the initial theme.
+ */
 function initThemeToggle() {
     const buttons = Array.from(document.querySelectorAll('.theme-toggle'));
     if (!buttons.length) return;
@@ -55,6 +67,10 @@ function initThemeToggle() {
     });
 }
 
+/**
+ * Inputs: light-mode flag and theme buttons.
+ * Outputs: updates body class and button labels/state.
+ */
 function _setLightMode(isLightMode, buttons) {
     document.body.classList.toggle('is-light-mode', isLightMode);
     buttons.forEach((button) => {
@@ -63,6 +79,10 @@ function _setLightMode(isLightMode, buttons) {
     });
 }
 
+/**
+ * Inputs: description panel DOM and stored collapsed state.
+ * Outputs: wires panel toggle and viewport resync after transitions.
+ */
 function initDescriptionPanelToggle() {
     const content = document.querySelector('.content');
     const button = document.getElementById('description-toggle');
@@ -86,6 +106,10 @@ function initDescriptionPanelToggle() {
     });
 }
 
+/**
+ * Inputs: collapsed flag, content wrapper, and toggle button.
+ * Outputs: updates panel CSS state and button accessibility labels.
+ */
 function _setDescriptionPanelCollapsed(isCollapsed, content, button) {
     content.classList.toggle('is-description-collapsed', isCollapsed);
     button.setAttribute('aria-expanded', String(!isCollapsed));
@@ -93,6 +117,141 @@ function _setDescriptionPanelCollapsed(isCollapsed, content, button) {
     button.title = isCollapsed ? 'Show description panel' : 'Hide description panel';
 }
 
+/**
+ * Inputs: endpoint selector buttons.
+ * Outputs: wires origin/destination role switching.
+ */
+function initEndpointSelectorControls() {
+    document.querySelectorAll('.endpoint-selector__node').forEach((button) => {
+        button.addEventListener('click', () => {
+            _setActiveEndpointRole(button.dataset.endpointRole || 'destination');
+        });
+    });
+
+    window.addEventListener('keydown', _handleEndpointModifierState);
+    window.addEventListener('keyup', _handleEndpointModifierState);
+    window.addEventListener('blur', _clearEndpointModifierState);
+
+    _setActiveEndpointRole('destination');
+    _refreshEndpointSelectorUi();
+}
+
+/**
+ * Inputs: requested endpoint role.
+ * Outputs: updates active endpoint role and selector button states.
+ */
+function _setActiveEndpointRole(role) {
+    _activeEndpointRole = role === 'origin' ? 'origin' : 'destination';
+    _refreshEndpointSelectorState();
+}
+
+/**
+ * Inputs: invert flag.
+ * Outputs: endpoint role affected by the current click/modifier state.
+ */
+function _getEndpointRole(invertEndpoint = false) {
+    if (!invertEndpoint) return _activeEndpointRole;
+    return _activeEndpointRole === 'origin' ? 'destination' : 'origin';
+}
+
+/**
+ * Inputs: none.
+ * Outputs: updates selector button selected/pressed state.
+ */
+function _refreshEndpointSelectorState() {
+    const previewRole = _getEndpointRole(_isEndpointModifierActive);
+
+    document.querySelectorAll('.endpoint-selector__node').forEach((button) => {
+        const buttonRole = button.dataset.endpointRole === 'origin' ? 'origin' : 'destination';
+        button.classList.toggle('is-selected', buttonRole === previewRole);
+        button.setAttribute('aria-pressed', String(buttonRole === _activeEndpointRole));
+    });
+}
+
+/**
+ * Inputs: keyboard event.
+ * Outputs: refreshes endpoint selector preview while Ctrl/Cmd is held.
+ */
+function _handleEndpointModifierState(event) {
+    const isActive = Boolean(event.ctrlKey || event.metaKey);
+    if (_isEndpointModifierActive === isActive) return;
+
+    _isEndpointModifierActive = isActive;
+    _refreshEndpointSelectorState();
+}
+
+/**
+ * Inputs: none.
+ * Outputs: clears stuck modifier preview state after focus loss.
+ */
+function _clearEndpointModifierState() {
+    if (!_isEndpointModifierActive) return;
+
+    _isEndpointModifierActive = false;
+    _refreshEndpointSelectorState();
+}
+
+/**
+ * Inputs: current selected points and loaded body data.
+ * Outputs: refreshes endpoint selector labels and swatches.
+ */
+function _refreshEndpointSelectorUi() {
+    const selection = typeof getSelectedPoints === 'function' ? getSelectedPoints() : null;
+    const originBody = _getEndpointBody(selection?.pointA, true);
+    const destinationBody = _getEndpointBody(selection?.pointB, false);
+
+    _setEndpointDisplay('origin', originBody, originBody?.label || 'Kerbin');
+    _setEndpointDisplay('destination', destinationBody, destinationBody?.label || 'None');
+    _refreshEndpointSelectorState();
+}
+
+/**
+ * Inputs: selected point and whether origin fallback is allowed.
+ * Outputs: body data for endpoint display, or null.
+ */
+function _getEndpointBody(point, useOriginFallback) {
+    if (point?.body) {
+        return _getBodyById(point.body);
+    }
+
+    if (!useOriginFallback) return null;
+
+    const originId = _loadedSystemData?.meta?.originBody || _originBodyId || 'kerbin';
+    return _getBodyById(originId);
+}
+
+/**
+ * Inputs: endpoint role, body data, and fallback label.
+ * Outputs: updates endpoint display text, color, and aria labels.
+ */
+function _setEndpointDisplay(role, body, fallbackLabel) {
+    const target = document.getElementById(`endpoint-${role}-target`);
+    const node = document.getElementById(`endpoint-${role}-node`);
+    const label = body?.label || fallbackLabel;
+    const roleLabel = role === 'origin' ? 'Origin' : 'Destination';
+    const displayLabel = `${roleLabel}: ${label}`;
+    const colour = body?.mapColour || (role === 'origin' ? '#4A90D9' : ENDPOINT_EMPTY_COLOUR);
+
+    if (target) {
+        const value = target.querySelector('.endpoint-selector__value');
+        if (value) {
+            value.textContent = label;
+        } else {
+            target.textContent = displayLabel;
+        }
+        target.setAttribute('aria-label', displayLabel);
+    }
+
+    if (node) {
+        node.style.setProperty('--endpoint-colour', colour);
+        node.setAttribute('aria-label', displayLabel);
+    }
+}
+
+/**
+ * Inputs: map container and planet info card DOM.
+ * Outputs: wires delayed hover card behavior for surface nodes.
+ */
 function initPlanetInfoCard() {
     const mapContainer = document.getElementById('map-container');
     const card = document.getElementById('planet-info-card');
@@ -142,6 +301,10 @@ function initPlanetInfoCard() {
     window.addEventListener('resize', hideCard);
 }
 
+/**
+ * Inputs: card element, map container, and hovered map node.
+ * Outputs: renders and positions the planet info card.
+ */
 function _showPlanetInfoCard(card, mapContainer, node) {
     if (!_canShowPlanetInfoCard()) return;
 
@@ -154,6 +317,10 @@ function _showPlanetInfoCard(card, mapContainer, node) {
     _positionPlanetInfoCard(card, mapContainer, node);
 }
 
+/**
+ * Inputs: body data.
+ * Outputs: document fragment containing planet info card contents.
+ */
 function _createPlanetInfoContent(body) {
     const fragment = document.createDocumentFragment();
 
@@ -195,6 +362,10 @@ function _createPlanetInfoContent(body) {
     return fragment;
 }
 
+/**
+ * Inputs: body data.
+ * Outputs: swatch container for body and satellite colors.
+ */
 function _createPlanetInfoSwatches(body) {
     const swatches = document.createElement('div');
     swatches.className = 'planet-info-card__swatches';
@@ -221,6 +392,10 @@ function _createPlanetInfoSwatches(body) {
     return swatches;
 }
 
+/**
+ * Inputs: body data and extra CSS class.
+ * Outputs: one color swatch element.
+ */
 function _createBodySwatch(body, extraClass) {
     const swatch = document.createElement('span');
     swatch.className = `planet-info-card__swatch ${extraClass}`;
@@ -230,6 +405,10 @@ function _createBodySwatch(body, extraClass) {
     return swatch;
 }
 
+/**
+ * Inputs: card, map container, and target node.
+ * Outputs: positions card near the node within container bounds.
+ */
 function _positionPlanetInfoCard(card, mapContainer, node) {
     const nodeRect = node.getBoundingClientRect();
     const containerRect = mapContainer.getBoundingClientRect();
@@ -249,12 +428,20 @@ function _positionPlanetInfoCard(card, mapContainer, node) {
     card.style.top = `${Math.round(Math.max(gap, Math.min(top, maxTop)))}px`;
 }
 
+/**
+ * Inputs: body data.
+ * Outputs: formatted atmosphere height or "None".
+ */
 function _formatAtmosphere(body) {
     const height = Number(body.physics?.atmosphereHeight);
     if (!Number.isFinite(height) || height <= 0) return 'None';
     return _formatDistance(height);
 }
 
+/**
+ * Inputs: distance in meters.
+ * Outputs: compact distance string.
+ */
 function _formatDistance(meters) {
     const value = Number(meters);
     if (!Number.isFinite(value)) return 'Unknown';
@@ -263,11 +450,19 @@ function _formatDistance(meters) {
     return `${value.toLocaleString()} m`;
 }
 
+/**
+ * Inputs: delta-v value.
+ * Outputs: formatted delta-v string or "Unknown".
+ */
 function _formatDv(dv) {
     const value = Number(dv);
     return Number.isFinite(value) ? `${value.toLocaleString()} m/s` : 'Unknown';
 }
 
+/**
+ * Inputs: body data.
+ * Outputs: comma-separated satellite labels or "None".
+ */
 function _formatSatellites(body) {
     const satellites = Array.isArray(body.moons) ? body.moons : [];
     if (!satellites.length) return 'None';
@@ -277,24 +472,44 @@ function _formatSatellites(body) {
         .join(', ');
 }
 
+/**
+ * Inputs: body data.
+ * Outputs: host body label or "None".
+ */
 function _formatHostBody(body) {
     if (!body.parent) return 'None';
     return _getBodyById(body.parent)?.label || body.parent;
 }
 
+/**
+ * Inputs: body id.
+ * Outputs: loaded body data or null.
+ */
 function _getBodyById(bodyId) {
     return _loadedSystemData?.bodies?.find((candidate) => candidate.id === bodyId) || null;
 }
 
+/**
+ * Inputs: viewport and pointer capabilities.
+ * Outputs: true when hover cards should be enabled.
+ */
 function _canShowPlanetInfoCard() {
     if (_isMobilePortraitViewport()) return false;
     return !window.matchMedia('(hover: none), (pointer: coarse)').matches;
 }
 
+/**
+ * Inputs: active pack id.
+ * Outputs: syncs map version toggle state.
+ */
 function initMapVersionControls() {
     _setActivePackToggle(_activePackId);
 }
 
+/**
+ * Inputs: requested pack id.
+ * Outputs: loads system data, initializes map, refreshes controls, and persists pack choice.
+ */
 async function loadPack(packId) {
     const nextPackId = PACK_CONFIG[packId] ? packId : 'stock';
     const config = PACK_CONFIG[nextPackId];
@@ -307,6 +522,8 @@ async function loadPack(packId) {
             _setActivePackToggle(nextPackId);
             window.localStorage.setItem(MAP_PACK_STORAGE_KEY, nextPackId);
             _syncMobileMapViewport();
+            _syncEndpointSelectorScale();
+            _refreshEndpointSelectorUi();
             _refreshOutputs();
             return;
         }
@@ -321,6 +538,8 @@ async function loadPack(packId) {
         _setActivePackToggle(nextPackId);
         window.localStorage.setItem(MAP_PACK_STORAGE_KEY, nextPackId);
         _syncMobileMapViewport();
+        _syncEndpointSelectorScale();
+        _refreshEndpointSelectorUi();
         _refreshOutputs();
     } catch (e) {
         console.error('Failed to load pack:', nextPackId, e);
@@ -329,6 +548,10 @@ async function loadPack(packId) {
     }
 }
 
+/**
+ * Inputs: loaded system data.
+ * Outputs: normalized data for calculator/map compatibility.
+ */
 function _normalizeLoadedPackData(data) {
     if (data?.meta?.pack !== 'rss') return data;
 
@@ -344,29 +567,73 @@ function _normalizeLoadedPackData(data) {
     return data;
 }
 
-function onNodeClick(bodyId, nodeKey) {
+/**
+ * Inputs: clicked body id and node key.
+ * Outputs: updates active endpoint selection, analytics, map, and calculation outputs.
+ */
+function onNodeClick(bodyId, nodeKey, options = {}) {
+    const endpointRole = _getEndpointRole(options.invertEndpoint);
+
+    if (endpointRole === 'origin') {
+        setPointA(bodyId, nodeKey);
+        _syncFromLowOrbitToggle(nodeKey);
+        _syncMobileMapViewport();
+    } else {
+        setPointB(bodyId, nodeKey);
+    }
+
     if (typeof trackNodeInteraction === 'function') {
         const bodies = typeof getBodies === 'function' ? getBodies() : null;
-        trackNodeInteraction(bodyId, nodeKey, {
+        const selection = typeof getSelectedPoints === 'function' ? getSelectedPoints() : null;
+        trackNodeInteraction(selection, {
             packId: _activePackId,
-            bodyLabel: bodies?.[bodyId]?.label || bodyId,
+            uiMode: _getActiveUiMode(),
+            bodyLabels: _getBodyLabelLookup(bodies),
         });
     }
 
-    setPointB(bodyId, nodeKey);
+    _refreshEndpointSelectorUi();
     _refreshOutputs();
 }
 
+/**
+ * Inputs: document body theme state.
+ * Outputs: analytics UI mode segment.
+ */
+function _getActiveUiMode() {
+    return document.body.classList.contains('is-light-mode') ? 'light' : 'dark';
+}
+
+/**
+ * Inputs: body data keyed by id.
+ * Outputs: analytics label lookup keyed by body id.
+ */
+function _getBodyLabelLookup(bodies) {
+    return Object.fromEntries(Object.entries(bodies || {}).map(([id, body]) => [id, body?.label || id]));
+}
+
+/**
+ * Inputs: none.
+ * Outputs: active pack id.
+ */
 function getActivePackId() {
     return _activePackId;
 }
 
+/**
+ * Inputs: redundancy slider DOM.
+ * Outputs: initializes slider value and dependent output text.
+ */
 function initSlider() {
     const slider = document.getElementById('slider');
     slider.value = 0;
     handleSliderChange(slider);
 }
 
+/**
+ * Inputs: redundancy slider element.
+ * Outputs: updates redundancy label and recalculates outputs.
+ */
 function handleSliderChange(slider) {
     const labels = [
         '+ 0% Redundancy', '+ 5% Redundancy', '+ 10% Redundancy', '+ 15% Redundancy', '+ 20% Redundancy',
@@ -376,6 +643,10 @@ function handleSliderChange(slider) {
     _refreshOutputs();
 }
 
+/**
+ * Inputs: current UI state.
+ * Outputs: clears toggles, dropdown, calculation state, destination, and outputs.
+ */
 function handleClearSelection() {
     [
         'roundTripToggle',
@@ -418,8 +689,13 @@ function handleClearSelection() {
     }
 
     _refreshOutputs();
+    _refreshEndpointSelectorUi();
 }
 
+/**
+ * Inputs: changed toggle id.
+ * Outputs: applies mutually exclusive toggle rules and refreshes map/calculation state.
+ */
 function handleToggleChange(id) {
     const roundTripToggle = document.getElementById('roundTripToggle');
     const returnOnlyToggle = document.getElementById('returnOnlyToggle');
@@ -443,12 +719,16 @@ function handleToggleChange(id) {
             break;
 
         case 'fromLO':
-            if (!_originBodyId) break;
+            const originBodyId = _getCurrentOriginBodyId();
+            if (!originBodyId) break;
+
             if (fromLOToggle.checked) {
-                setPointA(_originBodyId, 'orbit');
+                setPointA(originBodyId, _resolveOriginToggleNode(originBodyId, 'orbit'));
             } else {
-                setPointA(_originBodyId, 'land');
+                setPointA(originBodyId, _resolveOriginToggleNode(originBodyId, 'land'));
             }
+            _syncMobileMapViewport();
+            _refreshEndpointSelectorUi();
             _refreshOutputs();
             break;
 
@@ -497,6 +777,42 @@ function handleToggleChange(id) {
     }
 }
 
+/**
+ * Inputs: selected points and origin fallback state.
+ * Outputs: current origin body id or null.
+ */
+function _getCurrentOriginBodyId() {
+    const selection = typeof getSelectedPoints === 'function' ? getSelectedPoints() : null;
+    return selection?.pointA?.body || _originBodyId;
+}
+
+/**
+ * Inputs: body id and preferred node key.
+ * Outputs: valid node key for the active origin toggle.
+ */
+function _resolveOriginToggleNode(bodyId, preferredNodeKey) {
+    const bodies = typeof getBodies === 'function' ? getBodies() : null;
+    const nodes = bodies?.[bodyId]?.nodes || {};
+    if (nodes[preferredNodeKey] !== undefined) return preferredNodeKey;
+
+    const fallbackNode = Object.keys(nodes).find((key) => key !== 'comment');
+    return fallbackNode || preferredNodeKey;
+}
+
+/**
+ * Inputs: selected origin node key.
+ * Outputs: syncs "from low orbit" checkbox when applicable.
+ */
+function _syncFromLowOrbitToggle(nodeKey) {
+    const fromLOToggle = document.getElementById('fromLO');
+    if (!fromLOToggle || !['orbit', 'land'].includes(nodeKey)) return;
+    fromLOToggle.checked = nodeKey === 'orbit';
+}
+
+/**
+ * Inputs: requested map pack id.
+ * Outputs: updates pack checkboxes and loads the selected pack.
+ */
 function handleMapPackChange(packId) {
     const stockCheck = document.getElementById('stockCheck');
     const opmCheck = document.getElementById('opmCheck');
@@ -520,6 +836,10 @@ function handleMapPackChange(packId) {
     loadPack(packId);
 }
 
+/**
+ * Inputs: active pack id.
+ * Outputs: updates map pack checkbox states.
+ */
 function _setActivePackToggle(activePackId) {
     Object.keys(PACK_CONFIG).forEach((packId) => {
         const input = document.getElementById(`${packId}Check`);
@@ -527,15 +847,27 @@ function _setActivePackToggle(activePackId) {
     });
 }
 
+/**
+ * Inputs: current global selection/calculation state.
+ * Outputs: refreshes transfer UI if the module is loaded.
+ */
 function _refreshTransferUi() {
     if (typeof refreshTransferDisplay === 'function') refreshTransferDisplay();
 }
 
+/**
+ * Inputs: current UI and map selection state.
+ * Outputs: refreshes calculation and transfer displays.
+ */
 function _refreshOutputs() {
     _refreshCalculationUi();
     _refreshTransferUi();
 }
 
+/**
+ * Inputs: current selected points, bodies, metadata, and toggle state.
+ * Outputs: runs calculation and updates DV display, breakdown, and debug view.
+ */
 function _refreshCalculationUi() {
     const dVDisplay = document.getElementById('dV_display');
     const bodies = typeof getBodies === 'function' ? getBodies() : null;
@@ -587,6 +919,10 @@ function _refreshCalculationUi() {
     }
 }
 
+/**
+ * Inputs: current control states.
+ * Outputs: normalized options object for jscalculate.
+ */
 function _buildCalculationOptions() {
     return {
         roundTrip: document.getElementById('roundTripToggle')?.checked ?? false,
@@ -601,18 +937,31 @@ function _buildCalculationOptions() {
     };
 }
 
+/**
+ * Inputs: redundancy slider value.
+ * Outputs: numeric calculation multiplier.
+ */
 function _getRedundancyMultiplier() {
     const slider = document.getElementById('slider');
     const step = Number.parseInt(slider?.value ?? '0', 10);
     return 1 + ((Number.isFinite(step) ? step : 0) * 0.05);
 }
 
+/**
+ * Inputs: window lifecycle events.
+ * Outputs: wires mobile map viewport and endpoint scale resync.
+ */
 function _initMobileLayoutSync() {
     ['load', 'resize', 'orientationchange'].forEach((eventName) => {
         window.addEventListener(eventName, _syncMobileMapViewport);
+        window.addEventListener(eventName, _syncEndpointSelectorScale);
     });
 }
 
+/**
+ * Inputs: active map SVG, container size, and active pack layout.
+ * Outputs: updates mobile map width/viewBox and scroll position.
+ */
 function _syncMobileMapViewport() {
     const mapContainer = document.getElementById('map-container');
     const mapSvg = mapContainer?.querySelector('.dv-map');
@@ -623,6 +972,7 @@ function _syncMobileMapViewport() {
 
     if (!_isMobilePortraitViewport()) {
         mapSvg.style.removeProperty('--mobile-map-width');
+        _syncEndpointSelectorScale();
         return;
     }
 
@@ -635,12 +985,42 @@ function _syncMobileMapViewport() {
     const targetWidth = Math.ceil(mapContainer.clientWidth * widthRatio * MOBILE_MAP_SCROLL_EXPANSION);
     mapSvg.style.setProperty('--mobile-map-width', `${targetWidth}px`);
     _centerMobileMapScroll(mapContainer);
+    _syncEndpointSelectorScale();
 }
 
+/**
+ * Inputs: map SVG dimensions and viewBox.
+ * Outputs: updates endpoint selector scale CSS variable.
+ */
+function _syncEndpointSelectorScale() {
+    const selector = document.getElementById('endpoint-selector');
+    const mapSvg = document.getElementById('map-container')?.querySelector('.dv-map');
+    if (!selector || !mapSvg) return;
+
+    const viewBox = mapSvg.dataset.baseViewBox || mapSvg.getAttribute('viewBox');
+    const values = viewBox?.trim().split(/\s+/).map(Number);
+    if (!values || values.length !== 4 || values.some((value) => !Number.isFinite(value))) return;
+
+    const [, , viewBoxWidth, viewBoxHeight] = values;
+    const rect = mapSvg.getBoundingClientRect();
+    if (viewBoxWidth <= 0 || viewBoxHeight <= 0 || rect.width <= 0 || rect.height <= 0) return;
+
+    const scale = Math.min(rect.width / viewBoxWidth, rect.height / viewBoxHeight);
+    selector.style.setProperty('--endpoint-map-scale', scale.toFixed(4));
+}
+
+/**
+ * Inputs: current viewport media query state.
+ * Outputs: true when mobile portrait layout is active.
+ */
 function _isMobilePortraitViewport() {
     return window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches;
 }
 
+/**
+ * Inputs: map layout id.
+ * Outputs: x-axis span of layout positions, or null.
+ */
 function _getMobileLayoutContentWidth(mapId) {
     const layout = window.DeltaVMapPositions?.getMapLayout?.(mapId);
     const positions = layout?.positions ? Object.values(layout.positions) : null;
@@ -650,6 +1030,10 @@ function _getMobileLayoutContentWidth(mapId) {
     return Math.max(...xs) - Math.min(...xs);
 }
 
+/**
+ * Inputs: map container element.
+ * Outputs: centers horizontal scroll on the next animation frame.
+ */
 function _centerMobileMapScroll(mapContainer) {
     window.requestAnimationFrame(() => {
         const maxScrollLeft = mapContainer.scrollWidth - mapContainer.clientWidth;
@@ -657,6 +1041,10 @@ function _centerMobileMapScroll(mapContainer) {
     });
 }
 
+/**
+ * Inputs: map SVG element.
+ * Outputs: expands or restores viewBox for mobile portrait layout.
+ */
 function _syncMobileMapViewBox(mapSvg) {
     const baseViewBox = mapSvg.dataset.baseViewBox || mapSvg.getAttribute('viewBox');
     if (!baseViewBox) return;

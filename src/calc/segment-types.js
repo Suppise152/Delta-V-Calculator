@@ -3,6 +3,10 @@
     const INTERPLANETARY_ID = 'interplanetary';
     const DEFAULT_IPS_BRANCH_DV = 1000;
 
+    /**
+     * Inputs: none.
+     * Outputs: empty calculation result object.
+     */
     function emptyResult() {
         return {
             totalDV: 0,
@@ -15,10 +19,18 @@
         };
     }
 
+    /**
+     * Inputs: body data object.
+     * Outputs: ordered list of real node keys, excluding metadata comments.
+     */
     function getNodeKeys(body) {
         return Object.keys(body?.nodes || {}).filter((key) => key !== 'comment');
     }
 
+    /**
+     * Inputs: endpoint point and body lookup.
+     * Outputs: boolean indicating whether the point can be routed.
+     */
     function isValidPoint(point, bodies) {
         if (!point?.body) return false;
         if (point.body === INTERPLANETARY_ID) return true;
@@ -29,6 +41,10 @@
         return getNodeKeys(body).includes(point.node);
     }
 
+    /**
+     * Inputs: system metadata.
+     * Outputs: node model with surface, orbit, flyby, and altitude defaults.
+     */
     function getNodeModel(meta) {
         return meta?.nodeModel || {
             surfaceNodeKey: 'land',
@@ -40,10 +56,19 @@
         };
     }
 
+    /**
+     * Inputs: body data object.
+     * Outputs: physics object or null.
+     */
     function getBodyPhysics(body) {
         return body?.physics || null;
     }
 
+    /**
+     * Inputs: body data and system metadata.
+     * Outputs: low-orbit altitude in meters.
+     * Purpose: centralizes altitude overrides and atmosphere clearance rules.
+     */
     function getLowOrbitAltitude(body, meta) {
         const nodeModel = getNodeModel(meta);
         const overrides = nodeModel.lowOrbitAltitudeOverrides || {};
@@ -59,6 +84,10 @@
         );
     }
 
+    /**
+     * Inputs: body data and system metadata.
+     * Outputs: flyby/capture periapsis altitude in meters.
+     */
     function getFlybyPeriapsisAltitude(body, meta) {
         const nodeModel = getNodeModel(meta);
         const physics = getBodyPhysics(body);
@@ -69,12 +98,20 @@
         );
     }
 
+    /**
+     * Inputs: body data and altitude in meters.
+     * Outputs: radius from body center in meters, or null without physics data.
+     */
     function getPhysicalRadius(body, altitudeMeters) {
         const physics = getBodyPhysics(body);
         if (!physics) return null;
         return (Number(physics.radius) || 0) + (Number(altitudeMeters) || 0);
     }
 
+    /**
+     * Inputs: body, node key, and system metadata.
+     * Outputs: canonical node descriptor for map/calculation consumers.
+     */
     function describeCanonicalNodeState(body, nodeKey, meta) {
         const nodeModel = getNodeModel(meta);
         if (nodeKey === nodeModel.surfaceNodeKey) {
@@ -100,10 +137,18 @@
         return { type: nodeKey, bodyId: body.id };
     }
 
+    /**
+     * Inputs: body id and node key.
+     * Outputs: graph state id string.
+     */
     function stateId(bodyId, nodeKey) {
         return `${bodyId}::${nodeKey}`;
     }
 
+    /**
+     * Inputs: graph state id string.
+     * Outputs: parsed body id and node key.
+     */
     function parseStateId(value) {
         if (value === INTERPLANETARY_ID) {
             return { bodyId: INTERPLANETARY_ID, nodeKey: null };
@@ -113,6 +158,10 @@
         return { bodyId, nodeKey: nodeKey || null };
     }
 
+    /**
+     * Inputs: body data and node key.
+     * Outputs: body id whose map marker should represent the node.
+     */
     function resolveMarkerBodyId(body, nodeKey) {
         if (!body) return null;
 
@@ -123,6 +172,10 @@
         return body.id;
     }
 
+    /**
+     * Inputs: body data and node key.
+     * Outputs: human-readable breakdown label.
+     */
     function formatEntryLabel(body, nodeKey) {
         if (!body || !nodeKey) return 'Transfer';
 

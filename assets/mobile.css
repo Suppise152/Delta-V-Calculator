@@ -116,6 +116,49 @@
         font-size: 0.75rem;
     }
 
+    .endpoint-selector {
+        position: fixed;
+        top: calc(17vh + clamp(320px, 112vw, 46vh) - 34px);
+        right: 12px;
+        bottom: auto;
+        left: 12px;
+        z-index: 30;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .endpoint-selector__row {
+        min-width: 0;
+    }
+
+    .endpoint-selector__row:first-child {
+        order: 2;
+        flex: 1 1 calc(56% - 6px);
+        justify-content: flex-start;
+    }
+
+    .endpoint-selector__row:last-child {
+        order: 1;
+        flex: 0 1 calc(35% - 6px);
+        justify-content: flex-start;
+    }
+
+    .endpoint-selector__target {
+        flex: 1 1 auto;
+        grid-template-columns: max-content minmax(34px, 1fr);
+        column-gap: max(6px, calc(8px * var(--endpoint-map-scale)));
+        max-width: none;
+        overflow: hidden;
+    }
+
+    .endpoint-selector__value {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     /* Firefox scrollbar */
     .map-container {
         scrollbar-width: auto;
