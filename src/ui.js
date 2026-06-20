@@ -679,7 +679,7 @@ function handleClearSelection() {
     }
 
     const dVDisplay = document.getElementById('dV_display');
-    if (dVDisplay) dVDisplay.value = dVDisplay.placeholder || '';
+    _setResultDisplayValue(dVDisplay, dVDisplay?.placeholder || '');
 
     if (typeof resetSelection === 'function') {
         resetSelection();
@@ -885,7 +885,7 @@ function _refreshCalculationUi() {
             renderDebugView(null);
         }
         if (dVDisplay) {
-            dVDisplay.value = dVDisplay.placeholder || '';
+            _setResultDisplayValue(dVDisplay, dVDisplay.placeholder || '');
         }
         return;
     }
@@ -900,7 +900,7 @@ function _refreshCalculationUi() {
     }
 
     if (!result) {
-        dVDisplay.value = dVDisplay.placeholder || '';
+        _setResultDisplayValue(dVDisplay, dVDisplay.placeholder || '');
         if (typeof renderBreakdown === 'function') {
             renderBreakdown([]);
         }
@@ -910,7 +910,7 @@ function _refreshCalculationUi() {
         return;
     }
 
-    dVDisplay.value = `${result.totalDV.toLocaleString()} m/s`;
+    _setResultDisplayValue(dVDisplay, `${result.totalDV.toLocaleString()} m/s`);
     if (typeof renderBreakdown === 'function') {
         renderBreakdown(result.breakdown);
     }
@@ -935,6 +935,18 @@ function _buildCalculationOptions() {
         redundancyMultiplier: _getRedundancyMultiplier(),
         ipsBranchDV: 1000,
     };
+}
+
+/**
+ * Inputs: result input and display text.
+ * Outputs: writes value and resizes the input to fit it.
+ */
+function _setResultDisplayValue(inputEl, value) {
+    if (!inputEl) return;
+    inputEl.value = value;
+    if (typeof syncResultDisplayWidth === 'function') {
+        syncResultDisplayWidth(inputEl);
+    }
 }
 
 /**

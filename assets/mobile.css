@@ -308,12 +308,10 @@
 
     .result-display {
         font-size: clamp(1.4rem, 2.5vw, 2rem);
-        width: 150px;
     }
 
     .result-display--angle {
         font-size: clamp(1rem, 1.5vw, 1.1rem);
-        width: 90px;
     }
 
     /* ─── PHASE DIAGRAMS ──────────────────────────────────────── */

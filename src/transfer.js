@@ -76,6 +76,7 @@ function _renderTransferBlock(blockEl, angleEl, diagramEl, transferModel, mode, 
     }
 
     angleEl.value = `${_formatPhaseAngle(phaseAngle)}\u00B0`;
+    syncResultDisplayWidth(angleEl);
     blockEl.dataset.state = 'active';
     diagramEl.classList.remove('is-empty');
     diagramEl.innerHTML = '';
@@ -88,6 +89,7 @@ function _renderTransferBlock(blockEl, angleEl, diagramEl, transferModel, mode, 
  */
 function _clearTransferBlock(angleEl, diagramEl) {
     angleEl.value = TRANSFER_PLACEHOLDER;
+    syncResultDisplayWidth(angleEl);
     diagramEl.classList.add('is-empty');
     diagramEl.innerHTML = '';
 }
@@ -124,6 +126,7 @@ function _syncTransferDiagramSizes() {
 
             const angleRect = angleEl.getBoundingClientRect();
             const blockRect = blockEl.getBoundingClientRect();
+            const angleWidth = Math.ceil(angleRect.width);
             const labelWidth = Math.ceil(labelEl?.scrollWidth ?? 0);
             const angleBottomOffset = Math.ceil(angleRect.bottom - blockRect.top);
             const blockStyles = window.getComputedStyle(blockEl);
@@ -131,6 +134,7 @@ function _syncTransferDiagramSizes() {
 
             transferBlocks.push({
                 angleBottomOffset,
+                angleWidth,
                 blockGap,
                 blockEl,
                 diagramEl,
@@ -164,7 +168,7 @@ function _syncTransferDiagramSizes() {
         const wideWidths = transferBlocks.map((block) => {
             const size = Math.max(0, Math.floor(resultsHeight - block.angleBottomOffset - block.blockGap));
             return {
-                minWidth: Math.max(block.labelWidth, size),
+                minWidth: Math.max(block.labelWidth, block.angleWidth, size),
                 size,
             };
         });
@@ -172,7 +176,7 @@ function _syncTransferDiagramSizes() {
         const pairWidths = transferBlocks.map((block) => {
             const size = Math.max(0, Math.floor(resultsHeight - dvHeight - layoutGap - block.angleBottomOffset - block.blockGap));
             return {
-                minWidth: Math.max(block.labelWidth, size),
+                minWidth: Math.max(block.labelWidth, block.angleWidth, size),
                 size,
             };
         });
@@ -366,3 +370,18 @@ function _svgNode(tag, attrs) {
     Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
     return node;
 }
+
+/**
+ * Inputs: readonly result input.
+ * Outputs: updates inline width variable to fit current display text.
+ */
+function syncResultDisplayWidth(inputEl) {
+    if (!inputEl) return;
+
+    const text = inputEl.value || inputEl.placeholder || TRANSFER_PLACEHOLDER;
+    const minCh = inputEl.classList.contains('result-display--angle') ? 5 : 8;
+    const widthCh = Math.max(minCh, Array.from(text).length + 1);
+    inputEl.style.setProperty('--result-display-width', `${widthCh}ch`);
+}
+
+window.syncResultDisplayWidth = syncResultDisplayWidth;

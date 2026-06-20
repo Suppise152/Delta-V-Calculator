@@ -591,12 +591,14 @@ body {
     padding: 1px 0;
     outline: none;
     cursor: default;
-    width: 190px;
+    width: var(--result-display-width, 10ch);
+    min-width: 8ch;
+    max-width: 100%;
 }
 
 .result-display--angle {
     font-size: clamp(1.25rem, 1.85vw, 1.8rem);
-    width: 100px;
+    min-width: 5ch;
 }
 
 .result-display::placeholder {

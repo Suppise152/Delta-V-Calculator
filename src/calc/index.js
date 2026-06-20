@@ -137,14 +137,16 @@
             return branchResult.breakdownEntries.map((entry) => {
                 const body = bodies[entry.bodyId];
                 const nodeKey = entry.nodeKey;
+                const entryAerobrakeAdjustment = getBreakdownEntryAerobrakeAdjustment(entry, bodies, aerobrakeAdjustment);
+                const entryDv = entryAerobrakeAdjustment.zeroed ? 0 : entry.dv;
                 return {
                     label: entry.label || api.formatEntryLabel(body, nodeKey),
-                    dv: entry.dv,
+                    dv: entryDv,
                     rawDv: entry.rawDv ?? entry.dv,
                     type: nodeKey,
                     markerBodyId: entry.markerBodyId ?? api.resolveMarkerBodyId(body, nodeKey),
-                    zeroed: false,
-                    aerobrake: null,
+                    zeroed: entryAerobrakeAdjustment.zeroed,
+                    aerobrake: entryAerobrakeAdjustment.zeroed ? entryAerobrakeAdjustment.mode : null,
                 };
             });
         }
@@ -159,6 +161,31 @@
             zeroed: aerobrakeAdjustment.zeroed,
             aerobrake: aerobrakeAdjustment.zeroed ? aerobrakeAdjustment.mode : null,
         }];
+    }
+
+    /**
+     * Inputs: branch breakdown entry, body lookup, and segment-level aerobrake adjustment.
+     * Outputs: per-entry aerobrake zeroing decision for multi-entry transfer branches.
+     */
+    function getBreakdownEntryAerobrakeAdjustment(entry, bodies, aerobrakeAdjustment) {
+        if (!aerobrakeAdjustment.zeroed) {
+            return { zeroed: false, mode: null };
+        }
+
+        const body = bodies[entry.bodyId];
+        if (!body?.surface?.canAerobrake) {
+            return { zeroed: false, mode: null };
+        }
+
+        if (aerobrakeAdjustment.mode === 'intercept' && ['orbit', 'land'].includes(entry.nodeKey)) {
+            return aerobrakeAdjustment;
+        }
+
+        if (aerobrakeAdjustment.mode === 'orbit' && entry.nodeKey === 'land') {
+            return aerobrakeAdjustment;
+        }
+
+        return { zeroed: false, mode: null };
     }
 
     /**
@@ -348,6 +375,9 @@
             interceptToggle
             && (
                 branchResult.branchType === 'flyby_to_capture'
+                || branchResult.branchType === 'direct_orbital_transfer'
+                || branchResult.branchType === 'direct_moon_transfer'
+                || (branchResult.branchType === 'body_chain' && segment.nodeKey === 'orbit')
                 || branchResult.branchType === 'orbit_to_surface'
                 || _isReturnMoonToAtmosphericOriginOrbitSegment(segment, routeContext, bodies)
             )
