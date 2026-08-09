@@ -170,7 +170,7 @@
             <div class="map-container" id="map-container">
                 <footer class="site-footer">
                     <!-- Release.Major.Minor.Patch -->
-                    <span id="version-info">Version 2.2.0.2</span>
+                    <span id="version-info">Version 2.2.1.1.dev</span>
                 </footer>
                 <button type="button" class="theme-toggle theme-toggle--mobile" id="theme-toggle-mobile" aria-pressed="false">Light Mode</button>
                 <div class="endpoint-selector" id="endpoint-selector" aria-label="Route endpoint selector">
@@ -237,17 +237,34 @@
                 <div class="map-controls">
                     <div class="map-controls-title">Game Version</div>
                     <label class="toggle-label">
-                        <input type="checkbox" id="stockCheck" checked onchange="handleMapPackChange('stock')">
-                        <span>Stock</span>
+                        <input type="checkbox" id="ksp1Check" checked onchange="handleGameVersionChange('ksp1')">
+                        <span>KSP 1</span>
                     </label>
                     <label class="toggle-label">
-                        <input type="checkbox" id="opmCheck" onchange="handleMapPackChange('opm')">
-                        <span>OPM</span>
+                        <input type="checkbox" id="ksp2Check" onchange="handleGameVersionChange('ksp2')">
+                        <span>KSP 2</span>
                     </label>
-                    <label class="toggle-label">
-                        <input type="checkbox" id="rssCheck" onchange="handleMapPackChange('rss')">
-                        <span>RSS</span>
-                    </label>
+                    <div class="toggle-group-separator"></div>
+                    <div class="map-pack-group" id="ksp1-pack-group">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="stockCheck" checked onchange="handleMapPackChange('stock')">
+                            <span>Stock</span>
+                        </label>
+                        <label class="toggle-label">
+                            <input type="checkbox" id="opmCheck" onchange="handleMapPackChange('opm')">
+                            <span>OPM</span>
+                        </label>
+                        <label class="toggle-label">
+                            <input type="checkbox" id="rssCheck" onchange="handleMapPackChange('rss')">
+                            <span>RSS</span>
+                        </label>
+                    </div>
+                    <div class="map-pack-group is-hidden" id="ksp2-pack-group">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="kerbolCheck" onchange="handleMapPackChange('kerbol')">
+                            <span>Kerbol</span>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="results-panel">
@@ -297,7 +314,12 @@
     <script src="src/calc/branches/transfer.js"></script>
     <script src="src/calc/index.js"></script>
     <script src="src/calculator.js"></script>
-    <script src="src/map/positions.js"></script>
+    <script src="src/map/positions/shift-helpers.js"></script>
+    <script src="src/map/positions/ksp1/stock.js"></script>
+    <script src="src/map/positions/ksp1/opm.js"></script>
+    <script src="src/map/positions/ksp1/rss.js"></script>
+    <script src="src/map/positions/ksp2/kerbol.js"></script>
+    <script src="src/map/positions/index.js"></script>
     <script src="src/map/route.js"></script>
     <script src="src/map/render.js"></script>
     <script src="src/transfer.js"></script>

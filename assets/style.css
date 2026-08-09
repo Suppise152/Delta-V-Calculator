@@ -515,6 +515,16 @@ body {
     margin-bottom: 2px;
 }
 
+.map-pack-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.map-pack-group.is-hidden {
+    display: none;
+}
+
 /* ─── RESULTS PANEL (right half of controls bar) ─────────────── */
 .results-panel {
     flex: 1 1 0;

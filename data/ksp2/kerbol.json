@@ -1,7 +1,7 @@
 {
   "meta": {
     "name": "Kerbol System",
-    "pack": "stock",
+    "pack": "kerbol",
     "centralBody": "kerbol",
     "originBody": "kerbin",
     "interplanetaryNode": {
@@ -357,7 +357,10 @@
       "id": "dres",
       "label": "Dres",
       "parent": "kerbol",
-      "moons": [],
+      "moons": [
+        "beyl",
+        "drast"
+      ],
       "mapColour": "#9B9B7A",
       "orbit": {
         "sma": 40839348203,
@@ -385,6 +388,72 @@
         "atmosphereHeight": 0,
         "soiRadius": 32832839.763400655,
         "hillSphereRadius": 63830640.571476504
+      }
+    },
+    {
+      "id": "beyl",
+      "label": "Beyl",
+      "parent": "dres",
+      "moons": [],
+      "mapColour": "#ADAB8C",
+      "orbit": {
+        "sma": 8365000,
+        "eccentricity": 0.48,
+        "inclination": 216.0,
+        "longitudeOfAscendingNode": 0.0,
+        "argumentOfPeriapsis": 0.0,
+        "siderealPeriod": 4148064,
+        "periapsisRadius": 4349800,
+        "apoapsisRadius": 12380200
+      },
+      "surface": {
+        "canAerobrake": false,
+        "dvToOrbit": 10,
+        "dvToLand": 10
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 0,
+        "land": 10
+      },
+      "physics": {
+        "radius": 4595,
+        "mu": 2744823.25,
+        "atmosphereHeight": 0,
+        "soiRadius": 229949
+      }
+    },
+    {
+      "id": "drast",
+      "label": "Drast",
+      "parent": "dres",
+      "moons": [],
+      "mapColour": "#82827A",
+      "orbit": {
+        "sma": 434400,
+        "eccentricity": 0.0,
+        "inclination": 0.0,
+        "longitudeOfAscendingNode": 0.0,
+        "argumentOfPeriapsis": 0.0,
+        "siderealPeriod": 49248,
+        "periapsisRadius": 434400,
+        "apoapsisRadius": 434400
+      },
+      "surface": {
+        "canAerobrake": false,
+        "dvToOrbit": 5,
+        "dvToLand": 5
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 0,
+        "land": 5
+      },
+      "physics": {
+        "radius": 1596,
+        "mu": 50944.32,
+        "atmosphereHeight": 0,
+        "soiRadius": 4000
       }
     },
     {

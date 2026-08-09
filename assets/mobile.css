@@ -260,6 +260,10 @@
         margin-bottom: 1px;
     }
 
+    .map-pack-group {
+        gap: 4px;
+    }
+
     /* ─── RESULTS PANEL ───────────────────────────────────────── */
     .results-panel {
         flex: none;

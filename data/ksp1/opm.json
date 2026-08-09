@@ -356,7 +356,7 @@
       "label": "Dres",
       "parent": "kerbol",
       "moons": [],
-      "mapColour": "#9B9B7A",
+      "mapColour": "#98988E",
       "orbit": {
         "sma": 40839348203,
         "eccentricity": 0.145,

@@ -507,6 +507,16 @@ CALCULATOR_SOURCES = {
     }
 
     /**
+     * Inputs: orbiting body.
+     * Outputs: +1 for prograde (inclination <= 90 deg), -1 for retrograde.
+     * Assumes bodies are roughly coplanar; not a general-inclination model.
+     */
+    function directionSign(body) {
+        const inc = Number(body?.orbit?.inclination) || 0;
+        return inc > 90 ? -1 : 1;
+    }
+
+    /**
      * Inputs: origin body, target body, and central body.
      * Outputs: ideal Hohmann phase angle in degrees, or null.
      */
@@ -521,7 +531,10 @@ CALCULATOR_SOURCES = {
             return null;
         }
 
-        return normalizeAngleDegrees((Math.PI - (targetMeanMotion * transferTime)) * (180 / Math.PI));
+        const relativeDirection = directionSign(originBody) * directionSign(targetBody);
+        const signedMeanMotion = relativeDirection * targetMeanMotion;
+
+        return normalizeAngleDegrees((Math.PI - (signedMeanMotion * transferTime)) * (180 / Math.PI));
     }
 
     /**
@@ -718,6 +731,7 @@ CALCULATOR_SOURCES = {
         computeInterplanetaryContext,
         computeCentralBodyTransferContext,
         computeMoonTransferContext,
+        directionSign,
         flybyPeriapsisRadius,
         getPhysics,
         hohmannTransferSpeeds,

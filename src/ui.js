@@ -26,9 +26,14 @@ let _activeEndpointRole = 'destination';
 let _isEndpointModifierActive = false;
 
 const PACK_CONFIG = {
-    stock: { dataPackId: 'stock', mapId: 'stock' },
-    opm: { dataPackId: 'opm', mapId: 'opm' },
-    rss: { dataPackId: 'rss', mapId: 'rss' },
+    stock: { dataPackId: 'ksp1/stock', mapId: 'stock', gameVersion: 'ksp1' },
+    opm: { dataPackId: 'ksp1/opm', mapId: 'opm', gameVersion: 'ksp1' },
+    rss: { dataPackId: 'ksp1/rss', mapId: 'rss', gameVersion: 'ksp1' },
+    kerbol: { dataPackId: 'ksp2/kerbol', mapId: 'kerbol', gameVersion: 'ksp2' },
+};
+const GAME_VERSION_CONFIG = {
+    ksp1: { defaultPackId: 'stock' },
+    ksp2: { defaultPackId: 'kerbol' },
 };
 const MOBILE_MAP_SCROLL_EXPANSION = 1.5;
 const MOBILE_MAP_VIEWBOX_EXPANSION = 1.18;
@@ -503,7 +508,7 @@ function _canShowPlanetInfoCard() {
  * Outputs: syncs map version toggle state.
  */
 function initMapVersionControls() {
-    _setActivePackToggle(_activePackId);
+    _syncMapVersionControls(_activePackId);
 }
 
 /**
@@ -519,7 +524,7 @@ async function loadPack(packId) {
             _activePackId = nextPackId;
             _originBodyId = _loadedSystemData.meta?.originBody ?? null;
             setMapLayout(config.mapId);
-            _setActivePackToggle(nextPackId);
+            _syncMapVersionControls(nextPackId);
             window.localStorage.setItem(MAP_PACK_STORAGE_KEY, nextPackId);
             _syncMobileMapViewport();
             _syncEndpointSelectorScale();
@@ -535,7 +540,7 @@ async function loadPack(packId) {
         _activePackId = nextPackId;
         _originBodyId = data.meta?.originBody ?? null;
         initMap(data, { mapId: config.mapId });
-        _setActivePackToggle(nextPackId);
+        _syncMapVersionControls(nextPackId);
         window.localStorage.setItem(MAP_PACK_STORAGE_KEY, nextPackId);
         _syncMobileMapViewport();
         _syncEndpointSelectorScale();
@@ -814,26 +819,50 @@ function _syncFromLowOrbitToggle(nodeKey) {
  * Outputs: updates pack checkboxes and loads the selected pack.
  */
 function handleMapPackChange(packId) {
-    const stockCheck = document.getElementById('stockCheck');
-    const opmCheck = document.getElementById('opmCheck');
-    const rssCheck = document.getElementById('rssCheck');
-
-    if (packId === 'stock') {
-        stockCheck.checked = true;
-        opmCheck.checked = false;
-        rssCheck.checked = false;
-    } else if (packId === 'opm') {
-        stockCheck.checked = false;
-        opmCheck.checked = true;
-        rssCheck.checked = false;
-    } else if (packId === 'rss') {
-        stockCheck.checked = false;
-        opmCheck.checked = false;
-        rssCheck.checked = true;
+    if (packId === _activePackId) {
+        _setActivePackToggle(_activePackId);
+        return;
     }
-    if (packId === _activePackId) return;
 
     loadPack(packId);
+}
+
+/**
+ * Inputs: requested game version id ('ksp1'/'ksp2').
+ * Outputs: updates game version checkboxes/pack visibility and loads the version's default pack.
+ */
+function handleGameVersionChange(gameVersion) {
+    const config = GAME_VERSION_CONFIG[gameVersion];
+    if (!config) return;
+
+    if (gameVersion === PACK_CONFIG[_activePackId]?.gameVersion) {
+        _syncMapVersionControls(_activePackId);
+        return;
+    }
+
+    loadPack(config.defaultPackId);
+}
+
+/**
+ * Inputs: active pack id.
+ * Outputs: syncs game version toggles, pack toggles, and pack group visibility.
+ */
+function _syncMapVersionControls(activePackId) {
+    const gameVersion = PACK_CONFIG[activePackId]?.gameVersion ?? 'ksp1';
+    _setActiveGameVersionToggle(gameVersion);
+    _setActivePackToggle(activePackId);
+    _setActivePackGroupVisibility(gameVersion);
+}
+
+/**
+ * Inputs: active game version id.
+ * Outputs: updates KSP1/KSP2 checkbox states.
+ */
+function _setActiveGameVersionToggle(activeGameVersion) {
+    const ksp1Check = document.getElementById('ksp1Check');
+    const ksp2Check = document.getElementById('ksp2Check');
+    if (ksp1Check) ksp1Check.checked = activeGameVersion === 'ksp1';
+    if (ksp2Check) ksp2Check.checked = activeGameVersion === 'ksp2';
 }
 
 /**
@@ -845,6 +874,17 @@ function _setActivePackToggle(activePackId) {
         const input = document.getElementById(`${packId}Check`);
         if (input) input.checked = packId === activePackId;
     });
+}
+
+/**
+ * Inputs: active game version id.
+ * Outputs: shows the pack toggle group matching the active game version.
+ */
+function _setActivePackGroupVisibility(activeGameVersion) {
+    const ksp1Group = document.getElementById('ksp1-pack-group');
+    const ksp2Group = document.getElementById('ksp2-pack-group');
+    if (ksp1Group) ksp1Group.classList.toggle('is-hidden', activeGameVersion !== 'ksp1');
+    if (ksp2Group) ksp2Group.classList.toggle('is-hidden', activeGameVersion !== 'ksp2');
 }
 
 /**
