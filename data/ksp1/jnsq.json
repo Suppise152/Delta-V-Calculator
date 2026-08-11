@@ -5,8 +5,6 @@
     "centralBody": "sun",
     "originBody": "kerbin",
     "interplanetaryNode": {
-      "id": "interplanetary",
-      "label": "Interplanetary Space",
       "mapColour": "#c8c8d4"
     },
     "nodeModel": {
@@ -43,14 +41,12 @@
         "sma": 0,
         "eccentricity": 0,
         "inclination": 0,
-        "comment": "Central body, no orbit",
         "periapsisRadius": 0.0,
         "apoapsisRadius": 0.0
       },
       "surface": {
         "canAerobrake": false,
-        "dvToOrbit": 19700,
-        "dvToLand": null
+        "dvToOrbit": 19700
       },
       "nodes": {
         "orbit": 19700,
@@ -60,8 +56,7 @@
         "radius": 175750000,
         "mu": 8.39056e+18,
         "atmosphereHeight": 0,
-        "soiRadius": null,
-        "hillSphereRadius": null
+        "soiRadius": null
       }
     },
     {
@@ -75,15 +70,12 @@
         "eccentricity": 0.2,
         "inclination": 7,
         "longitudeOfAscendingNode": 70,
-        "argumentOfPeriapsis": 15,
         "siderealPeriod": 7592313.6,
         "periapsisRadius": 11617920000,
         "apoapsisRadius": 17426880000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 1660,
-        "dvToLand": 1660
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 2863,
@@ -94,8 +86,7 @@
         "radius": 650000,
         "mu": 1201560000000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 26572000,
-        "hillSphereRadius": 52680450.64102177
+        "soiRadius": 26572000
       }
     },
     {
@@ -111,14 +102,12 @@
         "eccentricity": 0.01,
         "inclination": 2.1,
         "longitudeOfAscendingNode": 15,
-        "argumentOfPeriapsis": 45,
         "siderealPeriod": 19387296.0,
         "periapsisRadius": 26859690000,
         "apoapsisRadius": 27402310000
       },
       "surface": {
         "canAerobrake": true,
-        "dvToOrbit": 6700,
         "dvToLand": 50
       },
       "nodes": {
@@ -130,8 +119,7 @@
         "radius": 2050000,
         "mu": 57697400000000.0,
         "atmosphereHeight": 60000,
-        "soiRadius": 233567000,
-        "hillSphereRadius": 357723234.04333806
+        "soiRadius": 233567000
       }
     },
     {
@@ -145,15 +133,12 @@
         "eccentricity": 0.55,
         "inclination": 12,
         "longitudeOfAscendingNode": 80,
-        "argumentOfPeriapsis": 10,
         "siderealPeriod": 1340668.8,
         "periapsisRadius": 39114000,
         "apoapsisRadius": 134726000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 70,
-        "dvToLand": 70
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -164,8 +149,7 @@
         "radius": 30000,
         "mu": 66194900.0,
         "atmosphereHeight": 0,
-        "soiRadius": 366000,
-        "hillSphereRadius": 630911.9138616513
+        "soiRadius": 366000
       }
     },
     {
@@ -182,15 +166,12 @@
         "eccentricity": 0.02,
         "inclination": 0,
         "longitudeOfAscendingNode": 0,
-        "argumentOfPeriapsis": 0,
         "siderealPeriod": 31536000,
         "periapsisRadius": 36775135000,
         "apoapsisRadius": 38276161000
       },
       "surface": {
-        "canAerobrake": true,
-        "dvToOrbit": 4900,
-        "dvToLand": 4900
+        "canAerobrake": true
       },
       "nodes": {
         "flyby": 4900,
@@ -201,8 +182,7 @@
         "radius": 1600000,
         "mu": 25105000000000.0,
         "atmosphereHeight": 85000,
-        "soiRadius": 231588000,
-        "hillSphereRadius": 374924834.41987664
+        "soiRadius": 231588000
       }
     },
     {
@@ -216,15 +196,12 @@
         "eccentricity": 0.005,
         "inclination": 0.5,
         "longitudeOfAscendingNode": 45,
-        "argumentOfPeriapsis": 165,
         "siderealPeriod": 2175724.8,
         "periapsisRadius": 90505000,
         "apoapsisRadius": 91415000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 880,
-        "dvToLand": 880
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 1545,
@@ -235,8 +212,7 @@
         "radius": 400000,
         "mu": 227514000000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 13860000,
-        "hillSphereRadius": 13148998.22854366
+        "soiRadius": 13860000
       }
     },
     {
@@ -250,15 +226,12 @@
         "eccentricity": 0.03,
         "inclination": 6,
         "longitudeOfAscendingNode": 75,
-        "argumentOfPeriapsis": 315,
         "siderealPeriod": 4468608.0,
         "periapsisRadius": 142561000,
         "apoapsisRadius": 151379000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 305,
-        "dvToLand": 305
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 1570,
@@ -269,8 +242,7 @@
         "radius": 160000,
         "mu": 12252500000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 7028000,
-        "hillSphereRadius": 8023116.610621772
+        "soiRadius": 7028000
       }
     },
     {
@@ -286,14 +258,12 @@
         "eccentricity": 0.051,
         "inclination": 0.06,
         "longitudeOfAscendingNode": 135.5,
-        "argumentOfPeriapsis": 345,
         "siderealPeriod": 59331744.0,
         "periapsisRadius": 54272456000,
         "apoapsisRadius": 60105744000
       },
       "surface": {
         "canAerobrake": true,
-        "dvToOrbit": 1975,
         "dvToLand": 200
       },
       "nodes": {
@@ -305,8 +275,7 @@
         "radius": 800000,
         "mu": 2133930000000.0,
         "atmosphereHeight": 70000,
-        "soiRadius": 131664000,
-        "hillSphereRadius": 251228699.95034125
+        "soiRadius": 131664000
       }
     },
     {
@@ -320,15 +289,12 @@
         "eccentricity": 0.03,
         "inclination": 0.2,
         "longitudeOfAscendingNode": 90,
-        "argumentOfPeriapsis": 345,
         "siderealPeriod": 1910995.2,
         "periapsisRadius": 35580000,
         "apoapsisRadius": 37780000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 400,
-        "dvToLand": 400
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -339,8 +305,7 @@
         "radius": 210000,
         "mu": 25948400000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 6286000,
-        "hillSphereRadius": 5848336.869625357
+        "soiRadius": 6286000
       }
     },
     {
@@ -356,15 +321,12 @@
         "eccentricity": 0.07,
         "inclination": 3,
         "longitudeOfAscendingNode": 30,
-        "argumentOfPeriapsis": 310,
         "siderealPeriod": 125274204.72,
         "periapsisRadius": 87494400000,
         "apoapsisRadius": 100665600000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 370,
-        "dvToLand": 370
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 2330,
@@ -375,8 +337,7 @@
         "radius": 260000,
         "mu": 53034400000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 49409000,
-        "hillSphereRadius": 120609349.32302849
+        "soiRadius": 49409000
       }
     },
     {
@@ -390,15 +351,12 @@
         "eccentricity": 0.01,
         "inclination": 10,
         "longitudeOfAscendingNode": 120,
-        "argumentOfPeriapsis": 90,
         "siderealPeriod": 568468.8,
         "periapsisRadius": 4722000,
         "apoapsisRadius": 4818000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 55,
-        "dvToLand": 55
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -409,8 +367,7 @@
         "radius": 20000,
         "mu": 31381300.0,
         "atmosphereHeight": 0,
-        "soiRadius": 244000,
-        "hillSphereRadius": 277661.533397772
+        "soiRadius": 244000
       }
     },
     {
@@ -424,15 +381,12 @@
         "eccentricity": 0.145,
         "inclination": 5,
         "longitudeOfAscendingNode": 280,
-        "argumentOfPeriapsis": 90,
         "siderealPeriod": 164219438.88,
         "periapsisRadius": 96347385000,
         "apoapsisRadius": 129026615000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 610,
-        "dvToLand": 610
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 2533,
@@ -443,8 +397,7 @@
         "radius": 360000,
         "mu": 152513000000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 90298000,
-        "hillSphereRadius": 205433865.3435249
+        "soiRadius": 90298000
       }
     },
     {
@@ -464,15 +417,12 @@
         "eccentricity": 0.05,
         "inclination": 1.304,
         "longitudeOfAscendingNode": 52,
-        "argumentOfPeriapsis": 30,
         "siderealPeriod": 358873027.2,
         "periapsisRadius": 180276750000,
         "apoapsisRadius": 199253250000
       },
       "surface": {
-        "canAerobrake": true,
-        "dvToOrbit": null,
-        "dvToLand": null
+        "canAerobrake": true
       },
       "nodes": {
         "intercept": 3133,
@@ -482,8 +432,7 @@
         "radius": 14000000,
         "mu": 1998990000000000.0,
         "atmosphereHeight": 700000,
-        "soiRadius": 6745648000,
-        "hillSphereRadius": 8156720631.952829
+        "soiRadius": 6745648000
       }
     },
     {
@@ -497,14 +446,12 @@
         "eccentricity": 0.01,
         "inclination": 0.2,
         "longitudeOfAscendingNode": 120,
-        "argumentOfPeriapsis": 120,
         "siderealPeriod": 230601.6,
         "periapsisRadius": 86764000,
         "apoapsisRadius": 88516000
       },
       "surface": {
         "canAerobrake": true,
-        "dvToOrbit": 3325,
         "dvToLand": 150
       },
       "nodes": {
@@ -516,8 +463,7 @@
         "radius": 1100000,
         "mu": 6882310000000.0,
         "atmosphereHeight": 75000,
-        "soiRadius": 9067000,
-        "hillSphereRadius": 9175642.557263643
+        "soiRadius": 9067000
       }
     },
     {
@@ -531,15 +477,12 @@
         "eccentricity": 0.03,
         "inclination": 0.3,
         "longitudeOfAscendingNode": 90,
-        "argumentOfPeriapsis": 270,
         "siderealPeriod": 570058.56,
         "periapsisRadius": 155423000,
         "apoapsisRadius": 165037000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 1150,
-        "dvToLand": 1150
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -550,8 +493,7 @@
         "radius": 550000,
         "mu": 533972000000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 5962000,
-        "hillSphereRadius": 7154940.646005151
+        "soiRadius": 5962000
       }
     },
     {
@@ -565,14 +507,12 @@
         "eccentricity": 0.01,
         "inclination": 0.1,
         "longitudeOfAscendingNode": 150,
-        "argumentOfPeriapsis": 285,
         "siderealPeriod": 1409270.4,
         "periapsisRadius": 290021000,
         "apoapsisRadius": 295880000
       },
       "surface": {
         "canAerobrake": true,
-        "dvToOrbit": 2175,
         "dvToLand": 150
       },
       "nodes": {
@@ -584,8 +524,7 @@
         "radius": 900000,
         "mu": 2541880000000.0,
         "atmosphereHeight": 85000,
-        "soiRadius": 20348000,
-        "hillSphereRadius": 22005668.091167536
+        "soiRadius": 20348000
       }
     },
     {
@@ -599,15 +538,12 @@
         "eccentricity": 0.235,
         "inclination": 15,
         "longitudeOfAscendingNode": 10,
-        "argumentOfPeriapsis": 25,
         "siderealPeriod": 3956169.6,
         "periapsisRadius": 445972000,
         "apoapsisRadius": 719968000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 355,
-        "dvToLand": 355
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -618,8 +554,7 @@
         "radius": 190000,
         "mu": 17701000000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 5533000,
-        "hillSphereRadius": 8362475.303652246
+        "soiRadius": 5533000
       }
     },
     {
@@ -633,15 +568,12 @@
         "eccentricity": 0.17085,
         "inclination": 4.25,
         "longitudeOfAscendingNode": 2,
-        "argumentOfPeriapsis": 15,
         "siderealPeriod": 5651683.199999999,
         "periapsisRadius": 613123000,
         "apoapsisRadius": 865797000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 200,
-        "dvToLand": 200
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -652,8 +584,7 @@
         "radius": 130000,
         "mu": 4971970000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 4238000,
-        "hillSphereRadius": 6946726.931140318
+        "soiRadius": 4238000
       }
     },
     {
@@ -673,15 +604,12 @@
         "eccentricity": 0.03,
         "inclination": 1.7,
         "longitudeOfAscendingNode": 80,
-        "argumentOfPeriapsis": 75,
         "siderealPeriod": 936029973.6000001,
         "periapsisRadius": 348783870000,
         "apoapsisRadius": 370358130000
       },
       "surface": {
-        "canAerobrake": true,
-        "dvToOrbit": null,
-        "dvToLand": null
+        "canAerobrake": true
       },
       "nodes": {
         "intercept": 3658,
@@ -691,8 +619,7 @@
         "radius": 8000000,
         "mu": 589968000000000.0,
         "atmosphereHeight": 540000,
-        "soiRadius": 7845120000,
-        "hillSphereRadius": 10290190367.258183
+        "soiRadius": 7845120000
       }
     },
     {
@@ -706,15 +633,12 @@
         "eccentricity": 0.02,
         "inclination": 1.5,
         "longitudeOfAscendingNode": 60,
-        "argumentOfPeriapsis": 180,
         "siderealPeriod": 232079.04,
         "periapsisRadius": 57428000,
         "apoapsisRadius": 59772000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 245,
-        "dvToLand": 245
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -725,8 +649,7 @@
         "radius": 150000,
         "mu": 6619490000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 614000,
-        "hillSphereRadius": 909611.3886579608
+        "soiRadius": 614000
       }
     },
     {
@@ -740,15 +663,12 @@
         "eccentricity": 0.01,
         "inclination": 0.25,
         "longitudeOfAscendingNode": 120,
-        "argumentOfPeriapsis": 30,
         "siderealPeriod": 573747.84,
         "periapsisRadius": 106069000,
         "apoapsisRadius": 108211000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 500,
-        "dvToLand": 500
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -759,8 +679,7 @@
         "radius": 300000,
         "mu": 61781900000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 2741000,
-        "hillSphereRadius": 3501510.974341584
+        "soiRadius": 2741000
       }
     },
     {
@@ -774,14 +693,12 @@
         "eccentricity": 0.025,
         "inclination": 0.75,
         "longitudeOfAscendingNode": 150,
-        "argumentOfPeriapsis": 60,
         "siderealPeriod": 1328313.6,
         "periapsisRadius": 182813000,
         "apoapsisRadius": 192188000
       },
       "surface": {
         "canAerobrake": true,
-        "dvToOrbit": 1875,
         "dvToLand": 100
       },
       "nodes": {
@@ -793,8 +710,7 @@
         "radius": 670000,
         "mu": 660331000000.0,
         "atmosphereHeight": 180000,
-        "soiRadius": 12376000,
-        "hillSphereRadius": 13498077.910375185
+        "soiRadius": 12376000
       }
     },
     {
@@ -808,14 +724,12 @@
         "eccentricity": 0.03,
         "inclination": 0.5,
         "longitudeOfAscendingNode": 90,
-        "argumentOfPeriapsis": 105,
         "siderealPeriod": 2815344.0,
         "periapsisRadius": 300099000,
         "apoapsisRadius": 318661000
       },
       "surface": {
         "canAerobrake": true,
-        "dvToOrbit": 1500,
         "dvToLand": 100
       },
       "nodes": {
@@ -827,8 +741,7 @@
         "radius": 750000,
         "mu": 992923000000.0,
         "atmosphereHeight": 90000,
-        "soiRadius": 24040000,
-        "hillSphereRadius": 25516093.70967595
+        "soiRadius": 24040000
       }
     },
     {
@@ -842,15 +755,12 @@
         "eccentricity": 0.04,
         "inclination": 1,
         "longitudeOfAscendingNode": 180,
-        "argumentOfPeriapsis": 285,
         "siderealPeriod": 7146057.600000001,
         "periapsisRadius": 552653000,
         "apoapsisRadius": 598707000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 840,
-        "dvToLand": 840
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -861,8 +771,7 @@
         "radius": 500000,
         "mu": 269683000000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 26558000,
-        "hillSphereRadius": 30747921.35895693
+        "soiRadius": 26558000
       }
     },
     {
@@ -879,14 +788,12 @@
         "eccentricity": 0.26,
         "inclination": 6.15,
         "longitudeOfAscendingNode": 50,
-        "argumentOfPeriapsis": 260,
         "siderealPeriod": 1404029181.6000001,
         "periapsisRadius": 348666762000,
         "apoapsisRadius": 593675838000
       },
       "surface": {
         "canAerobrake": true,
-        "dvToOrbit": 900,
         "dvToLand": 350
       },
       "nodes": {
@@ -898,8 +805,7 @@
         "radius": 600000,
         "mu": 529559000000.0,
         "atmosphereHeight": 80000,
-        "soiRadius": 621195000,
-        "hillSphereRadius": 1300707205.005638
+        "soiRadius": 621195000
       }
     },
     {
@@ -913,15 +819,12 @@
         "eccentricity": 0.05,
         "inclination": 10,
         "longitudeOfAscendingNode": 100,
-        "argumentOfPeriapsis": 270,
         "siderealPeriod": 3096662.4,
         "periapsisRadius": 30210000,
         "apoapsisRadius": 33390000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 325,
-        "dvToLand": 325
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -932,8 +835,7 @@
         "radius": 200000,
         "mu": 15690600000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 7782000,
-        "hillSphereRadius": 6822786.282912151
+        "soiRadius": 7782000
       }
     },
     {
@@ -947,15 +849,12 @@
         "eccentricity": 0.025,
         "inclination": 9.5,
         "longitudeOfAscendingNode": 105,
-        "argumentOfPeriapsis": 210,
         "siderealPeriod": 8980416.0,
         "periapsisRadius": 63053000,
         "apoapsisRadius": 66287000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 30,
-        "dvToLand": 30
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -966,8 +865,7 @@
         "radius": 10000,
         "mu": 3432330.0,
         "atmosphereHeight": 0,
-        "soiRadius": 544000,
-        "hillSphereRadius": 836027.7062123275
+        "soiRadius": 544000
       }
     },
     {
@@ -981,15 +879,12 @@
         "eccentricity": 0.1,
         "inclination": 4,
         "longitudeOfAscendingNode": 165,
-        "argumentOfPeriapsis": 175,
         "siderealPeriod": 1661444524.8,
         "periapsisRadius": 474416100000,
         "apoapsisRadius": 579841900000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 550,
-        "dvToLand": 550
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 3875,
@@ -1000,8 +895,7 @@
         "radius": 450000,
         "mu": 198585000000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 469439000,
-        "hillSphereRadius": 1049369223.0766786
+        "soiRadius": 469439000
       }
     },
     {
@@ -1019,15 +913,12 @@
         "eccentricity": 0.35,
         "inclination": 20,
         "longitudeOfAscendingNode": 90,
-        "argumentOfPeriapsis": 150,
         "siderealPeriod": 9724474440.0,
         "periapsisRadius": 1112800000000,
         "apoapsisRadius": 2311200000000
       },
       "surface": {
-        "canAerobrake": true,
-        "dvToOrbit": 5933,
-        "dvToLand": 5933
+        "canAerobrake": true
       },
       "nodes": {
         "intercept": 4208,
@@ -1038,8 +929,7 @@
         "radius": 3600000,
         "mu": 127094000000000.0,
         "atmosphereHeight": 200000,
-        "soiRadius": 20213317000,
-        "hillSphereRadius": 29370276995.85095
+        "soiRadius": 20213317000
       }
     },
     {
@@ -1053,15 +943,12 @@
         "eccentricity": 0.01,
         "inclination": 0.5,
         "longitudeOfAscendingNode": 180,
-        "argumentOfPeriapsis": 345,
         "siderealPeriod": 465618.24,
         "periapsisRadius": 55321000,
         "apoapsisRadius": 56439000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 475,
-        "dvToLand": 475
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -1072,8 +959,7 @@
         "radius": 320000,
         "mu": 60252100000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 2616000,
-        "hillSphereRadius": 3021099.477810689
+        "soiRadius": 2616000
       }
     },
     {
@@ -1087,15 +973,12 @@
         "eccentricity": 0.015,
         "inclination": 0.2,
         "longitudeOfAscendingNode": 270,
-        "argumentOfPeriapsis": 0,
         "siderealPeriod": 1576195.2,
         "periapsisRadius": 124090000,
         "apoapsisRadius": 127870000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 1170,
-        "dvToLand": 1170
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -1106,8 +989,7 @@
         "radius": 700000,
         "mu": 720789000000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 15914000,
-        "hillSphereRadius": 15577181.722843688
+        "soiRadius": 15914000
       }
     },
     {
@@ -1121,15 +1003,12 @@
         "eccentricity": 0.4,
         "inclination": 17,
         "longitudeOfAscendingNode": 95,
-        "argumentOfPeriapsis": 100,
         "siderealPeriod": 22981536.0,
         "periapsisRadius": 451140000,
         "apoapsisRadius": 1052660000
       },
       "surface": {
-        "canAerobrake": false,
-        "dvToOrbit": 160,
-        "dvToLand": 160
+        "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
@@ -1140,16 +1019,8 @@
         "radius": 110000,
         "mu": 2373210000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 9653000,
-        "hillSphereRadius": 13831099.54450817
+        "soiRadius": 9653000
       }
     }
-  ],
-  "transferConfig": {
-    "originBody": "kerbin",
-    "lkoAltitude": 10000,
-    "lkoVelocity": 3949,
-    "ejectionDV": 1575,
-    "kerbinMoonBaseCost": 4900
-  }
+  ]
 }

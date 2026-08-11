@@ -10,12 +10,12 @@
         if (!body) return _emptyBranchResult(segment, 'surface_orbit');
 
         if (segment.from.nodeKey === 'land' && segment.to.nodeKey === 'orbit') {
-            const dvToOrbit = _configuredDv(body.surface?.dvToOrbit, body.nodes?.orbit);
+            const dvToOrbit = _configuredDv(body.surface?.dvToOrbit, body.nodes?.land);
             return {
                 dv: dvToOrbit,
                 branchType: 'surface_to_orbit',
                 debug: {
-                    source: body.surface?.dvToOrbit == null ? 'body.nodes.orbit' : 'body.surface.dvToOrbit',
+                    source: body.surface?.dvToOrbit == null ? 'body.nodes.land' : 'body.surface.dvToOrbit',
                     altitudeMeters: api.getLowOrbitAltitude(body, meta),
                     radiusMeters: api.lowOrbitRadius(body, meta),
                 },
