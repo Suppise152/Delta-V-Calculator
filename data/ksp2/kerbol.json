@@ -408,13 +408,13 @@
       },
       "surface": {
         "canAerobrake": false,
-        "dvToOrbit": 10,
-        "dvToLand": 10
+        "dvToOrbit": 20,
+        "dvToLand": 20
       },
       "nodes": {
         "intercept": 0,
         "orbit": 0,
-        "land": 10
+        "land": 20
       },
       "physics": {
         "radius": 4595,
