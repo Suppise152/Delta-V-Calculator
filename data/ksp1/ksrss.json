@@ -24,19 +24,19 @@
       "label": "Sun",
       "parent": null,
       "moons": [
-        "ceres",
-        "earth",
-        "jupiter",
-        "mars",
         "mercury",
-        "neptune",
-        "pluto",
+        "venus",
+        "earth",
+        "mars",
+        "vesta",
+        "ceres",
+        "jupiter",
         "saturn",
         "uranus",
-        "venus",
-        "vesta"
+        "neptune",
+        "pluto"
       ],
-      "mapColour": "#FDB813",
+      "mapColour": "#FFD700",
       "orbit": {
         "sma": 0,
         "eccentricity": 0,
@@ -64,7 +64,7 @@
       "label": "Mercury",
       "parent": "sun",
       "moons": [],
-      "mapColour": "#9C8B7A",
+      "mapColour": "#A0906A",
       "orbit": {
         "sma": 14477243411.472,
         "eccentricity": 0.2033547204116125,
@@ -94,7 +94,7 @@
       "label": "Venus",
       "parent": "sun",
       "moons": [],
-      "mapColour": "#D9B98B",
+      "mapColour": "#C8B46E",
       "orbit": {
         "sma": 27052387197.6167,
         "eccentricity": 0.009358687502771969,
@@ -126,7 +126,7 @@
       "moons": [
         "moon"
       ],
-      "mapColour": "#2A6FB0",
+      "mapColour": "#4A90D9",
       "orbit": {
         "sma": 37399565287.6105,
         "eccentricity": 0.01781154480208012,
@@ -156,7 +156,7 @@
       "label": "Moon",
       "parent": "earth",
       "moons": [],
-      "mapColour": "#A8A8A8",
+      "mapColour": "#C8C8C8",
       "orbit": {
         "sma": 96077109.4426765,
         "eccentricity": 0.05328149353682574,
@@ -186,10 +186,10 @@
       "label": "Mars",
       "parent": "sun",
       "moons": [
-        "deimos",
-        "phobos"
+        "phobos",
+        "deimos"
       ],
-      "mapColour": "#B1440E",
+      "mapColour": "#C1440E",
       "orbit": {
         "sma": 56987424990.494,
         "eccentricity": 0.09314888581484417,
@@ -219,7 +219,7 @@
       "label": "Phobos",
       "parent": "mars",
       "moons": [],
-      "mapColour": "#6E6259",
+      "mapColour": "#8B7355",
       "orbit": {
         "sma": 2344623.05227208,
         "eccentricity": 0.01539938155583979,
@@ -249,7 +249,7 @@
       "label": "Deimos",
       "parent": "mars",
       "moons": [],
-      "mapColour": "#8A7A68",
+      "mapColour": "#9B8B6B",
       "orbit": {
         "sma": 5864528.00439845,
         "eccentricity": 0.00032946807986617,
@@ -279,7 +279,7 @@
       "label": "Ceres",
       "parent": "sun",
       "moons": [],
-      "mapColour": "#8B8378",
+      "mapColour": "#9A9060",
       "orbit": {
         "sma": 103434690578.293,
         "eccentricity": 0.07845358917584373,
@@ -309,7 +309,7 @@
       "label": "Vesta",
       "parent": "sun",
       "moons": [],
-      "mapColour": "#A69C8E",
+      "mapColour": "#9C8F78",
       "orbit": {
         "sma": 88336555950.7895,
         "eccentricity": 0.09006440364822228,
@@ -339,12 +339,12 @@
       "label": "Jupiter",
       "parent": "sun",
       "moons": [
-        "callisto",
+        "io",
         "europa",
         "ganymede",
-        "io"
+        "callisto"
       ],
-      "mapColour": "#D8A56C",
+      "mapColour": "#C8A06A",
       "orbit": {
         "sma": 194547234664.939,
         "eccentricity": 0.0488142501712162,
@@ -374,7 +374,7 @@
       "label": "Io",
       "parent": "jupiter",
       "moons": [],
-      "mapColour": "#DFCB4C",
+      "mapColour": "#C8B840",
       "orbit": {
         "sma": 105504573.630924,
         "eccentricity": 0.003545858426216978,
@@ -404,7 +404,7 @@
       "label": "Europa",
       "parent": "jupiter",
       "moons": [],
-      "mapColour": "#D9C9A3",
+      "mapColour": "#C8B8A0",
       "orbit": {
         "sma": 167813409.385429,
         "eccentricity": 0.009511727119926178,
@@ -434,7 +434,7 @@
       "label": "Ganymede",
       "parent": "jupiter",
       "moons": [],
-      "mapColour": "#8C8272",
+      "mapColour": "#8A9878",
       "orbit": {
         "sma": 267705867.22363,
         "eccentricity": 0.001190086418361844,
@@ -464,7 +464,7 @@
       "label": "Callisto",
       "parent": "jupiter",
       "moons": [],
-      "mapColour": "#5C5248",
+      "mapColour": "#7A7060",
       "orbit": {
         "sma": 470953091.64338,
         "eccentricity": 0.007973319796896609,
@@ -494,15 +494,12 @@
       "label": "Saturn",
       "parent": "sun",
       "moons": [
-        "dione",
-        "enceladus",
-        "iapetus",
-        "mimas",
+        "titan",
         "rhea",
-        "tethys",
-        "titan"
+        "dione",
+        "enceladus"
       ],
-      "mapColour": "#E3C16F",
+      "mapColour": "#C8AA6E",
       "orbit": {
         "sma": 356209689653.315,
         "eccentricity": 0.05424221197652705,
@@ -562,7 +559,7 @@
       "label": "Enceladus",
       "parent": "saturn",
       "moons": [],
-      "mapColour": "#F2F2F0",
+      "mapColour": "#E8E8F0",
       "orbit": {
         "sma": 59603424.870968,
         "eccentricity": 0.006227897999957464,
@@ -622,7 +619,7 @@
       "label": "Dione",
       "parent": "saturn",
       "moons": [],
-      "mapColour": "#B8B3AB",
+      "mapColour": "#C0C8D0",
       "orbit": {
         "sma": 94412662.8754272,
         "eccentricity": 0.001679230905502774,
@@ -652,7 +649,7 @@
       "label": "Rhea",
       "parent": "saturn",
       "moons": [],
-      "mapColour": "#AEA99F",
+      "mapColour": "#D0D0C8",
       "orbit": {
         "sma": 131803161.4268,
         "eccentricity": 0.001168269515756326,
@@ -682,7 +679,7 @@
       "label": "Titan",
       "parent": "saturn",
       "moons": [],
-      "mapColour": "#E0A85C",
+      "mapColour": "#C8900A",
       "orbit": {
         "sma": 305491559.627855,
         "eccentricity": 0.02891936561555365,
@@ -742,13 +739,13 @@
       "label": "Uranus",
       "parent": "sun",
       "moons": [
-        "ariel",
         "miranda",
-        "oberon",
+        "ariel",
+        "umbriel",
         "titania",
-        "umbriel"
+        "oberon"
       ],
-      "mapColour": "#B4E1E5",
+      "mapColour": "#7ABCCC",
       "orbit": {
         "sma": 716708213290.993,
         "eccentricity": 0.04734074764887236,
@@ -778,7 +775,7 @@
       "label": "Miranda",
       "parent": "uranus",
       "moons": [],
-      "mapColour": "#9C9890",
+      "mapColour": "#AFA8A0",
       "orbit": {
         "sma": 32470011.9085438,
         "eccentricity": 0.00118741261963413,
@@ -808,7 +805,7 @@
       "label": "Ariel",
       "parent": "uranus",
       "moons": [],
-      "mapColour": "#B8B4AC",
+      "mapColour": "#B8B8B0",
       "orbit": {
         "sma": 47736091.1194055,
         "eccentricity": 0.00190951361476287,
@@ -838,7 +835,7 @@
       "label": "Umbriel",
       "parent": "uranus",
       "moons": [],
-      "mapColour": "#5E5A54",
+      "mapColour": "#807C78",
       "orbit": {
         "sma": 66498090.031914,
         "eccentricity": 0.0038334454580725,
@@ -868,7 +865,7 @@
       "label": "Titania",
       "parent": "uranus",
       "moons": [],
-      "mapColour": "#9E9284",
+      "mapColour": "#A8B8C0",
       "orbit": {
         "sma": 109073170.741926,
         "eccentricity": 0.002486916,
@@ -898,7 +895,7 @@
       "label": "Oberon",
       "parent": "uranus",
       "moons": [],
-      "mapColour": "#8F7F6E",
+      "mapColour": "#B0A898",
       "orbit": {
         "sma": 145858832.085151,
         "eccentricity": 0.00110558297330948,
@@ -930,7 +927,7 @@
       "moons": [
         "triton"
       ],
-      "mapColour": "#3C5A99",
+      "mapColour": "#3A5ABF",
       "orbit": {
         "sma": 1124363958202.93,
         "eccentricity": 0.008564584851545534,
@@ -960,7 +957,7 @@
       "label": "Triton",
       "parent": "neptune",
       "moons": [],
-      "mapColour": "#D8C9C0",
+      "mapColour": "#C0D0D8",
       "orbit": {
         "sma": 88691810.885166,
         "eccentricity": 0.0001688014359763687,
@@ -992,7 +989,7 @@
       "moons": [
         "charon"
       ],
-      "mapColour": "#C9A98A",
+      "mapColour": "#D4C8B8",
       "orbit": {
         "sma": 1461417656019.55,
         "eccentricity": 0.2462457947997467,
@@ -1022,7 +1019,7 @@
       "label": "Charon",
       "parent": "pluto",
       "moons": [],
-      "mapColour": "#9C948E",
+      "mapColour": "#B8B0A8",
       "orbit": {
         "sma": 4899048.45885098,
         "eccentricity": 5.082225659448947e-05,

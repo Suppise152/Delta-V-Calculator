@@ -24,16 +24,16 @@
       "label": "Sun",
       "parent": null,
       "moons": [
-        "dres",
+        "moho",
+        "eve",
+        "kerbin",
         "duna",
         "edna",
-        "eeloo",
-        "eve",
-        "hamek",
+        "dres",
         "jool",
-        "kerbin",
         "lindor",
-        "moho",
+        "eeloo",
+        "hamek",
         "nara"
       ],
       "mapColour": "#FFD700",
@@ -157,8 +157,8 @@
       "label": "Kerbin",
       "parent": "sun",
       "moons": [
-        "minmus",
-        "mun"
+        "mun",
+        "minmus"
       ],
       "mapColour": "#4A90D9",
       "orbit": {
@@ -405,11 +405,11 @@
       "label": "Jool",
       "parent": "sun",
       "moons": [
-        "bop",
         "laythe",
-        "pol",
+        "vall",
         "tylo",
-        "vall"
+        "bop",
+        "pol"
       ],
       "mapColour": "#5B8C3E",
       "orbit": {
@@ -593,9 +593,9 @@
       "label": "Lindor",
       "parent": "sun",
       "moons": [
+        "krel",
         "aden",
         "huygen",
-        "krel",
         "riga",
         "talos"
       ],
