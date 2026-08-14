@@ -349,7 +349,7 @@ function _createPlanetInfoContent(body) {
 
     [
         ['Atmosphere', _formatAtmosphere(body)],
-        ['DV to orbit', _formatDv(body.surface?.dvToOrbit)],
+        ['DV to orbit', _formatDv(body.surface?.dvToOrbit ?? body.nodes?.land)],
         ['Satellites', _formatSatellites(body)],
         ['Host body', _formatHostBody(body)],
         ['Radius', _formatDistance(body.physics?.radius)],

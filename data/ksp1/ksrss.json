@@ -53,8 +53,8 @@
         "land": 67000
       },
       "physics": {
-        "radius": 87200000.0,
-        "mu": 1.18222e+18,
+        "radius": 174085500.0,
+        "mu": 8.29452750262119e+18,
         "atmosphereHeight": 0,
         "soiRadius": null
       }
@@ -66,13 +66,13 @@
       "moons": [],
       "mapColour": "#9C8B7A",
       "orbit": {
-        "sma": 5453849467.49746,
-        "eccentricity": 0.2056187266319207,
-        "inclination": 7.01,
-        "longitudeOfAscendingNode": 10.86541167564728,
-        "siderealPeriod": 2327477.2110855407,
-        "periapsisRadius": 4332435884.748454,
-        "apoapsisRadius": 6575263050.246467
+        "sma": 14477243411.472,
+        "eccentricity": 0.2033547204116125,
+        "inclination": 7.020894544262584,
+        "longitudeOfAscendingNode": 48.6509390838666,
+        "siderealPeriod": 3800256.0339231966,
+        "periapsisRadius": 11533227625.201252,
+        "apoapsisRadius": 17421259197.74275
       },
       "surface": {
         "canAerobrake": false
@@ -83,10 +83,10 @@
         "land": 1530
       },
       "physics": {
-        "radius": 229770.0,
-        "mu": 196739208876.67828,
+        "radius": 609925.0,
+        "mu": 1376986250000.0,
         "atmosphereHeight": 0,
-        "soiRadius": 10596933.138263065
+        "soiRadius": 28102247.688606102
       }
     },
     {
@@ -96,13 +96,13 @@
       "moons": [],
       "mapColour": "#D9B98B",
       "orbit": {
-        "sma": 10191142285.7852,
-        "eccentricity": 0.006810339650842032,
-        "inclination": 3.39458,
-        "longitudeOfAscendingNode": 7.981603378781639,
-        "siderealPeriod": 5945180.093543874,
-        "periapsisRadius": 10121737145.388945,
-        "apoapsisRadius": 10260547426.181458
+        "sma": 27052387197.6167,
+        "eccentricity": 0.009358687502771969,
+        "inclination": 3.394232940100089,
+        "longitudeOfAscendingNode": 76.90359605163887,
+        "siderealPeriod": 9707165.516225412,
+        "periapsisRadius": 26799212359.630215,
+        "apoapsisRadius": 27305562035.603184
       },
       "surface": {
         "canAerobrake": true
@@ -113,10 +113,10 @@
         "land": 13500
       },
       "physics": {
-        "radius": 569693.0,
-        "mu": 2877205437621.5605,
-        "atmosphereHeight": 68000.0,
-        "soiRadius": 57907110.3067717
+        "radius": 1512250.0,
+        "mu": 20303662000000.0,
+        "atmosphereHeight": 86000.0,
+        "soiRadius": 154070213.43673772
       }
     },
     {
@@ -128,13 +128,13 @@
       ],
       "mapColour": "#2A6FB0",
       "orbit": {
-        "sma": 14089118586.40445,
-        "eccentricity": 0.01609636160505683,
-        "inclination": 0.0,
-        "longitudeOfAscendingNode": 359.9965004168758,
-        "siderealPeriod": 9663989.604110524,
-        "periapsisRadius": 13862335038.941156,
-        "apoapsisRadius": 14315902133.867744
+        "sma": 37399565287.6105,
+        "eccentricity": 0.01781154480208012,
+        "inclination": 0.00332414560350639,
+        "longitudeOfAscendingNode": 311.7891048874449,
+        "siderealPeriod": 15779159.78290632,
+        "periapsisRadius": 36733421254.9119,
+        "apoapsisRadius": 38065709320.30909
       },
       "surface": {
         "canAerobrake": true
@@ -145,10 +145,10 @@
         "land": 4800
       },
       "physics": {
-        "radius": 600000.0,
-        "mu": 3531600000000.0,
-        "atmosphereHeight": 69000.0,
-        "soiRadius": 86894663.73722689
+        "radius": 1592750.0,
+        "mu": 24912527214755.9,
+        "atmosphereHeight": 80000.0,
+        "soiRadius": 231162300.61525476
       }
     },
     {
@@ -158,13 +158,13 @@
       "moons": [],
       "mapColour": "#A8A8A8",
       "orbit": {
-        "sma": 36194051.4005186,
+        "sma": 96077109.4426765,
         "eccentricity": 0.05328149353682574,
         "inclination": 28.36267790798491,
         "longitudeOfAscendingNode": 2.296616161126016,
-        "siderealPeriod": 728031.0675200408,
-        "periapsisRadius": 34265578.284750335,
-        "apoapsisRadius": 38122524.51628687
+        "siderealPeriod": 1185498.1157139577,
+        "periapsisRadius": 90957977.55686963,
+        "apoapsisRadius": 101196241.32848337
       },
       "surface": {
         "canAerobrake": false
@@ -175,10 +175,10 @@
         "land": 865
       },
       "physics": {
-        "radius": 163600.0,
-        "mu": 43570782767.344,
+        "radius": 434275.0,
+        "mu": 306425004135.237,
         "atmosphereHeight": 0,
-        "soiRadius": 6239168.870305248
+        "soiRadius": 16541789.664238596
       }
     },
     {
@@ -191,13 +191,13 @@
       ],
       "mapColour": "#B1440E",
       "orbit": {
-        "sma": 21468233185.3434,
-        "eccentricity": 0.09326110278323557,
-        "inclination": 1.85,
-        "longitudeOfAscendingNode": 3.351911063089117,
-        "siderealPeriod": 18177124.135292094,
-        "periapsisRadius": 19466082083.67062,
-        "apoapsisRadius": 23470384287.01618
+        "sma": 56987424990.494,
+        "eccentricity": 0.09314888581484417,
+        "inclination": 1.849927423305627,
+        "longitudeOfAscendingNode": 49.69802620099254,
+        "siderealPeriod": 29679227.511016835,
+        "periapsisRadius": 51679109847.17248,
+        "apoapsisRadius": 62295740133.81553
       },
       "surface": {
         "canAerobrake": true
@@ -208,10 +208,10 @@
         "land": 1900
       },
       "physics": {
-        "radius": 317932.0,
-        "mu": 375688905137.81805,
-        "atmosphereHeight": 58000.0,
-        "soiRadius": 54031662.54149052
+        "radius": 843950.0,
+        "mu": 2676773351293.69,
+        "atmosphereHeight": 73000.0,
+        "soiRadius": 144313517.71812373
       }
     },
     {
@@ -221,13 +221,13 @@
       "moons": [],
       "mapColour": "#6E6259",
       "orbit": {
-        "sma": 1766471.613703651,
+        "sma": 2344623.05227208,
         "eccentricity": 0.01539938155583979,
         "inclination": 1.093,
         "longitudeOfAscendingNode": 46.48212553464923,
-        "siderealPeriod": 24067.206147997986,
-        "periapsisRadius": 1739269.0433166684,
-        "apoapsisRadius": 1793674.1840906334
+        "siderealPeriod": 13787.439327726419,
+        "periapsisRadius": 2308517.3072855244,
+        "apoapsisRadius": 2380728.7972586355
       },
       "surface": {
         "canAerobrake": false
@@ -238,10 +238,10 @@
         "land": 4
       },
       "physics": {
-        "radius": 7250.0,
-        "mu": 715452.7999999999,
+        "radius": 1812.5,
+        "mu": 44297.1629180903,
         "atmosphereHeight": 0,
-        "soiRadius": 9099.294267123167
+        "soiRadius": 1809.5840325264421
       }
     },
     {
@@ -251,13 +251,13 @@
       "moons": [],
       "mapColour": "#8A7A68",
       "orbit": {
-        "sma": 4418416.95512676,
+        "sma": 5864528.00439845,
         "eccentricity": 0.00032946807986617,
         "inclination": 0.93,
         "longitudeOfAscendingNode": 47.51893570799763,
-        "siderealPeriod": 95206.30902740905,
-        "periapsisRadius": 4416961.227776506,
-        "apoapsisRadius": 4419872.682477013
+        "siderealPeriod": 54541.071417272105,
+        "periapsisRadius": 5862595.82961752,
+        "apoapsisRadius": 5866460.179179381
       },
       "surface": {
         "canAerobrake": false
@@ -268,10 +268,10 @@
         "land": 2
       },
       "physics": {
-        "radius": 5456.0,
-        "mu": 98775.2,
+        "radius": 1364.0,
+        "mu": 6009.73103007519,
         "atmosphereHeight": 0,
-        "soiRadius": 10308.477230691982
+        "soiRadius": 2035.7781022288339
       }
     },
     {
@@ -281,27 +281,27 @@
       "moons": [],
       "mapColour": "#8B8378",
       "orbit": {
-        "sma": 38965790385.4938,
-        "eccentricity": 0.079363494880566,
-        "inclination": 10.62,
-        "longitudeOfAscendingNode": 23.4501727740666,
-        "siderealPeriod": 44448381.55620547,
-        "periapsisRadius": 35873329079.71745,
-        "apoapsisRadius": 42058251691.27014
+        "sma": 103434690578.293,
+        "eccentricity": 0.07845358917584373,
+        "inclination": 10.59802395005837,
+        "longitudeOfAscendingNode": 81.36903071871447,
+        "siderealPeriod": 72574386.29369321,
+        "periapsisRadius": 95319867857.13309,
+        "apoapsisRadius": 111549513299.45291
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 42,
-        "land": 102
+        "orbit": 72,
+        "land": 175
       },
       "physics": {
-        "radius": 44547.0,
-        "mu": 564359184.7278556,
+        "radius": 118250.0,
+        "mu": 3914531250.0,
         "atmosphereHeight": 0,
-        "soiRadius": 7281593.123462064
+        "soiRadius": 19240726.43263664
       }
     },
     {
@@ -311,27 +311,27 @@
       "moons": [],
       "mapColour": "#A69C8E",
       "orbit": {
-        "sma": 33278039536.9333,
-        "eccentricity": 0.0902068412255369,
-        "inclination": 5.58,
-        "longitudeOfAscendingNode": 18.1671232653234,
-        "siderealPeriod": 35080624.60795625,
-        "periapsisRadius": 30276132708.128017,
-        "apoapsisRadius": 36279946365.73859
+        "sma": 88336555950.7895,
+        "eccentricity": 0.09006440364822228,
+        "inclination": 7.134501510020114,
+        "longitudeOfAscendingNode": 104.4187846656265,
+        "siderealPeriod": 57278908.98575199,
+        "periapsisRadius": 80380576718.74382,
+        "apoapsisRadius": 96292535182.83519
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 27,
-        "land": 66
+        "orbit": 59,
+        "land": 142
       },
       "physics": {
-        "radius": 24741.0,
-        "mu": 150070449.30971625,
+        "radius": 43783.33,
+        "mu": 1080515310.58125,
         "atmosphereHeight": 0,
-        "soiRadius": 3660972.660327631
+        "soiRadius": 9819201.504776426
       }
     },
     {
@@ -346,13 +346,13 @@
       ],
       "mapColour": "#D8A56C",
       "orbit": {
-        "sma": 73289596784.6822,
-        "eccentricity": 0.04872660654702194,
-        "inclination": 1.31,
-        "longitudeOfAscendingNode": 3.262077289923354,
-        "siderealPeriod": 114655321.32780994,
-        "periapsisRadius": 69718443438.1651,
-        "apoapsisRadius": 76860750131.19931
+        "sma": 194547234664.939,
+        "eccentricity": 0.0488142501712162,
+        "inclination": 1.305819291275594,
+        "longitudeOfAscendingNode": 100.3783289028023,
+        "siderealPeriod": 187206806.84739885,
+        "periapsisRadius": 185050557281.88635,
+        "apoapsisRadius": 204043912047.9916
       },
       "surface": {
         "canAerobrake": true
@@ -363,10 +363,10 @@
         "land": 22500
       },
       "physics": {
-        "radius": 6533528.0,
-        "mu": 987097358283695.0,
+        "radius": 17343250.0,
+        "mu": 7917908432612500.0,
         "atmosphereHeight": 732000.0,
-        "soiRadius": 4302362577.3904705
+        "soiRadius": 12049044031.071775
       }
     },
     {
@@ -376,13 +376,13 @@
       "moons": [],
       "mapColour": "#DFCB4C",
       "orbit": {
-        "sma": 39745554.2026,
+        "sma": 105504573.630924,
         "eccentricity": 0.003545858426216978,
         "inclination": 0.05,
         "longitudeOfAscendingNode": 358.046643167846,
-        "siderealPeriod": 50110.95842183811,
-        "periapsisRadius": 39604622.09432605,
-        "apoapsisRadius": 39886486.310873955
+        "siderealPeriod": 76521.16281898075,
+        "periapsisRadius": 105130469.34951036,
+        "apoapsisRadius": 105878677.91233763
       },
       "surface": {
         "canAerobrake": false
@@ -393,10 +393,10 @@
         "land": 925
       },
       "physics": {
-        "radius": 170587.68,
-        "mu": 52223634224.196106,
+        "radius": 452825.0,
+        "mu": 372494752088.15,
         "atmosphereHeight": 0,
-        "soiRadius": 773911.6736432253
+        "soiRadius": 1960086.1509171582
       }
     },
     {
@@ -406,13 +406,13 @@
       "moons": [],
       "mapColour": "#D9C9A3",
       "orbit": {
-        "sma": 63218462.7559,
+        "sma": 167813409.385429,
         "eccentricity": 0.009511727119926178,
         "inclination": 0.47,
         "longitudeOfAscendingNode": 358.9360081847504,
-        "siderealPeriod": 100523.07618020182,
-        "periapsisRadius": 62617145.989224665,
-        "apoapsisRadius": 63819779.52257533
+        "siderealPeriod": 153502.20633730805,
+        "periapsisRadius": 166217214.02829033,
+        "apoapsisRadius": 169409604.74256763
       },
       "surface": {
         "canAerobrake": false
@@ -423,10 +423,10 @@
         "land": 740
       },
       "physics": {
-        "radius": 146054.0,
-        "mu": 28031890307.95445,
+        "radius": 387700.0,
+        "mu": 200171173432.681,
         "atmosphereHeight": 0,
-        "soiRadius": 959756.1182323197
+        "soiRadius": 2431885.2849218296
       }
     },
     {
@@ -436,13 +436,13 @@
       "moons": [],
       "mapColour": "#8C8272",
       "orbit": {
-        "sma": 100849827.54704502,
+        "sma": 267705867.22363,
         "eccentricity": 0.001190086418361844,
         "inclination": 0.2,
         "longitudeOfAscendingNode": 358.0125219248113,
-        "siderealPeriod": 202540.84307880249,
-        "periapsisRadius": 100729807.53698716,
-        "apoapsisRadius": 100969847.55710289
+        "siderealPeriod": 309286.85698307055,
+        "periapsisRadius": 267387274.1069314,
+        "apoapsisRadius": 268024460.34032863
       },
       "surface": {
         "canAerobrake": false
@@ -453,10 +453,10 @@
         "land": 985
       },
       "physics": {
-        "radius": 247136.937276323,
-        "mu": 87447792713.24489,
+        "radius": 656025.0,
+        "mu": 617989653333.384,
         "atmosphereHeight": 0,
-        "soiRadius": 2413407.7598589496
+        "soiRadius": 6089844.188919862
       }
     },
     {
@@ -466,13 +466,13 @@
       "moons": [],
       "mapColour": "#5C5248",
       "orbit": {
-        "sma": 177416873.8532,
+        "sma": 470953091.64338,
         "eccentricity": 0.007973319796896609,
         "inclination": 0.192,
         "longitudeOfAscendingNode": 358.5022563372704,
-        "siderealPeriod": 472598.41131902026,
-        "periapsisRadius": 176002272.38060275,
-        "apoapsisRadius": 178831475.3257972
+        "siderealPeriod": 721674.0832623647,
+        "periapsisRadius": 467198032.0343701,
+        "apoapsisRadius": 474708151.2523898
       },
       "surface": {
         "canAerobrake": false
@@ -483,10 +483,10 @@
         "land": 880
       },
       "physics": {
-        "radius": 226907.14,
-        "mu": 63619103437.71153,
+        "radius": 602325.0,
+        "mu": 448705585087.329,
         "atmosphereHeight": 0,
-        "soiRadius": 3738401.5190497967
+        "soiRadius": 9425796.350263203
       }
     },
     {
@@ -504,13 +504,13 @@
       ],
       "mapColour": "#E3C16F",
       "orbit": {
-        "sma": 134190879507.7481,
-        "eccentricity": 0.05347166506749872,
-        "inclination": 2.485,
-        "longitudeOfAscendingNode": 5.970845343832233,
-        "siderealPeriod": 284063357.7398072,
-        "periapsisRadius": 127015469743.59671,
-        "apoapsisRadius": 141366289271.89948
+        "sma": 356209689653.315,
+        "eccentricity": 0.05424221197652705,
+        "inclination": 2.487376708567551,
+        "longitudeOfAscendingNode": 113.8411241598629,
+        "siderealPeriod": 463812699.9162706,
+        "periapsisRadius": 336888088159.047,
+        "apoapsisRadius": 375531291147.58307
       },
       "surface": {
         "canAerobrake": true
@@ -521,10 +521,10 @@
         "land": 15000
       },
       "physics": {
-        "radius": 5388585.4,
-        "mu": 303263276972272.4,
+        "radius": 14304000.0,
+        "mu": 2370700468665760.0,
         "atmosphereHeight": 1118000.0,
-        "soiRadius": 4913281055.314006
+        "soiRadius": 13618828240.673384
       }
     },
     {
@@ -534,27 +534,27 @@
       "moons": [],
       "mapColour": "#B0ABA3",
       "orbit": {
-        "sma": 17518297.7889,
+        "sma": 46502321.4805122,
         "eccentricity": 0.01776275223147744,
         "inclination": 1.574,
         "longitudeOfAscendingNode": 139.7604722490289,
-        "siderealPeriod": 26455.002894643178,
-        "periapsisRadius": 17207124.60575853,
-        "apoapsisRadius": 17829470.97204147
+        "siderealPeriod": 40921.68206691409,
+        "periapsisRadius": 45676312.265865356,
+        "apoapsisRadius": 47328330.69515905
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 12,
-        "land": 28
+        "orbit": 21,
+        "land": 51
       },
       "physics": {
-        "radius": 18666.4155,
-        "mu": 22210374.913105194,
+        "radius": 49550.0,
+        "mu": 156470250.0,
         "atmosphereHeight": 0,
-        "soiRadius": 24512.427994551716
+        "soiRadius": 62416.10600571147
       }
     },
     {
@@ -564,27 +564,27 @@
       "moons": [],
       "mapColour": "#F2F2F0",
       "orbit": {
-        "sma": 22453729.4673,
+        "sma": 59603424.870968,
         "eccentricity": 0.006227897999957464,
         "inclination": 0.009,
         "longitudeOfAscendingNode": 128.4244161601446,
-        "siderealPeriod": 38388.63634673731,
-        "periapsisRadius": 22313889.93045902,
-        "apoapsisRadius": 22593569.004140984
+        "siderealPeriod": 59381.11508914943,
+        "periapsisRadius": 59232220.820423484,
+        "apoapsisRadius": 59974628.921512514
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 18,
-        "land": 43
+        "orbit": 33,
+        "land": 79
       },
       "physics": {
-        "radius": 23742.7,
-        "mu": 62468248.480372824,
+        "radius": 63025.0,
+        "mu": 450715885.364125,
         "atmosphereHeight": 0,
-        "soiRadius": 47514.294810066385
+        "soiRadius": 122146.68563541252
       }
     },
     {
@@ -594,27 +594,27 @@
       "moons": [],
       "mapColour": "#C9C4BC",
       "orbit": {
-        "sma": 27780510.6781,
+        "sma": 73743365.5951105,
         "eccentricity": 0.001064868868083566,
         "inclination": 1.12,
         "longitudeOfAscendingNode": 119.2518388332899,
-        "siderealPeriod": 52829.96147713713,
-        "periapsisRadius": 27750928.07713943,
-        "apoapsisRadius": 27810093.279060576
+        "siderealPeriod": 81719.54831368341,
+        "periapsisRadius": 73664838.58086057,
+        "apoapsisRadius": 73821892.60936046
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 32,
-        "land": 78
+        "orbit": 56,
+        "land": 134
       },
       "physics": {
-        "radius": 50018.0,
-        "mu": 368014202.2103189,
+        "radius": 132775.0,
+        "mu": 2575692364.15063,
         "atmosphereHeight": 0,
-        "soiRadius": 119497.3094907815
+        "soiRadius": 303479.86107260233
       }
     },
     {
@@ -624,27 +624,27 @@
       "moons": [],
       "mapColour": "#B8B3AB",
       "orbit": {
-        "sma": 35567023.1213,
+        "sma": 94412662.8754272,
         "eccentricity": 0.001679230905502774,
         "inclination": 0.019,
         "longitudeOfAscendingNode": 128.5606071129818,
-        "siderealPeriod": 76531.67745171071,
-        "periapsisRadius": 35507297.87685797,
-        "apoapsisRadius": 35626748.36574201
+        "siderealPeriod": 118382.33339864502,
+        "periapsisRadius": 94254122.21405597,
+        "apoapsisRadius": 94571203.53679843
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 42,
-        "land": 101
+        "orbit": 72,
+        "land": 174
       },
       "physics": {
-        "radius": 52872.48,
-        "mu": 646981767.0467641,
+        "radius": 140350.0,
+        "mu": 4569772905.4575,
         "atmosphereHeight": 0,
-        "soiRadius": 191723.96613977247
+        "soiRadius": 488694.4648385407
       }
     },
     {
@@ -654,27 +654,27 @@
       "moons": [],
       "mapColour": "#AEA99F",
       "orbit": {
-        "sma": 49652726.0979,
+        "sma": 131803161.4268,
         "eccentricity": 0.001168269515756326,
         "inclination": 0.345,
         "longitudeOfAscendingNode": 130.3670574820431,
-        "siderealPeriod": 126236.40065537131,
-        "periapsisRadius": 49594718.331625625,
-        "apoapsisRadius": 49710733.86417437
+        "siderealPeriod": 195267.63514181026,
+        "periapsisRadius": 131649179.81122476,
+        "apoapsisRadius": 131957143.04237522
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 53,
-        "land": 129
+        "orbit": 91,
+        "land": 219
       },
       "physics": {
-        "radius": 71934.45,
-        "mu": 1365044502.8964162,
+        "radius": 190950.0,
+        "mu": 9621404022.09375,
         "atmosphereHeight": 0,
-        "soiRadius": 360806.11749450356
+        "soiRadius": 918904.8291756393
       }
     },
     {
@@ -684,13 +684,13 @@
       "moons": [],
       "mapColour": "#E0A85C",
       "orbit": {
-        "sma": 115084407.4695,
+        "sma": 305491559.627855,
         "eccentricity": 0.02891936561555365,
         "inclination": 0.34854,
         "longitudeOfAscendingNode": 126.4945233702913,
-        "siderealPeriod": 445445.61250384373,
-        "periapsisRadius": 111756239.41324018,
-        "apoapsisRadius": 118412575.52575985
+        "siderealPeriod": 689033.5187509424,
+        "periapsisRadius": 296656937.52251136,
+        "apoapsisRadius": 314326181.7331987
       },
       "surface": {
         "canAerobrake": true
@@ -701,10 +701,10 @@
         "land": 3800
       },
       "physics": {
-        "radius": 242352.6,
-        "mu": 80638803983.83334,
-        "atmosphereHeight": 84000.0,
-        "soiRadius": 4274705.379545457
+        "radius": 643325.0,
+        "mu": 561133648533.937,
+        "atmosphereHeight": 81000.0,
+        "soiRadius": 10831162.367788855
       }
     },
     {
@@ -714,27 +714,27 @@
       "moons": [],
       "mapColour": "#7A6F5D",
       "orbit": {
-        "sma": 335295026.655,
+        "sma": 890040648.255743,
         "eccentricity": 0.0288028628196961,
         "inclination": 15.47,
         "longitudeOfAscendingNode": 50.29392880240187,
-        "siderealPeriod": 2215188.173621809,
-        "periapsisRadius": 325637569.99812967,
-        "apoapsisRadius": 344952483.3118703
+        "siderealPeriod": 3426543.800456787,
+        "periapsisRadius": 864404929.5600795,
+        "apoapsisRadius": 915676366.9514066
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 48,
-        "land": 116
+        "orbit": 82,
+        "land": 197
       },
       "physics": {
-        "radius": 69174.99,
-        "mu": 1069925978.5973787,
+        "radius": 183625.0,
+        "mu": 7532005543.95625,
         "atmosphereHeight": 0,
-        "soiRadius": 2210246.3158910703
+        "soiRadius": 5626306.919135839
       }
     },
     {
@@ -750,13 +750,13 @@
       ],
       "mapColour": "#B4E1E5",
       "orbit": {
-        "sma": 269997443319.2668,
-        "eccentricity": 0.04620653158718433,
-        "inclination": 0.773,
-        "longitudeOfAscendingNode": 1.846089669223938,
-        "siderealPeriod": 810718708.0384537,
-        "periapsisRadius": 257521797926.0761,
-        "apoapsisRadius": 282473088712.4575
+        "sma": 716708213290.993,
+        "eccentricity": 0.04734074764887236,
+        "inclination": 0.7736150677926379,
+        "longitudeOfAscendingNode": 74.01706616784516,
+        "siderealPeriod": 1323724523.429638,
+        "periapsisRadius": 682778710627.71,
+        "apoapsisRadius": 750637715954.2761
       },
       "surface": {
         "canAerobrake": true
@@ -767,10 +767,10 @@
         "land": 9000
       },
       "physics": {
-        "radius": 2326427.0,
-        "mu": 47980853062569.85,
+        "radius": 6175500.0,
+        "mu": 362121957642437.0,
         "atmosphereHeight": 891000.0,
-        "soiRadius": 4728327143.741593
+        "soiRadius": 12923128556.255531
       }
     },
     {
@@ -780,27 +780,27 @@
       "moons": [],
       "mapColour": "#9C9890",
       "orbit": {
-        "sma": 12232063.2543,
+        "sma": 32470011.9085438,
         "eccentricity": 0.00118741261963413,
         "inclination": 4.232,
         "longitudeOfAscendingNode": 169.064212054828,
-        "siderealPeriod": 38805.694749454546,
-        "periapsisRadius": 12217538.74802768,
-        "apoapsisRadius": 12246587.760572318
+        "siderealPeriod": 61090.84193146219,
+        "periapsisRadius": 32431456.606643923,
+        "apoapsisRadius": 32508567.21044367
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 14,
-        "land": 35
+        "orbit": 26,
+        "land": 63
       },
       "physics": {
-        "radius": 22198.15,
-        "mu": 38658431.21065808,
+        "radius": 58925.0,
+        "mu": 269969806.202006,
         "atmosphereHeight": 0,
-        "soiRadius": 44665.29663377261
+        "soiRadius": 114938.77971966886
       }
     },
     {
@@ -810,27 +810,27 @@
       "moons": [],
       "mapColour": "#B8B4AC",
       "orbit": {
-        "sma": 17983081.9813,
+        "sma": 47736091.1194055,
         "eccentricity": 0.00190951361476287,
         "inclination": 0.26,
         "longitudeOfAscendingNode": 166.5671084714081,
-        "siderealPeriod": 69173.86978169682,
-        "periapsisRadius": 17948743.04142131,
-        "apoapsisRadius": 18017420.92117869
+        "siderealPeriod": 108898.70602524518,
+        "periapsisRadius": 47644938.403497435,
+        "apoapsisRadius": 47827243.835313566
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 46,
-        "land": 110
+        "orbit": 76,
+        "land": 184
       },
       "physics": {
-        "radius": 54520.63,
-        "mu": 787056972.907554,
+        "radius": 144725.0,
+        "mu": 5216465269.85654,
         "atmosphereHeight": 0,
-        "soiRadius": 219199.42291775055
+        "soiRadius": 552402.2490971632
       }
     },
     {
@@ -840,27 +840,27 @@
       "moons": [],
       "mapColour": "#5E5A54",
       "orbit": {
-        "sma": 25051079.3113,
+        "sma": 66498090.031914,
         "eccentricity": 0.0038334454580725,
         "inclination": 0.128,
         "longitudeOfAscendingNode": 166.5601075193709,
-        "siderealPeriod": 113732.75220114323,
-        "periapsisRadius": 24955047.36509428,
-        "apoapsisRadius": 25147111.25750571
+        "siderealPeriod": 179046.64848854733,
+        "periapsisRadius": 66243173.23071066,
+        "apoapsisRadius": 66753006.833117336
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 42,
-        "land": 103
+        "orbit": 76,
+        "land": 185
       },
       "physics": {
-        "radius": 55066.87,
-        "mu": 683957782.166187,
+        "radius": 146175.0,
+        "mu": 5318336309.05586,
         "atmosphereHeight": 0,
-        "soiRadius": 288676.1961609991
+        "soiRadius": 775492.4009668755
       }
     },
     {
@@ -870,27 +870,27 @@
       "moons": [],
       "mapColour": "#9E9284",
       "orbit": {
-        "sma": 41089911.7505842,
+        "sma": 109073170.741926,
         "eccentricity": 0.002486916,
         "inclination": 0.34,
         "longitudeOfAscendingNode": 166.6555214910122,
-        "siderealPeriod": 238917.9053784447,
-        "periapsisRadius": 40987724.591613084,
-        "apoapsisRadius": 41192098.909555316
+        "siderealPeriod": 376122.5275388947,
+        "periapsisRadius": 108801914.92843717,
+        "apoapsisRadius": 109344426.55541484
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 65,
-        "land": 157
+        "orbit": 108,
+        "land": 262
       },
       "physics": {
-        "radius": 74298.36,
-        "mu": 2089615761.8907127,
+        "radius": 197225.0,
+        "mu": 14183981273.3827,
         "atmosphereHeight": 0,
-        "soiRadius": 740175.3141024231
+        "soiRadius": 1883194.833729544
       }
     },
     {
@@ -900,27 +900,27 @@
       "moons": [],
       "mapColour": "#8F7F6E",
       "orbit": {
-        "sma": 54947761.1924,
+        "sma": 145858832.085151,
         "eccentricity": 0.00110558297330948,
         "inclination": 0.058,
         "longitudeOfAscendingNode": 166.6887328903476,
-        "siderealPeriod": 369462.94607167796,
-        "periapsisRadius": 54887011.883204214,
-        "apoapsisRadius": 55008510.501595795
+        "siderealPeriod": 581636.344451544,
+        "periapsisRadius": 145697573.04389083,
+        "apoapsisRadius": 146020091.12641114
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 61,
-        "land": 147
+        "orbit": 105,
+        "land": 253
       },
       "physics": {
-        "radius": 71708.42,
-        "mu": 1764936265.3143334,
+        "radius": 190350.0,
+        "mu": 12832714390.8476,
         "atmosphereHeight": 0,
-        "soiRadius": 925154.8434525143
+        "soiRadius": 2419458.6235050596
       }
     },
     {
@@ -932,13 +932,13 @@
       ],
       "mapColour": "#3C5A99",
       "orbit": {
-        "sma": 423569017970.5911,
-        "eccentricity": 0.008090397688364061,
-        "inclination": 1.77,
-        "longitudeOfAscendingNode": 3.512610711801178,
-        "siderealPeriod": 1593004476.9939377,
-        "periapsisRadius": 420142176166.7392,
-        "apoapsisRadius": 426995859774.44305
+        "sma": 1124363958202.93,
+        "eccentricity": 0.008564584851545534,
+        "inclination": 1.770410252598332,
+        "longitudeOfAscendingNode": 131.8321153312058,
+        "siderealPeriod": 2601024339.5420103,
+        "periapsisRadius": 1114734247678.8813,
+        "apoapsisRadius": 1133993668726.9785
       },
       "surface": {
         "canAerobrake": true
@@ -949,10 +949,10 @@
         "land": 9500
       },
       "physics": {
-        "radius": 2268318.0,
-        "mu": 57521924152522.234,
+        "radius": 6021250.0,
+        "mu": 427193718902479.0,
         "atmosphereHeight": 688000.0,
-        "soiRadius": 7975872947.549095
+        "soiRadius": 21659089632.544155
       }
     },
     {
@@ -962,27 +962,27 @@
       "moons": [],
       "mapColour": "#D8C9C0",
       "orbit": {
-        "sma": 33411870.742198598,
+        "sma": 88691810.885166,
         "eccentricity": 0.0001688014359763687,
         "inclination": 156.885,
         "longitudeOfAscendingNode": 197.1953239788069,
-        "siderealPeriod": 159997.9266100089,
-        "periapsisRadius": 33406230.770438656,
-        "apoapsisRadius": 33417510.71395854
+        "siderealPeriod": 253917.55205022206,
+        "periapsisRadius": 88676839.58012924,
+        "apoapsisRadius": 88706782.19020277
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 126,
-        "land": 303
+        "orbit": 210,
+        "land": 506
       },
       "physics": {
-        "radius": 127462.8,
-        "mu": 12650511535.063902,
+        "radius": 338350.0,
+        "mu": 89224883795.3144,
         "atmosphereHeight": 0,
-        "soiRadius": 1150298.796369883
+        "soiRadius": 2991079.6305851107
       }
     },
     {
@@ -994,27 +994,27 @@
       ],
       "mapColour": "#C9A98A",
       "orbit": {
-        "sma": 550543475614.826,
-        "eccentricity": 0.2462772488425983,
-        "inclination": 17.14,
-        "longitudeOfAscendingNode": 44.36099836994975,
-        "siderealPeriod": 2360576871.4679384,
-        "periapsisRadius": 414957143072.1646,
-        "apoapsisRadius": 686129808157.4875
+        "sma": 1461417656019.55,
+        "eccentricity": 0.2462457947997467,
+        "inclination": 17.30784805894436,
+        "longitudeOfAscendingNode": 110.6134914716127,
+        "siderealPeriod": 3854300466.0189686,
+        "periapsisRadius": 1101549703778.633,
+        "apoapsisRadius": 1821285608260.467
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 104,
-        "land": 252
+        "orbit": 174,
+        "land": 421
       },
       "physics": {
-        "radius": 111791.23,
-        "mu": 7721055854.454227,
+        "radius": 296750.0,
+        "mu": 54350863610.0546,
         "atmosphereHeight": 0,
-        "soiRadius": 292942900.3380149
+        "soiRadius": 778646380.2928891
       }
     },
     {
@@ -1024,27 +1024,27 @@
       "moons": [],
       "mapColour": "#9C948E",
       "orbit": {
-        "sma": 1845563.555792425,
+        "sma": 4899048.45885098,
         "eccentricity": 5.082225659448947e-05,
         "inclination": 0.08,
         "longitudeOfAscendingNode": 222.405373557001,
-        "siderealPeriod": 179281.315279747,
-        "periapsisRadius": 1845469.7600878312,
-        "apoapsisRadius": 1845657.351497019
+        "siderealPeriod": 292243.0869706973,
+        "periapsisRadius": 4898799.478153136,
+        "apoapsisRadius": 4899297.439548824
       },
       "surface": {
         "canAerobrake": false
       },
       "nodes": {
         "intercept": 0,
-        "orbit": 49,
-        "land": 117
+        "orbit": 84,
+        "land": 203
       },
       "physics": {
-        "radius": 56837.45,
-        "mu": 918729885.435295,
+        "radius": 150875.0,
+        "mu": 6617499303.76175,
         "atmosphereHeight": 0,
-        "soiRadius": 787650.3411929171
+        "soiRadius": 2110117.879224356
       }
     }
   ]

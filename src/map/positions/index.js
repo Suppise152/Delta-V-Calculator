@@ -24,13 +24,13 @@
         ksrss: {
             id: 'ksrss',
             label: 'KSRSS',
-            viewBox: '-635 -90 1865 940',
+            viewBox: '-610 -25 1780 820',
             positions: data.ksrss,
         },
         jnsq: {
             id: 'jnsq',
             label: 'JNSQ',
-            viewBox: '-550 -90 1700 935',
+            viewBox: '-550 -25 1700 820',
             positions: data.jnsq,
         },
         kerbol: {
