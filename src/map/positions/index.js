@@ -21,6 +21,18 @@
             viewBox: '-610 -25 1780 820',
             positions: data.rss,
         },
+        ksrss: {
+            id: 'ksrss',
+            label: 'KSRSS',
+            viewBox: '-635 -90 1865 940',
+            positions: data.ksrss,
+        },
+        jnsq: {
+            id: 'jnsq',
+            label: 'JNSQ',
+            viewBox: '-550 -90 1700 935',
+            positions: data.jnsq,
+        },
         kerbol: {
             id: 'kerbol',
             label: 'Kerbol',
@@ -49,6 +61,8 @@
         STOCK_POSITIONS: data.stock,
         OPM_POSITIONS: data.opm,
         RSS_POSITIONS: data.rss,
+        KSRSS_POSITIONS: data.ksrss,
+        JNSQ_POSITIONS: data.jnsq,
         KERBOL_POSITIONS: data.kerbol,
         getMapLayout,
         getMapLayouts,

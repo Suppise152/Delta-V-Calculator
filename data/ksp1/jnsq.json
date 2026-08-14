@@ -426,7 +426,8 @@
       },
       "nodes": {
         "intercept": 3133,
-        "orbit": 5070
+        "orbit": 5070,
+        "land": 14000
       },
       "physics": {
         "radius": 14000000,
@@ -613,7 +614,8 @@
       },
       "nodes": {
         "intercept": 3658,
-        "orbit": 3753
+        "orbit": 3753,
+        "land": 20000
       },
       "physics": {
         "radius": 8000000,
@@ -907,7 +909,7 @@
         "enon",
         "prax"
       ],
-      "mapColour": "#4B4560",
+      "mapColour": "#66371a",
       "orbit": {
         "sma": 1712000000000,
         "eccentricity": 0.35,
@@ -937,7 +939,7 @@
       "label": "Amos",
       "parent": "nara",
       "moons": [],
-      "mapColour": "#5C5470",
+      "mapColour": "#615953",
       "orbit": {
         "sma": 55880000,
         "eccentricity": 0.01,
@@ -967,7 +969,7 @@
       "label": "Enon",
       "parent": "nara",
       "moons": [],
-      "mapColour": "#6E6684",
+      "mapColour": "#cfc2ba",
       "orbit": {
         "sma": 125980000,
         "eccentricity": 0.015,
@@ -997,7 +999,7 @@
       "label": "Prax",
       "parent": "nara",
       "moons": [],
-      "mapColour": "#807898",
+      "mapColour": "#bdb9b7",
       "orbit": {
         "sma": 751900000,
         "eccentricity": 0.4,
