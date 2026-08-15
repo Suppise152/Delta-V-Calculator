@@ -1,0 +1,1048 @@
+{
+  "meta": {
+    "name": "KSRSS (Kerbin-Scale Real Solar System)",
+    "pack": "ksrss",
+    "centralBody": "sun",
+    "originBody": "earth",
+    "interplanetaryNode": {
+      "mapColour": "#c8c8d4"
+    },
+    "nodeModel": {
+      "surfaceNodeKey": "land",
+      "orbitNodeKey": "orbit",
+      "flybyNodeKeys": [
+        "flyby",
+        "intercept"
+      ],
+      "lowOrbitAltitudeMeters": 10000,
+      "flybyPeriapsisAltitudeMeters": 10000
+    }
+  },
+  "bodies": [
+    {
+      "id": "sun",
+      "label": "Sun",
+      "parent": null,
+      "moons": [
+        "mercury",
+        "venus",
+        "earth",
+        "mars",
+        "vesta",
+        "ceres",
+        "jupiter",
+        "saturn",
+        "uranus",
+        "neptune",
+        "pluto"
+      ],
+      "mapColour": "#FFD700",
+      "orbit": {
+        "sma": 0,
+        "eccentricity": 0,
+        "inclination": 0,
+        "periapsisRadius": 0.0,
+        "apoapsisRadius": 0.0
+      },
+      "surface": {
+        "canAerobrake": false,
+        "dvToOrbit": 19700
+      },
+      "nodes": {
+        "orbit": 19700,
+        "land": 67000
+      },
+      "physics": {
+        "radius": 174085500.0,
+        "mu": 8.29452750262119e+18,
+        "atmosphereHeight": 0,
+        "soiRadius": null
+      }
+    },
+    {
+      "id": "mercury",
+      "label": "Mercury",
+      "parent": "sun",
+      "moons": [],
+      "mapColour": "#A0906A",
+      "orbit": {
+        "sma": 14477243411.472,
+        "eccentricity": 0.2033547204116125,
+        "inclination": 7.020894544262584,
+        "longitudeOfAscendingNode": 48.6509390838666,
+        "siderealPeriod": 3800256.0339231966,
+        "periapsisRadius": 11533227625.201252,
+        "apoapsisRadius": 17421259197.74275
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 4325,
+        "orbit": 610,
+        "land": 1530
+      },
+      "physics": {
+        "radius": 609925.0,
+        "mu": 1376986250000.0,
+        "atmosphereHeight": 0,
+        "soiRadius": 28102247.688606102
+      }
+    },
+    {
+      "id": "venus",
+      "label": "Venus",
+      "parent": "sun",
+      "moons": [],
+      "mapColour": "#C8B46E",
+      "orbit": {
+        "sma": 27052387197.6167,
+        "eccentricity": 0.009358687502771969,
+        "inclination": 3.394232940100089,
+        "longitudeOfAscendingNode": 76.90359605163887,
+        "siderealPeriod": 9707165.516225412,
+        "periapsisRadius": 26799212359.630215,
+        "apoapsisRadius": 27305562035.603184
+      },
+      "surface": {
+        "canAerobrake": true
+      },
+      "nodes": {
+        "intercept": 320,
+        "orbit": 1470,
+        "land": 13500
+      },
+      "physics": {
+        "radius": 1512250.0,
+        "mu": 20303662000000.0,
+        "atmosphereHeight": 86000.0,
+        "soiRadius": 154070213.43673772
+      }
+    },
+    {
+      "id": "earth",
+      "label": "Earth",
+      "parent": "sun",
+      "moons": [
+        "moon"
+      ],
+      "mapColour": "#4A90D9",
+      "orbit": {
+        "sma": 37399565287.6105,
+        "eccentricity": 0.01781154480208012,
+        "inclination": 0.00332414560350639,
+        "longitudeOfAscendingNode": 311.7891048874449,
+        "siderealPeriod": 15779159.78290632,
+        "periapsisRadius": 36733421254.9119,
+        "apoapsisRadius": 38065709320.30909
+      },
+      "surface": {
+        "canAerobrake": true
+      },
+      "nodes": {
+        "flyby": 4800,
+        "orbit": 1605,
+        "land": 4800
+      },
+      "physics": {
+        "radius": 1592750.0,
+        "mu": 24912527214755.9,
+        "atmosphereHeight": 80000.0,
+        "soiRadius": 231162300.61525476
+      }
+    },
+    {
+      "id": "moon",
+      "label": "Moon",
+      "parent": "earth",
+      "moons": [],
+      "mapColour": "#C8C8C8",
+      "orbit": {
+        "sma": 96077109.4426765,
+        "eccentricity": 0.05328149353682574,
+        "inclination": 28.36267790798491,
+        "longitudeOfAscendingNode": 2.296616161126016,
+        "siderealPeriod": 1185498.1157139577,
+        "periapsisRadius": 90957977.55686963,
+        "apoapsisRadius": 101196241.32848337
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 1630,
+        "orbit": 340,
+        "land": 865
+      },
+      "physics": {
+        "radius": 434275.0,
+        "mu": 306425004135.237,
+        "atmosphereHeight": 0,
+        "soiRadius": 16541789.664238596
+      }
+    },
+    {
+      "id": "mars",
+      "label": "Mars",
+      "parent": "sun",
+      "moons": [
+        "phobos",
+        "deimos"
+      ],
+      "mapColour": "#C1440E",
+      "orbit": {
+        "sma": 56987424990.494,
+        "eccentricity": 0.09314888581484417,
+        "inclination": 1.849927423305627,
+        "longitudeOfAscendingNode": 49.69802620099254,
+        "siderealPeriod": 29679227.511016835,
+        "periapsisRadius": 51679109847.17248,
+        "apoapsisRadius": 62295740133.81553
+      },
+      "surface": {
+        "canAerobrake": true
+      },
+      "nodes": {
+        "intercept": 530,
+        "orbit": 720,
+        "land": 1900
+      },
+      "physics": {
+        "radius": 843950.0,
+        "mu": 2676773351293.69,
+        "atmosphereHeight": 73000.0,
+        "soiRadius": 144313517.71812373
+      }
+    },
+    {
+      "id": "phobos",
+      "label": "Phobos",
+      "parent": "mars",
+      "moons": [],
+      "mapColour": "#8B7355",
+      "orbit": {
+        "sma": 2344623.05227208,
+        "eccentricity": 0.01539938155583979,
+        "inclination": 1.093,
+        "longitudeOfAscendingNode": 46.48212553464923,
+        "siderealPeriod": 13787.439327726419,
+        "periapsisRadius": 2308517.3072855244,
+        "apoapsisRadius": 2380728.7972586355
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 640,
+        "orbit": 2,
+        "land": 4
+      },
+      "physics": {
+        "radius": 1812.5,
+        "mu": 44297.1629180903,
+        "atmosphereHeight": 0,
+        "soiRadius": 1809.5840325264421
+      }
+    },
+    {
+      "id": "deimos",
+      "label": "Deimos",
+      "parent": "mars",
+      "moons": [],
+      "mapColour": "#9B8B6B",
+      "orbit": {
+        "sma": 5864528.00439845,
+        "eccentricity": 0.00032946807986617,
+        "inclination": 0.93,
+        "longitudeOfAscendingNode": 47.51893570799763,
+        "siderealPeriod": 54541.071417272105,
+        "periapsisRadius": 5862595.82961752,
+        "apoapsisRadius": 5866460.179179381
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 495,
+        "orbit": 1,
+        "land": 2
+      },
+      "physics": {
+        "radius": 1364.0,
+        "mu": 6009.73103007519,
+        "atmosphereHeight": 0,
+        "soiRadius": 2035.7781022288339
+      }
+    },
+    {
+      "id": "ceres",
+      "label": "Ceres",
+      "parent": "sun",
+      "moons": [],
+      "mapColour": "#9A9060",
+      "orbit": {
+        "sma": 103434690578.293,
+        "eccentricity": 0.07845358917584373,
+        "inclination": 10.59802395005837,
+        "longitudeOfAscendingNode": 81.36903071871447,
+        "siderealPeriod": 72574386.29369321,
+        "periapsisRadius": 95319867857.13309,
+        "apoapsisRadius": 111549513299.45291
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 72,
+        "land": 175
+      },
+      "physics": {
+        "radius": 118250.0,
+        "mu": 3914531250.0,
+        "atmosphereHeight": 0,
+        "soiRadius": 19240726.43263664
+      }
+    },
+    {
+      "id": "vesta",
+      "label": "Vesta",
+      "parent": "sun",
+      "moons": [],
+      "mapColour": "#9C8F78",
+      "orbit": {
+        "sma": 88336555950.7895,
+        "eccentricity": 0.09006440364822228,
+        "inclination": 7.134501510020114,
+        "longitudeOfAscendingNode": 104.4187846656265,
+        "siderealPeriod": 57278908.98575199,
+        "periapsisRadius": 80380576718.74382,
+        "apoapsisRadius": 96292535182.83519
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 59,
+        "land": 142
+      },
+      "physics": {
+        "radius": 43783.33,
+        "mu": 1080515310.58125,
+        "atmosphereHeight": 0,
+        "soiRadius": 9819201.504776426
+      }
+    },
+    {
+      "id": "jupiter",
+      "label": "Jupiter",
+      "parent": "sun",
+      "moons": [
+        "io",
+        "europa",
+        "ganymede",
+        "callisto"
+      ],
+      "mapColour": "#C8A06A",
+      "orbit": {
+        "sma": 194547234664.939,
+        "eccentricity": 0.0488142501712162,
+        "inclination": 1.305819291275594,
+        "longitudeOfAscendingNode": 100.3783289028023,
+        "siderealPeriod": 187206806.84739885,
+        "periapsisRadius": 185050557281.88635,
+        "apoapsisRadius": 204043912047.9916
+      },
+      "surface": {
+        "canAerobrake": true
+      },
+      "nodes": {
+        "intercept": 1680,
+        "orbit": 8600,
+        "land": 22500
+      },
+      "physics": {
+        "radius": 17343250.0,
+        "mu": 7917908432612500.0,
+        "atmosphereHeight": 732000.0,
+        "soiRadius": 12049044031.071775
+      }
+    },
+    {
+      "id": "io",
+      "label": "Io",
+      "parent": "jupiter",
+      "moons": [],
+      "mapColour": "#C8B840",
+      "orbit": {
+        "sma": 105504573.630924,
+        "eccentricity": 0.003545858426216978,
+        "inclination": 0.05,
+        "longitudeOfAscendingNode": 358.046643167846,
+        "siderealPeriod": 76521.16281898075,
+        "periapsisRadius": 105130469.34951036,
+        "apoapsisRadius": 105878677.91233763
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 5160,
+        "orbit": 365,
+        "land": 925
+      },
+      "physics": {
+        "radius": 452825.0,
+        "mu": 372494752088.15,
+        "atmosphereHeight": 0,
+        "soiRadius": 1960086.1509171582
+      }
+    },
+    {
+      "id": "europa",
+      "label": "Europa",
+      "parent": "jupiter",
+      "moons": [],
+      "mapColour": "#C8B8A0",
+      "orbit": {
+        "sma": 167813409.385429,
+        "eccentricity": 0.009511727119926178,
+        "inclination": 0.47,
+        "longitudeOfAscendingNode": 358.9360081847504,
+        "siderealPeriod": 153502.20633730805,
+        "periapsisRadius": 166217214.02829033,
+        "apoapsisRadius": 169409604.74256763
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 4445,
+        "orbit": 290,
+        "land": 740
+      },
+      "physics": {
+        "radius": 387700.0,
+        "mu": 200171173432.681,
+        "atmosphereHeight": 0,
+        "soiRadius": 2431885.2849218296
+      }
+    },
+    {
+      "id": "ganymede",
+      "label": "Ganymede",
+      "parent": "jupiter",
+      "moons": [],
+      "mapColour": "#8A9878",
+      "orbit": {
+        "sma": 267705867.22363,
+        "eccentricity": 0.001190086418361844,
+        "inclination": 0.2,
+        "longitudeOfAscendingNode": 358.0125219248113,
+        "siderealPeriod": 309286.85698307055,
+        "periapsisRadius": 267387274.1069314,
+        "apoapsisRadius": 268024460.34032863
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 3350,
+        "orbit": 395,
+        "land": 985
+      },
+      "physics": {
+        "radius": 656025.0,
+        "mu": 617989653333.384,
+        "atmosphereHeight": 0,
+        "soiRadius": 6089844.188919862
+      }
+    },
+    {
+      "id": "callisto",
+      "label": "Callisto",
+      "parent": "jupiter",
+      "moons": [],
+      "mapColour": "#7A7060",
+      "orbit": {
+        "sma": 470953091.64338,
+        "eccentricity": 0.007973319796896609,
+        "inclination": 0.192,
+        "longitudeOfAscendingNode": 358.5022563372704,
+        "siderealPeriod": 721674.0832623647,
+        "periapsisRadius": 467198032.0343701,
+        "apoapsisRadius": 474708151.2523898
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 2570,
+        "orbit": 35,
+        "land": 880
+      },
+      "physics": {
+        "radius": 602325.0,
+        "mu": 448705585087.329,
+        "atmosphereHeight": 0,
+        "soiRadius": 9425796.350263203
+      }
+    },
+    {
+      "id": "saturn",
+      "label": "Saturn",
+      "parent": "sun",
+      "moons": [
+        "titan",
+        "rhea",
+        "dione",
+        "enceladus"
+      ],
+      "mapColour": "#C8AA6E",
+      "orbit": {
+        "sma": 356209689653.315,
+        "eccentricity": 0.05424221197652705,
+        "inclination": 2.487376708567551,
+        "longitudeOfAscendingNode": 113.8411241598629,
+        "siderealPeriod": 463812699.9162706,
+        "periapsisRadius": 336888088159.047,
+        "apoapsisRadius": 375531291147.58307
+      },
+      "surface": {
+        "canAerobrake": true
+      },
+      "nodes": {
+        "intercept": 2250,
+        "orbit": 10115,
+        "land": 15000
+      },
+      "physics": {
+        "radius": 14304000.0,
+        "mu": 2370700468665760.0,
+        "atmosphereHeight": 1118000.0,
+        "soiRadius": 13618828240.673384
+      }
+    },
+    {
+      "id": "mimas",
+      "label": "Mimas",
+      "parent": "saturn",
+      "moons": [],
+      "mapColour": "#B0ABA3",
+      "orbit": {
+        "sma": 46502321.4805122,
+        "eccentricity": 0.01776275223147744,
+        "inclination": 1.574,
+        "longitudeOfAscendingNode": 139.7604722490289,
+        "siderealPeriod": 40921.68206691409,
+        "periapsisRadius": 45676312.265865356,
+        "apoapsisRadius": 47328330.69515905
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 21,
+        "land": 51
+      },
+      "physics": {
+        "radius": 49550.0,
+        "mu": 156470250.0,
+        "atmosphereHeight": 0,
+        "soiRadius": 62416.10600571147
+      }
+    },
+    {
+      "id": "enceladus",
+      "label": "Enceladus",
+      "parent": "saturn",
+      "moons": [],
+      "mapColour": "#E8E8F0",
+      "orbit": {
+        "sma": 59603424.870968,
+        "eccentricity": 0.006227897999957464,
+        "inclination": 0.009,
+        "longitudeOfAscendingNode": 128.4244161601446,
+        "siderealPeriod": 59381.11508914943,
+        "periapsisRadius": 59232220.820423484,
+        "apoapsisRadius": 59974628.921512514
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 33,
+        "land": 79
+      },
+      "physics": {
+        "radius": 63025.0,
+        "mu": 450715885.364125,
+        "atmosphereHeight": 0,
+        "soiRadius": 122146.68563541252
+      }
+    },
+    {
+      "id": "tethys",
+      "label": "Tethys",
+      "parent": "saturn",
+      "moons": [],
+      "mapColour": "#C9C4BC",
+      "orbit": {
+        "sma": 73743365.5951105,
+        "eccentricity": 0.001064868868083566,
+        "inclination": 1.12,
+        "longitudeOfAscendingNode": 119.2518388332899,
+        "siderealPeriod": 81719.54831368341,
+        "periapsisRadius": 73664838.58086057,
+        "apoapsisRadius": 73821892.60936046
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 56,
+        "land": 134
+      },
+      "physics": {
+        "radius": 132775.0,
+        "mu": 2575692364.15063,
+        "atmosphereHeight": 0,
+        "soiRadius": 303479.86107260233
+      }
+    },
+    {
+      "id": "dione",
+      "label": "Dione",
+      "parent": "saturn",
+      "moons": [],
+      "mapColour": "#C0C8D0",
+      "orbit": {
+        "sma": 94412662.8754272,
+        "eccentricity": 0.001679230905502774,
+        "inclination": 0.019,
+        "longitudeOfAscendingNode": 128.5606071129818,
+        "siderealPeriod": 118382.33339864502,
+        "periapsisRadius": 94254122.21405597,
+        "apoapsisRadius": 94571203.53679843
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 72,
+        "land": 174
+      },
+      "physics": {
+        "radius": 140350.0,
+        "mu": 4569772905.4575,
+        "atmosphereHeight": 0,
+        "soiRadius": 488694.4648385407
+      }
+    },
+    {
+      "id": "rhea",
+      "label": "Rhea",
+      "parent": "saturn",
+      "moons": [],
+      "mapColour": "#D0D0C8",
+      "orbit": {
+        "sma": 131803161.4268,
+        "eccentricity": 0.001168269515756326,
+        "inclination": 0.345,
+        "longitudeOfAscendingNode": 130.3670574820431,
+        "siderealPeriod": 195267.63514181026,
+        "periapsisRadius": 131649179.81122476,
+        "apoapsisRadius": 131957143.04237522
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 91,
+        "land": 219
+      },
+      "physics": {
+        "radius": 190950.0,
+        "mu": 9621404022.09375,
+        "atmosphereHeight": 0,
+        "soiRadius": 918904.8291756393
+      }
+    },
+    {
+      "id": "titan",
+      "label": "Titan",
+      "parent": "saturn",
+      "moons": [],
+      "mapColour": "#C8900A",
+      "orbit": {
+        "sma": 305491559.627855,
+        "eccentricity": 0.02891936561555365,
+        "inclination": 0.34854,
+        "longitudeOfAscendingNode": 126.4945233702913,
+        "siderealPeriod": 689033.5187509424,
+        "periapsisRadius": 296656937.52251136,
+        "apoapsisRadius": 314326181.7331987
+      },
+      "surface": {
+        "canAerobrake": true
+      },
+      "nodes": {
+        "intercept": 1530,
+        "orbit": 330,
+        "land": 3800
+      },
+      "physics": {
+        "radius": 643325.0,
+        "mu": 561133648533.937,
+        "atmosphereHeight": 81000.0,
+        "soiRadius": 10831162.367788855
+      }
+    },
+    {
+      "id": "iapetus",
+      "label": "Iapetus",
+      "parent": "saturn",
+      "moons": [],
+      "mapColour": "#7A6F5D",
+      "orbit": {
+        "sma": 890040648.255743,
+        "eccentricity": 0.0288028628196961,
+        "inclination": 15.47,
+        "longitudeOfAscendingNode": 50.29392880240187,
+        "siderealPeriod": 3426543.800456787,
+        "periapsisRadius": 864404929.5600795,
+        "apoapsisRadius": 915676366.9514066
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 82,
+        "land": 197
+      },
+      "physics": {
+        "radius": 183625.0,
+        "mu": 7532005543.95625,
+        "atmosphereHeight": 0,
+        "soiRadius": 5626306.919135839
+      }
+    },
+    {
+      "id": "uranus",
+      "label": "Uranus",
+      "parent": "sun",
+      "moons": [
+        "miranda",
+        "ariel",
+        "umbriel",
+        "titania",
+        "oberon"
+      ],
+      "mapColour": "#7ABCCC",
+      "orbit": {
+        "sma": 716708213290.993,
+        "eccentricity": 0.04734074764887236,
+        "inclination": 0.7736150677926379,
+        "longitudeOfAscendingNode": 74.01706616784516,
+        "siderealPeriod": 1323724523.429638,
+        "periapsisRadius": 682778710627.71,
+        "apoapsisRadius": 750637715954.2761
+      },
+      "surface": {
+        "canAerobrake": true
+      },
+      "nodes": {
+        "intercept": 2640,
+        "orbit": 3060,
+        "land": 9000
+      },
+      "physics": {
+        "radius": 6175500.0,
+        "mu": 362121957642437.0,
+        "atmosphereHeight": 891000.0,
+        "soiRadius": 12923128556.255531
+      }
+    },
+    {
+      "id": "miranda",
+      "label": "Miranda",
+      "parent": "uranus",
+      "moons": [],
+      "mapColour": "#AFA8A0",
+      "orbit": {
+        "sma": 32470011.9085438,
+        "eccentricity": 0.00118741261963413,
+        "inclination": 4.232,
+        "longitudeOfAscendingNode": 169.064212054828,
+        "siderealPeriod": 61090.84193146219,
+        "periapsisRadius": 32431456.606643923,
+        "apoapsisRadius": 32508567.21044367
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 26,
+        "land": 63
+      },
+      "physics": {
+        "radius": 58925.0,
+        "mu": 269969806.202006,
+        "atmosphereHeight": 0,
+        "soiRadius": 114938.77971966886
+      }
+    },
+    {
+      "id": "ariel",
+      "label": "Ariel",
+      "parent": "uranus",
+      "moons": [],
+      "mapColour": "#B8B8B0",
+      "orbit": {
+        "sma": 47736091.1194055,
+        "eccentricity": 0.00190951361476287,
+        "inclination": 0.26,
+        "longitudeOfAscendingNode": 166.5671084714081,
+        "siderealPeriod": 108898.70602524518,
+        "periapsisRadius": 47644938.403497435,
+        "apoapsisRadius": 47827243.835313566
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 76,
+        "land": 184
+      },
+      "physics": {
+        "radius": 144725.0,
+        "mu": 5216465269.85654,
+        "atmosphereHeight": 0,
+        "soiRadius": 552402.2490971632
+      }
+    },
+    {
+      "id": "umbriel",
+      "label": "Umbriel",
+      "parent": "uranus",
+      "moons": [],
+      "mapColour": "#807C78",
+      "orbit": {
+        "sma": 66498090.031914,
+        "eccentricity": 0.0038334454580725,
+        "inclination": 0.128,
+        "longitudeOfAscendingNode": 166.5601075193709,
+        "siderealPeriod": 179046.64848854733,
+        "periapsisRadius": 66243173.23071066,
+        "apoapsisRadius": 66753006.833117336
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 76,
+        "land": 185
+      },
+      "physics": {
+        "radius": 146175.0,
+        "mu": 5318336309.05586,
+        "atmosphereHeight": 0,
+        "soiRadius": 775492.4009668755
+      }
+    },
+    {
+      "id": "titania",
+      "label": "Titania",
+      "parent": "uranus",
+      "moons": [],
+      "mapColour": "#A8B8C0",
+      "orbit": {
+        "sma": 109073170.741926,
+        "eccentricity": 0.002486916,
+        "inclination": 0.34,
+        "longitudeOfAscendingNode": 166.6555214910122,
+        "siderealPeriod": 376122.5275388947,
+        "periapsisRadius": 108801914.92843717,
+        "apoapsisRadius": 109344426.55541484
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 108,
+        "land": 262
+      },
+      "physics": {
+        "radius": 197225.0,
+        "mu": 14183981273.3827,
+        "atmosphereHeight": 0,
+        "soiRadius": 1883194.833729544
+      }
+    },
+    {
+      "id": "oberon",
+      "label": "Oberon",
+      "parent": "uranus",
+      "moons": [],
+      "mapColour": "#B0A898",
+      "orbit": {
+        "sma": 145858832.085151,
+        "eccentricity": 0.00110558297330948,
+        "inclination": 0.058,
+        "longitudeOfAscendingNode": 166.6887328903476,
+        "siderealPeriod": 581636.344451544,
+        "periapsisRadius": 145697573.04389083,
+        "apoapsisRadius": 146020091.12641114
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 105,
+        "land": 253
+      },
+      "physics": {
+        "radius": 190350.0,
+        "mu": 12832714390.8476,
+        "atmosphereHeight": 0,
+        "soiRadius": 2419458.6235050596
+      }
+    },
+    {
+      "id": "neptune",
+      "label": "Neptune",
+      "parent": "sun",
+      "moons": [
+        "triton"
+      ],
+      "mapColour": "#3A5ABF",
+      "orbit": {
+        "sma": 1124363958202.93,
+        "eccentricity": 0.008564584851545534,
+        "inclination": 1.770410252598332,
+        "longitudeOfAscendingNode": 131.8321153312058,
+        "siderealPeriod": 2601024339.5420103,
+        "periapsisRadius": 1114734247678.8813,
+        "apoapsisRadius": 1133993668726.9785
+      },
+      "surface": {
+        "canAerobrake": true
+      },
+      "nodes": {
+        "intercept": 2695,
+        "orbit": 3375,
+        "land": 9500
+      },
+      "physics": {
+        "radius": 6021250.0,
+        "mu": 427193718902479.0,
+        "atmosphereHeight": 688000.0,
+        "soiRadius": 21659089632.544155
+      }
+    },
+    {
+      "id": "triton",
+      "label": "Triton",
+      "parent": "neptune",
+      "moons": [],
+      "mapColour": "#C0D0D8",
+      "orbit": {
+        "sma": 88691810.885166,
+        "eccentricity": 0.0001688014359763687,
+        "inclination": 156.885,
+        "longitudeOfAscendingNode": 197.1953239788069,
+        "siderealPeriod": 253917.55205022206,
+        "periapsisRadius": 88676839.58012924,
+        "apoapsisRadius": 88706782.19020277
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 210,
+        "land": 506
+      },
+      "physics": {
+        "radius": 338350.0,
+        "mu": 89224883795.3144,
+        "atmosphereHeight": 0,
+        "soiRadius": 2991079.6305851107
+      }
+    },
+    {
+      "id": "pluto",
+      "label": "Pluto",
+      "parent": "sun",
+      "moons": [
+        "charon"
+      ],
+      "mapColour": "#D4C8B8",
+      "orbit": {
+        "sma": 1461417656019.55,
+        "eccentricity": 0.2462457947997467,
+        "inclination": 17.30784805894436,
+        "longitudeOfAscendingNode": 110.6134914716127,
+        "siderealPeriod": 3854300466.0189686,
+        "periapsisRadius": 1101549703778.633,
+        "apoapsisRadius": 1821285608260.467
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 174,
+        "land": 421
+      },
+      "physics": {
+        "radius": 296750.0,
+        "mu": 54350863610.0546,
+        "atmosphereHeight": 0,
+        "soiRadius": 778646380.2928891
+      }
+    },
+    {
+      "id": "charon",
+      "label": "Charon",
+      "parent": "pluto",
+      "moons": [],
+      "mapColour": "#B8B0A8",
+      "orbit": {
+        "sma": 4899048.45885098,
+        "eccentricity": 5.082225659448947e-05,
+        "inclination": 0.08,
+        "longitudeOfAscendingNode": 222.405373557001,
+        "siderealPeriod": 292243.0869706973,
+        "periapsisRadius": 4898799.478153136,
+        "apoapsisRadius": 4899297.439548824
+      },
+      "surface": {
+        "canAerobrake": false
+      },
+      "nodes": {
+        "intercept": 0,
+        "orbit": 84,
+        "land": 203
+      },
+      "physics": {
+        "radius": 150875.0,
+        "mu": 6617499303.76175,
+        "atmosphereHeight": 0,
+        "soiRadius": 2110117.879224356
+      }
+    }
+  ]
+}

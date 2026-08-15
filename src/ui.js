@@ -29,6 +29,8 @@ const PACK_CONFIG = {
     stock: { dataPackId: 'ksp1/stock', mapId: 'stock', gameVersion: 'ksp1' },
     opm: { dataPackId: 'ksp1/opm', mapId: 'opm', gameVersion: 'ksp1' },
     rss: { dataPackId: 'ksp1/rss', mapId: 'rss', gameVersion: 'ksp1' },
+    ksrss: { dataPackId: 'ksp1/ksrss', mapId: 'ksrss', gameVersion: 'ksp1' },
+    jnsq: { dataPackId: 'ksp1/jnsq', mapId: 'jnsq', gameVersion: 'ksp1' },
     kerbol: { dataPackId: 'ksp2/kerbol', mapId: 'kerbol', gameVersion: 'ksp2' },
 };
 const GAME_VERSION_CONFIG = {
@@ -347,7 +349,7 @@ function _createPlanetInfoContent(body) {
 
     [
         ['Atmosphere', _formatAtmosphere(body)],
-        ['DV to orbit', _formatDv(body.surface?.dvToOrbit)],
+        ['DV to orbit', _formatDv(body.surface?.dvToOrbit ?? body.nodes?.land)],
         ['Satellites', _formatSatellites(body)],
         ['Host body', _formatHostBody(body)],
         ['Radius', _formatDistance(body.physics?.radius)],

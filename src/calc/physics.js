@@ -33,11 +33,22 @@
     }
 
     /**
+     * Inputs: gravitational parameter, hyperbolic excess speed, and radius
+     * from the body's center.
+     * Outputs: speed at that radius along a hyperbolic trajectory with the
+     * given excess speed (vis-viva energy conservation: v = sqrt(vInf^2 +
+     * 2*mu/r)).
+     */
+    function hyperbolicSpeedAtRadius(mu, vInf, radius) {
+        return Math.sqrt((vInf * vInf) + ((2 * mu) / radius));
+    }
+
+    /**
      * Inputs: body mu, periapsis radius, and hyperbolic excess speed.
      * Outputs: impulsive burn from circular orbit to hyperbolic departure.
      */
     function hyperbolicDepartureBurn(mu, periapsisRadius, vInf) {
-        return Math.sqrt((vInf * vInf) + ((2 * mu) / periapsisRadius)) - Math.sqrt(mu / periapsisRadius);
+        return hyperbolicSpeedAtRadius(mu, vInf, periapsisRadius) - Math.sqrt(mu / periapsisRadius);
     }
 
     /**
@@ -45,7 +56,7 @@
      * Outputs: impulsive capture burn at periapsis.
      */
     function hyperbolicCaptureBurn(mu, periapsisRadius, vInf, finalSpeed) {
-        return Math.sqrt((vInf * vInf) + ((2 * mu) / periapsisRadius)) - finalSpeed;
+        return hyperbolicSpeedAtRadius(mu, vInf, periapsisRadius) - finalSpeed;
     }
 
     /**
@@ -460,6 +471,7 @@
         hohmannTransferTime,
         hyperbolicCaptureBurn,
         hyperbolicDepartureBurn,
+        hyperbolicSpeedAtRadius,
         lowOrbitRadius,
         meanMotion,
         normalizeAngleDegrees,
