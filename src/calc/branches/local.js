@@ -121,21 +121,22 @@
         if (segment.from.nodeKey === segment.primaryNodeKey && segment.to.nodeKey === 'orbit') {
             if (body.parent && body.parent !== meta?.centralBody) {
                 const hostBody = bodies[body.parent];
-                const context = api.computeMoonTransferContext(hostBody, body, meta, 'periapsis');
+                const localContext = api.computeMoonTransferContext(hostBody, body, meta, 'periapsis');
+                const arrival = _resolveMoonCaptureArrival(hostBody, meta, options, localContext, bodies);
                 const periapsis = api.flybyPeriapsisRadius(body, meta);
                 const mu = Number(api.getPhysics(body).mu) || 0;
                 const finalSpeed = Math.sqrt(mu / periapsis);
                 return {
-                    dv: api.hyperbolicCaptureBurn(mu, periapsis, context.vinfArriveCombined, finalSpeed),
+                    dv: api.hyperbolicCaptureBurn(mu, periapsis, arrival.vinfArriveCombined, finalSpeed),
                     branchType: 'flyby_to_capture',
                     debug: {
-                        source: 'formula.moon_capture',
+                        source: arrival.source,
                         hostRelative: true,
                         periapsis,
                         altitudeMeters: api.getLowOrbitAltitude(body, meta),
                         flybyAltitudeMeters: api.getFlybyPeriapsisAltitude(body, meta),
-                        hostLowOrbitRadiusMeters: context.originRadius,
-                        moonTransferTargetRadiusMeters: context.targetRadius,
+                        hostLowOrbitRadiusMeters: localContext.originRadius,
+                        moonTransferTargetRadiusMeters: localContext.targetRadius,
                         hostBodyId: hostBody.id,
                     },
                 };
@@ -177,6 +178,35 @@
         }
 
         return _emptyBranchResult(segment, 'flyby_capture');
+    }
+
+    /**
+     * Inputs: a moon's host body, system metadata, evaluation options, the
+     * moon's local host-relative transfer context (from
+     * computeMoonTransferContext), and body lookup.
+     * Outputs: { vinfArriveCombined, source } - the ship's actual arrival
+     * speed relative to the moon being captured into orbit.
+     */
+    function _resolveMoonCaptureArrival(hostBody, meta, options, localContext, bodies) {
+        const isTopLevelHost = hostBody.parent === meta?.centralBody;
+        const originTopLevelBody = _resolveTransferOriginTopLevelBody(options?.routeContext?.startPoint?.body, bodies, meta);
+        const arrivesFromWithinHostSystem = originTopLevelBody === hostBody.id;
+        const localArrival = { vinfArriveCombined: localContext.vinfArriveCombined, source: 'formula.moon_capture' };
+        if (!isTopLevelHost || arrivesFromWithinHostSystem) return localArrival;
+
+        const originBody = bodies[originTopLevelBody];
+        const centralBody = bodies[meta?.centralBody];
+        if (!originBody || !centralBody) return localArrival;
+
+        const hostArrivalContext = originTopLevelBody === meta?.centralBody
+            ? _computeCentralBodyOriginArrivalContext(hostBody, centralBody, meta)
+            : api.computeInterplanetaryContext(originBody, hostBody, meta, centralBody);
+        const hostMu = Number(api.getPhysics(hostBody).mu) || 0;
+        const speedAtMoonRadius = api.hyperbolicSpeedAtRadius(hostMu, hostArrivalContext.vinfArriveCombined, localContext.targetRadius);
+        return {
+            vinfArriveCombined: api.relativeSpeed(localContext.targetSpeed, speedAtMoonRadius, localContext.planeAngle),
+            source: 'formula.moon_capture_via_host_arrival',
+        };
     }
 
     /**
