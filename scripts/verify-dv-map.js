@@ -35,9 +35,33 @@
  * both straight from the repo on every run, so its results can't drift out
  * of sync with the live site the way a hand-copied fixture could.
  *
+ * Another honest gap: a return leg that escapes a moon toward a DIFFERENT
+ * top-level body than its own host (calculateMoonHostEscapeBranch, e.g.
+ * Gilly -> Kerbin passing through Eve's SOI) produces an "{Host} Escape"
+ * stage that isn't a plain local escape - it's a composite retarget burn
+ * with no single matching pack field. It's still compared against the
+ * host's own orbit field here for lack of a better option, so a large diff
+ * on one of those specific rows is worth a manual look before assuming it's
+ * a formula bug, rather than an artifact of the reference choice.
+ *
+ * Each target is checked both ways: the outbound trip (origin -> target) and
+ * the return trip (target -> origin), run as two independent one-way
+ * jscalculate() calls (exactly how the site's own roundTrip option computes
+ * them internally - see calc/index.js calculateRoute). The return leg is
+ * where a class of bug hid previously: an arrival edge with no branch
+ * classifier at all silently fell through to a flat fallback value. Running
+ * both directions through the same per-stage reference check catches that
+ * kind of thing without having to eyeball the dropdown by hand. The round
+ * trip's combined total is also checked, using the real roundTrip:true
+ * result (not a re-sum) so its rounding matches the site exactly; its
+ * reference is the outbound map total counted twice, since the map's own
+ * description assumes an idealized transfer with the same cost either
+ * direction (see resolveMapTotal).
+ *
  * Usage:
  *   node scripts/verify-dv-map.js [--pack ksp1/stock] [--origin kerbin]
  *     [--json] [--sort percent|diff|body] [--only moho,eve,...]
+ *     [--legs outbound|return|both]
  */
 
 'use strict';
@@ -193,16 +217,57 @@ function resolveBodyIdFromLabel(label, bodies) {
 }
 
 /**
- * Inputs: breakdown entry (label, type, dv), origin body id, and body
- * lookup.
+ * Inputs: body id, body lookup, and central body id.
+ * Outputs: the id of that body's top-level ancestor (a direct child of the
+ * central body), or the body id itself if it already is one.
+ * Purpose: mirrors src/calc/branches/local.js's own
+ * _resolveTransferOriginTopLevelBody, used to tell whether a leg's origin
+ * sits within the same top-level system the map's reference numbers assume.
+ */
+function resolveTopLevelBodyId(bodyId, bodies, centralBodyId) {
+    let currentId = bodyId;
+    while (currentId && bodies[currentId]) {
+        const parentId = bodies[currentId].parent;
+        if (parentId === centralBodyId || parentId == null) return currentId;
+        currentId = parentId;
+    }
+    return bodyId;
+}
+
+// Mirrors src/calc/branches/transfer.js's own LOW_GRAVITY_ESCAPE_BUDGET_DV.
+// Not exported by the calculator (it's a private module constant), so it's
+// duplicated here; keep it in sync if that file's threshold ever changes.
+const LOW_GRAVITY_ESCAPE_BUDGET_DV = 600;
+
+/**
+ * Inputs: a top-level body and system metadata.
+ * Outputs: true when escaping this body's own low orbit costs less than the
+ * low-gravity threshold.
+ * Purpose: replicates calculateDirectOrbitalTransferBranch's own
+ * _usesLowGravitySoiBudget check (using the real exported formula
+ * functions, not a re-derived approximation) to know when a "{Body} Escape"
+ * stage stopped being a plain zero-vInf local escape and became one term
+ * of a different, non-hyperbolic budget split - see that function's own
+ * comment for why low-gravity bodies get this alternate treatment.
+ */
+function localEscapeBurnBelowLowGravityBudget(body, meta) {
+    const mu = Number(DeltaVCalc.getPhysics(body).mu) || 0;
+    const periapsis = DeltaVCalc.lowOrbitRadius(body, meta);
+    return DeltaVCalc.hyperbolicDepartureBurn(mu, periapsis, 0) < LOW_GRAVITY_ESCAPE_BUDGET_DV;
+}
+
+/**
+ * Inputs: breakdown entry (label, type, dv), origin body id, body lookup,
+ * and system metadata.
  * Outputs: { bodyId, referenceDv, referenceField } describing the standard
  * map value this stage should match, or null if no reference applies.
  * Purpose: maps each dropdown-style stage to the pack node field that
  * represents its community-standard delta-v, per body.nodes.{land,orbit,
  * intercept}. See the file header for why this is a meaningful comparison
- * rather than a tautology.
+ * rather than a tautology, and for the composite-leg caveat this function
+ * deliberately returns null for.
  */
-function resolveStageReference(entry, originBodyId, bodies) {
+function resolveStageReference(entry, originBodyId, bodies, meta) {
     const bodyId = resolveBodyIdFromLabel(entry.label, bodies);
     const body = bodyId ? bodies[bodyId] : null;
     if (!body) return null;
@@ -211,6 +276,27 @@ function resolveStageReference(entry, originBodyId, bodies) {
         return { bodyId, referenceField: 'land', referenceDv: Number(body.nodes?.land) };
     }
     if (entry.type === 'escape') {
+        // A plain local escape from wherever this leg started (outbound, or
+        // a return leg's first hop off the target body) matches the pack's
+        // orbit field. An "escape" stage for any OTHER body is a
+        // calculateMoonHostEscapeBranch composite retarget through an
+        // intermediate host (e.g. "Eve Escape" while actually departing
+        // Gilly) - not a single-body quantity the pack has a field for.
+        if (bodyId !== originBodyId) return null;
+
+        // A top-level body escaping toward a DIFFERENT top-level system
+        // (only possible on a return leg, since an outbound leg always
+        // starts at the map's own origin body) can hit
+        // calculateDirectOrbitalTransferBranch's low-gravity SOI budget,
+        // which stops decomposing the burn the normal way once the local
+        // escape is cheap enough. The "escape" entry is then one term of a
+        // linear split rather than a standalone zero-vInf escape, so it no
+        // longer matches the pack's orbit field either.
+        const isTopLevelBody = body.parent === meta?.centralBody;
+        if (isTopLevelBody && bodyId !== meta?.originBody && localEscapeBurnBelowLowGravityBudget(body, meta)) {
+            return null;
+        }
+
         return { bodyId, referenceField: 'orbit', referenceDv: Number(body.nodes?.orbit) };
     }
     if (entry.type === 'intercept' || entry.type === 'flyby') {
@@ -218,9 +304,35 @@ function resolveStageReference(entry, originBodyId, bodies) {
     }
     if (entry.type === 'orbit') {
         const isOriginAscent = bodyId === originBodyId;
-        return isOriginAscent
-            ? { bodyId, referenceField: 'land', referenceDv: Number(body.nodes?.land) }
-            : { bodyId, referenceField: 'orbit', referenceDv: Number(body.nodes?.orbit) };
+        if (isOriginAscent) {
+            return { bodyId, referenceField: 'land', referenceDv: Number(body.nodes?.land) };
+        }
+
+        // A leg that starts at one of this body's own moons and captures
+        // straight into this body's low orbit (calculateMoonHostCaptureBranch,
+        // e.g. a Mun -> Low Kerbin Orbit return leg) mirrors that moon's own
+        // outbound intercept burn by Hohmann-transfer symmetry - see that
+        // branch's doc comment. Comparing it against the moon's intercept
+        // field is the precise check; the host's own orbit field (a plain
+        // zero-vInf escape/capture magnitude) is the wrong reference here.
+        const originBody = bodies[originBodyId];
+        if (originBody?.parent === bodyId) {
+            return { bodyId: originBodyId, referenceField: 'intercept', referenceDv: Number(originBody.nodes?.intercept) };
+        }
+
+        // Otherwise this is a capture arriving from a genuinely different
+        // top-level system (e.g. any "Low Kerbin Orbit" on a return leg from
+        // Eve, Duna, or a Jool moon). The pack's orbit field is a plain
+        // zero-vInf local escape/capture magnitude calibrated around
+        // Kerbin-origin transfers (this IS a Kerbin dV map); comparing it
+        // against an arrival from some other body's system - which
+        // calculateFlybyCaptureBranch already correctly derives a distinct,
+        // body-specific speed for - has no single right answer in the pack,
+        // so there's nothing meaningful to check it against here.
+        const originTopLevelId = resolveTopLevelBodyId(originBodyId, bodies, meta?.centralBody);
+        if (originTopLevelId !== (meta?.originBody ?? originTopLevelId)) return null;
+
+        return { bodyId, referenceField: 'orbit', referenceDv: Number(body.nodes?.orbit) };
     }
 
     return null;
@@ -239,16 +351,22 @@ function compareToReference(computedDv, referenceDv) {
 }
 
 /**
- * Inputs: origin point, target point, bodies, meta, options, and pack id.
- * Outputs: one report row: per-stage comparisons plus a total comparison.
+ * Inputs: leg start point, leg end point, bodies, meta, options, pack id,
+ * and the body id whose transcribed map total applies to this leg.
+ * Outputs: one leg report: per-stage comparisons plus a total comparison.
+ * Purpose: computes ONE direction of travel. mapTotalBodyId is passed
+ * explicitly (rather than always inferred from pointB) so a return leg
+ * (target -> origin) can still be checked against the same body's map
+ * total, since the origin itself (e.g. Kerbin) was never transcribed.
  */
-function buildTargetReport(pointA, pointB, bodies, meta, options, packId) {
+function buildLegReport(pointA, pointB, bodies, meta, options, packId, mapTotalBodyId) {
     const result = jscalculate(pointA, pointB, options, bodies, meta);
-    const targetBody = bodies[pointB.body];
+    const fromBody = bodies[pointA.body];
+    const toBody = bodies[pointB.body];
 
     const stages = result.breakdown.map((entry) => {
         const computedDv = roundTen(entry.dv);
-        const reference = resolveStageReference(entry, pointA.body, bodies);
+        const reference = resolveStageReference(entry, pointA.body, bodies, meta);
         if (!reference || !Number.isFinite(reference.referenceDv)) {
             return { label: entry.label, computedDv, referenceDv: null, diff: null, percent: null };
         }
@@ -258,7 +376,7 @@ function buildTargetReport(pointA, pointB, bodies, meta, options, packId) {
     });
 
     const computedTotal = result.totalDV;
-    const mapTotal = resolveMapTotal(packId, pointB.body);
+    const mapTotal = resolveMapTotal(packId, mapTotalBodyId ?? pointB.body);
     const fallbackTotal = stages.every((stage) => stage.referenceDv !== null)
         ? stages.reduce((sum, stage) => sum + stage.referenceDv, 0)
         : null;
@@ -269,14 +387,46 @@ function buildTargetReport(pointA, pointB, bodies, meta, options, packId) {
         : { diff: null, percent: null };
 
     return {
-        bodyId: pointB.body,
-        label: targetBody?.label || pointB.body,
+        fromLabel: fromBody?.label || pointA.body,
+        toLabel: toBody?.label || pointB.body,
         stages,
         computedTotal,
         referenceTotal,
         totalSource,
         totalDiff: totalComparison.diff,
         totalPercent: totalComparison.percent,
+    };
+}
+
+/**
+ * Inputs: origin point, target point, bodies, meta, options, and pack id.
+ * Outputs: { bodyId, label, outbound, inbound, roundTrip* } - both leg
+ * reports plus the real combined round-trip total (from an actual
+ * roundTrip:true call, so its rounding matches the site exactly rather
+ * than being re-derived by adding two independently-rounded totals).
+ */
+function buildRoundTripReport(originPoint, targetPoint, bodies, meta, options, packId) {
+    const targetBody = bodies[targetPoint.body];
+    const outbound = buildLegReport(originPoint, targetPoint, bodies, meta, options, packId, targetPoint.body);
+    const inbound = buildLegReport(targetPoint, originPoint, bodies, meta, options, packId, targetPoint.body);
+
+    const roundTripResult = jscalculate(originPoint, targetPoint, { ...options, roundTrip: true }, bodies, meta);
+    const roundTripReferenceTotal = (outbound.referenceTotal !== null && inbound.referenceTotal !== null)
+        ? outbound.referenceTotal + inbound.referenceTotal
+        : null;
+    const roundTripComparison = roundTripReferenceTotal !== null
+        ? compareToReference(roundTripResult.totalDV, roundTripReferenceTotal)
+        : { diff: null, percent: null };
+
+    return {
+        bodyId: targetPoint.body,
+        label: targetBody?.label || targetPoint.body,
+        outbound,
+        inbound,
+        roundTripTotal: roundTripResult.totalDV,
+        roundTripReferenceTotal,
+        roundTripDiff: roundTripComparison.diff,
+        roundTripPercent: roundTripComparison.percent,
     };
 }
 
@@ -329,16 +479,16 @@ function fmtDiff(value) {
 }
 
 /**
- * Inputs: one target report.
+ * Inputs: one leg report and a heading line.
  * Outputs: prints its per-stage breakdown table, dropdown-order, plus total.
  */
-function printTargetTable(report) {
-    console.log(`${report.label} (Surface)`);
-    console.log('-'.repeat(report.label.length + 10));
+function printLegTable(leg, heading) {
+    console.log(heading);
+    console.log('-'.repeat(heading.length));
     console.log(
         `  ${'Stage'.padEnd(22)} ${'Computed'.padStart(10)} ${'Reference'.padStart(10)} ${'Diff'.padStart(8)} ${'Diff %'.padStart(8)}`,
     );
-    for (const stage of report.stages) {
+    for (const stage of leg.stages) {
         console.log(
             `  ${stage.label.padEnd(22)} `
             + `${fmt(stage.computedDv).padStart(10)} `
@@ -349,45 +499,80 @@ function printTargetTable(report) {
     }
     console.log(
         `  ${'Total'.padEnd(22)} `
-        + `${fmt(report.computedTotal).padStart(10)} `
-        + `${fmt(report.referenceTotal).padStart(10)} `
-        + `${fmtDiff(report.totalDiff).padStart(8)} `
-        + `${fmtPercent(report.totalPercent).padStart(8)}`,
+        + `${fmt(leg.computedTotal).padStart(10)} `
+        + `${fmt(leg.referenceTotal).padStart(10)} `
+        + `${fmtDiff(leg.totalDiff).padStart(8)} `
+        + `${fmtPercent(leg.totalPercent).padStart(8)}`,
     );
-    if (report.totalSource && report.totalSource !== 'map') {
-        console.log(`  (total reference: ${report.totalSource})`);
+    if (leg.totalSource && leg.totalSource !== 'map') {
+        console.log(`  (total reference: ${leg.totalSource})`);
     }
+}
+
+/**
+ * Inputs: one round-trip report (outbound leg, return leg, combined total).
+ * Outputs: prints both leg tables plus the combined round-trip total line.
+ */
+function printRoundTripReport(report) {
+    printLegTable(report.outbound, `${report.label} - Outbound: ${report.outbound.fromLabel} -> ${report.outbound.toLabel}`);
+    console.log();
+    printLegTable(report.inbound, `${report.label} - Return: ${report.inbound.fromLabel} -> ${report.inbound.toLabel}`);
+    console.log();
+    console.log(
+        `  ${'Round trip total'.padEnd(22)} `
+        + `${fmt(report.roundTripTotal).padStart(10)} `
+        + `${fmt(report.roundTripReferenceTotal).padStart(10)} `
+        + `${fmtDiff(report.roundTripDiff).padStart(8)} `
+        + `${fmtPercent(report.roundTripPercent).padStart(8)}`,
+    );
     console.log();
 }
 
 /**
- * Inputs: all target reports.
+ * Inputs: all round-trip reports and the requested leg scope.
  * Outputs: prints a summary table sorted worst-offender first, across every
- * stage of every route (not just totals), so a body with one bad leg still
- * surfaces even if its total looks fine.
+ * stage of every leg in scope (not just totals), so a body with one bad leg
+ * still surfaces even if its total looks fine.
  */
-function printWorstOffenders(reports, sortKey) {
+function printWorstOffenders(reports, sortKey, legScope) {
     const rows = [];
     for (const report of reports) {
-        for (const stage of report.stages) {
-            if (stage.percent === null) continue;
-            rows.push({
-                body: report.label,
-                stage: stage.label,
-                computedDv: stage.computedDv,
-                referenceDv: stage.referenceDv,
-                diff: stage.diff,
-                percent: stage.percent,
-            });
+        const legs = [];
+        if (legScope !== 'return') legs.push(['Outbound', report.outbound]);
+        if (legScope !== 'outbound') legs.push(['Return', report.inbound]);
+
+        for (const [legName, leg] of legs) {
+            for (const stage of leg.stages) {
+                if (stage.percent === null) continue;
+                rows.push({
+                    body: `${report.label} (${legName})`,
+                    stage: stage.label,
+                    computedDv: stage.computedDv,
+                    referenceDv: stage.referenceDv,
+                    diff: stage.diff,
+                    percent: stage.percent,
+                });
+            }
+            if (leg.totalPercent !== null) {
+                rows.push({
+                    body: `${report.label} (${legName})`,
+                    stage: 'Leg total',
+                    computedDv: leg.computedTotal,
+                    referenceDv: leg.referenceTotal,
+                    diff: leg.totalDiff,
+                    percent: leg.totalPercent,
+                });
+            }
         }
-        if (report.totalPercent !== null) {
+
+        if (legScope === 'both' && report.roundTripPercent !== null) {
             rows.push({
                 body: report.label,
-                stage: 'Total',
-                computedDv: report.computedTotal,
-                referenceDv: report.referenceTotal,
-                diff: report.totalDiff,
-                percent: report.totalPercent,
+                stage: 'Round trip total',
+                computedDv: report.roundTripTotal,
+                referenceDv: report.roundTripReferenceTotal,
+                diff: report.roundTripDiff,
+                percent: report.roundTripPercent,
             });
         }
     }
@@ -399,14 +584,16 @@ function printWorstOffenders(reports, sortKey) {
     };
     rows.sort(sorters[sortKey] || sorters.percent);
 
-    console.log('Worst offenders (all stages, all bodies)');
-    console.log('=========================================');
+    const bodyColumnWidth = Math.max(18, ...rows.map((row) => row.body.length));
+
+    console.log('Worst offenders (all legs in scope, all bodies)');
+    console.log('================================================');
     console.log(
-        `${'Body'.padEnd(10)} ${'Stage'.padEnd(22)} ${'Computed'.padStart(10)} ${'Reference'.padStart(10)} ${'Diff'.padStart(8)} ${'Diff %'.padStart(8)}`,
+        `${'Body'.padEnd(bodyColumnWidth)} ${'Stage'.padEnd(22)} ${'Computed'.padStart(10)} ${'Reference'.padStart(10)} ${'Diff'.padStart(8)} ${'Diff %'.padStart(8)}`,
     );
     for (const row of rows) {
         console.log(
-            `${row.body.padEnd(10)} ${row.stage.padEnd(22)} `
+            `${row.body.padEnd(bodyColumnWidth)} ${row.stage.padEnd(22)} `
             + `${fmt(row.computedDv).padStart(10)} `
             + `${fmt(row.referenceDv).padStart(10)} `
             + `${fmtDiff(row.diff).padStart(8)} `
@@ -427,6 +614,7 @@ function parseArgs(argv) {
         json: false,
         sort: 'percent',
         only: null,
+        legs: 'both',
     };
 
     for (let i = 0; i < argv.length; i += 1) {
@@ -436,7 +624,12 @@ function parseArgs(argv) {
         else if (arg === '--json') options.json = true;
         else if (arg === '--sort') options.sort = argv[++i];
         else if (arg === '--only') options.only = new Set(argv[++i].split(',').map((id) => id.trim()));
+        else if (arg === '--legs') options.legs = argv[++i];
         else throw new Error(`Unknown argument: ${arg}`);
+    }
+
+    if (!['both', 'outbound', 'return'].includes(options.legs)) {
+        throw new Error(`--legs must be one of: both, outbound, return (got "${options.legs}")`);
     }
 
     return options;
@@ -457,10 +650,10 @@ function main() {
     const calcOptions = defaultCalculationOptions();
 
     const targets = collectTargetPoints(bodies, meta, originBodyId, args.only);
-    const reports = targets.map((point) => buildTargetReport(originPoint, point, bodies, meta, calcOptions, args.pack));
+    const reports = targets.map((point) => buildRoundTripReport(originPoint, point, bodies, meta, calcOptions, args.pack));
 
     if (args.json) {
-        console.log(JSON.stringify({ pack: label, origin: originPoint, reports }, null, 2));
+        console.log(JSON.stringify({ pack: label, origin: originPoint, legs: args.legs, reports }, null, 2));
         return;
     }
 
@@ -468,13 +661,22 @@ function main() {
     console.log('================================');
     console.log(`Pack:   ${label}`);
     console.log(`Origin: ${bodies[originBodyId]?.label || originBodyId} Surface`);
+    console.log(`Legs:   ${args.legs}`);
     console.log();
 
     for (const report of reports) {
-        printTargetTable(report);
+        if (args.legs === 'both') {
+            printRoundTripReport(report);
+        } else if (args.legs === 'outbound') {
+            printLegTable(report.outbound, `${report.label} - Outbound: ${report.outbound.fromLabel} -> ${report.outbound.toLabel}`);
+            console.log();
+        } else {
+            printLegTable(report.inbound, `${report.label} - Return: ${report.inbound.fromLabel} -> ${report.inbound.toLabel}`);
+            console.log();
+        }
     }
 
-    printWorstOffenders(reports, args.sort);
+    printWorstOffenders(reports, args.sort, args.legs);
 }
 
 main();

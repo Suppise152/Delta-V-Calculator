@@ -212,6 +212,33 @@
         };
     }
 
+    function calculateMoonHostCaptureBranch(segment, bodies, meta) {
+        const hostBody = bodies[segment.to.bodyId];
+        const moonBody = bodies[segment.from.bodyId];
+        if (!hostBody || !moonBody) {
+            return _emptyBranchResult(segment, 'moon_host_capture');
+        }
+
+        const context = api.computeMoonTransferContext(hostBody, moonBody, meta, 'periapsis');
+        const coplanarExtra = Math.abs(context.transferDepartSpeed - context.originSpeed);
+        const planeChange = api.planeChangeDeltaV(context.transferArriveSpeed, context.planeAngle);
+
+        return {
+            dv: coplanarExtra + planeChange,
+            branchType: 'moon_host_capture',
+            debug: {
+                source: 'formula.moon_host_capture',
+                hostBodyId: hostBody.id,
+                moonBodyId: moonBody.id,
+                coplanarExtra,
+                planeChange,
+                hostLowOrbitAltitudeMeters: api.getLowOrbitAltitude(hostBody, meta),
+                hostLowOrbitRadiusMeters: context.originRadius,
+                moonOrbitRadiusMeters: context.targetRadius,
+            },
+        };
+    }
+
     /**
      * Inputs: direct top-level transfer segment, body lookup, and metadata.
      * Outputs: branch result with escape, intercept, and capture breakdown entries.
@@ -473,6 +500,7 @@
         calculateDirectMoonTransferBranch,
         calculateDirectOrbitalTransferBranch,
         calculateEscapeInterceptBranch,
+        calculateMoonHostCaptureBranch,
         calculateMoonHostEscapeBranch,
     });
 })(typeof window !== 'undefined' ? window : globalThis);

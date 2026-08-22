@@ -214,6 +214,10 @@
             return api.calculateMoonHostEscapeBranch(segment, bodies, meta, options);
         }
 
+        if (_isMoonHostCaptureSegment(segment, bodies, meta)) {
+            return api.calculateMoonHostCaptureBranch(segment, bodies, meta);
+        }
+
         if (_isOrbitEscapeSegment(segment)) {
             return api.calculateOrbitEscapeBranch(segment, bodies, options);
         }
@@ -308,6 +312,25 @@
             && moonBody.parent === hostBody.id
             && hostBody.parent === meta?.centralBody
             && segment.from.nodeKey === moonPrimaryNode
+        );
+    }
+
+    /**
+     * Inputs: route segment, body lookup, and metadata.
+     * Outputs: true when a top-level host body is being captured into
+     * directly from one of its own moons (e.g. Mun -> Low Kerbin Orbit).
+     */
+    function _isMoonHostCaptureSegment(segment, bodies, meta) {
+        const moonBody = bodies[segment.from.bodyId];
+        const hostBody = bodies[segment.to.bodyId];
+        if (!moonBody || !hostBody) return false;
+
+        const moonPrimaryNode = api.getNodeKeys(moonBody)[0];
+        return Boolean(
+            moonBody.parent === hostBody.id
+            && hostBody.parent === meta?.centralBody
+            && segment.from.nodeKey === moonPrimaryNode
+            && segment.to.nodeKey === 'orbit'
         );
     }
 
