@@ -584,7 +584,7 @@ function _normalizeLoadedPackData(data) {
 function onNodeClick(bodyId, nodeKey, options = {}) {
     if (typeof isAdvancedModeActive === 'function' && isAdvancedModeActive()) {
         if (typeof assignActiveJourneyStopNode === 'function') {
-            assignActiveJourneyStopNode(bodyId, nodeKey);
+            assignActiveJourneyStopNode(bodyId, nodeKey, { useNextStop: options.invertEndpoint });
         }
         return;
     }

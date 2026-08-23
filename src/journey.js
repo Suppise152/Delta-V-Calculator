@@ -15,13 +15,16 @@
     const JOURNEY_EMPTY_COLOUR = '#6f7580';
     const JOURNEY_PLACEHOLDER_GLOW = '#4a90ff';
 
+    // Per-leg aerobrake toggles: only the destination-side ones apply in advanced
+    // mode, since each leg's "origin" is just the previous stop, not a mission start.
     const AEROBRAKE_TOGGLE_IDS = [
         'aeroInterceptDest',
         'aeroLowOrbitDest',
-        'aeroInterceptOrigin',
-        'aeroLowOrbitOrigin',
     ];
-    const LOCKED_SINGLE_TRIP_TOGGLE_IDS = ['roundTripToggle', 'returnOnlyToggle', 'fromLO'];
+    const LOCKED_SINGLE_TRIP_TOGGLE_IDS = [
+        'roundTripToggle', 'returnOnlyToggle', 'fromLO',
+        'aeroInterceptOrigin', 'aeroLowOrbitOrigin',
+    ];
     const MAP_CONTROL_INPUT_IDS = [
         'ksp1Check', 'ksp2Check',
         'stockCheck', 'opmCheck', 'rssCheck', 'ksrssCheck', 'jnsqCheck',
@@ -40,6 +43,7 @@
     let _journeyStops = [];
     let _activeStopIndex = 1;
     let _dragFromIndex = null;
+    let _isJourneyModifierActive = false;
 
     /**
      * Inputs: none.
@@ -58,6 +62,48 @@
         button.addEventListener('click', () => {
             _setAdvancedMode(!_advancedModeActive, { persist: true });
         });
+
+        window.addEventListener('keydown', _handleJourneyModifierState);
+        window.addEventListener('keyup', _handleJourneyModifierState);
+        window.addEventListener('blur', _clearJourneyModifierState);
+    }
+
+    /**
+     * Inputs: keyboard event.
+     * Outputs: previews the next stop as active while Ctrl/Cmd is held, reverting on release.
+     * Purpose: mirrors the origin/destination Ctrl-preview in src/ui.js (_handleEndpointModifierState) —
+     * lets a Ctrl+click on the map assign straight to the next leg without losing the current selection.
+     */
+    function _handleJourneyModifierState(event) {
+        if (!_advancedModeActive) return;
+
+        const isActive = Boolean(event.ctrlKey || event.metaKey);
+        if (_isJourneyModifierActive === isActive) return;
+
+        _isJourneyModifierActive = isActive;
+        renderJourneyPanel();
+    }
+
+    /**
+     * Inputs: none.
+     * Outputs: clears a stuck modifier preview after focus loss.
+     */
+    function _clearJourneyModifierState() {
+        if (!_isJourneyModifierActive) return;
+        _isJourneyModifierActive = false;
+        renderJourneyPanel();
+    }
+
+    /**
+     * Inputs: whether the next-stop preview should apply.
+     * Outputs: the stop index that should currently read as "active" — the real
+     * active stop normally, or the trailing "select next stop" placeholder while
+     * the Ctrl/Cmd preview is held (always the frontier, not just +1 from wherever
+     * the real selection happens to be).
+     */
+    function _getPreviewStopIndex(useNextStop) {
+        if (!useNextStop) return _activeStopIndex;
+        return _journeyStops.length - 1;
     }
 
     /**
@@ -211,19 +257,28 @@
     }
 
     /**
-     * Inputs: clicked map body id and node key.
-     * Outputs: assigns the node to the active journey stop, grows the journey, and re-renders.
+     * Inputs: clicked map body id/node key, and whether the Ctrl/Cmd "next stop" preview applied.
+     * Outputs: assigns the node to the target journey stop, grows the journey, and re-renders.
      * Purpose: called from onNodeClick (src/ui.js) instead of the normal origin/destination write.
+     * A Ctrl/Cmd-held click writes to the trailing placeholder (the frontier) and advances the
+     * active selection onto it — so holding Ctrl and clicking repeatedly rapid-builds consecutive
+     * legs. Releasing Ctrl afterwards reflects wherever that left the active selection.
      */
-    function assignActiveJourneyStopNode(bodyId, nodeKey) {
+    function assignActiveJourneyStopNode(bodyId, nodeKey, options = {}) {
         if (!_journeyStops.length) return;
 
-        _journeyStops[_activeStopIndex] = { body: bodyId, node: nodeKey };
+        const useNextStop = Boolean(options.useNextStop);
+        const targetIndex = _getPreviewStopIndex(useNextStop);
+        _journeyStops[targetIndex] = { body: bodyId, node: nodeKey };
 
         // p0 (the origin) never grows the list — only assigning a trailing stop does.
-        const isLastStop = _activeStopIndex === _journeyStops.length - 1;
-        if (_activeStopIndex > 0 && isLastStop && _journeyStops.length < MAX_JOURNEY_STOPS) {
+        const isLastStop = targetIndex === _journeyStops.length - 1;
+        if (targetIndex > 0 && isLastStop && _journeyStops.length < MAX_JOURNEY_STOPS) {
             _journeyStops.push({ body: null, node: null });
+        }
+
+        if (useNextStop) {
+            _activeStopIndex = targetIndex;
         }
 
         _syncMapControlsLockUI();
@@ -374,7 +429,7 @@
 
         const row = document.createElement('div');
         row.className = 'journey-stop-row';
-        row.classList.toggle('is-active', index === _activeStopIndex);
+        row.classList.toggle('is-active', index === _getPreviewStopIndex(_isJourneyModifierActive));
         row.dataset.stopIndex = String(index);
 
         if (!isOrigin && !isPlaceholder) {
@@ -467,11 +522,40 @@
         if (isComplete) {
             const widget = document.createElement('div');
             widget.className = 'journey-leg-widget';
-            widget.innerHTML = '<span class="journey-leg-widget-dv">&Delta;V: —</span><span class="journey-leg-widget-transfer">Transfer: —</span>';
+            widget.innerHTML = `
+                <span class="journey-leg-widget-dv">&Delta;V: —</span>
+                <span class="journey-leg-widget-transfer">Transfer: —&deg;</span>
+            `;
+            const diagram = _buildMiniTransferDiagram();
+            if (diagram) widget.appendChild(diagram);
             connector.appendChild(widget);
         }
 
         return connector;
+    }
+
+    /**
+     * Inputs: none.
+     * Outputs: small transfer-diagram SVG sized to fit the leg widget, or null.
+     * Purpose: reuses the exact same diagram renderer as the main transfer display
+     * (buildTransferDiagramSvg in src/transfer.js) with a static placeholder model,
+     * so it already matches the real diagram's look once per-leg data is wired in.
+     */
+    function _buildMiniTransferDiagram() {
+        if (typeof buildTransferDiagramSvg !== 'function') return null;
+
+        const placeholderModel = {
+            centerLabel: 'Transfer',
+            centerBodyId: null,
+            fromBodyId: null,
+            toBodyId: null,
+            fromOrbitRadius: 1,
+            toOrbitRadius: 1.6,
+        };
+        const svg = buildTransferDiagramSvg(placeholderModel, 'depart', {}, 90);
+        svg.classList.add('journey-leg-widget-diagram');
+        svg.setAttribute('aria-hidden', 'true');
+        return svg;
     }
 
     /**

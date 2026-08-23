@@ -385,3 +385,4 @@ function syncResultDisplayWidth(inputEl) {
 }
 
 window.syncResultDisplayWidth = syncResultDisplayWidth;
+window.buildTransferDiagramSvg = _buildTransferDiagramSvg;
