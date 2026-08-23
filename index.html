@@ -36,11 +36,24 @@
     <main class="content">
 
         <aside class="panel-left" id="description-panel">
-            <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Light Mode</button>
+            <div class="panel-left-toolbar">
+                <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Light Mode</button>
+                <button type="button" class="advanced-mode-toggle" id="advanced-mode-toggle" aria-pressed="false">Advanced Mode</button>
+            </div>
             <details class="debug-panel" id="calc-debug-panel">
                 <summary>Calculation Debug</summary>
                 <div class="debug-output" id="calc-debug"></div>
             </details>
+
+            <div class="journey-panel" id="journey-panel" hidden>
+                <div class="journey-stop-list" id="journey-stop-list"></div>
+                <div class="journey-footer">
+                    <div class="journey-footer-dv" id="journey-total-dv">—</div>
+                    <button type="button" class="journey-footer-clear" id="journey-clear-all">Clear</button>
+                </div>
+            </div>
+
+            <div id="description-static-content">
             <h2>How to Use this Site</h2>
             <p>
                 This is an interactive ΔV map. Simply click on a node on a branch to
@@ -157,6 +170,7 @@
                 <li>Thrust limits, steering losses, long-burn Oberth inefficiency, and staging transients are ignored.</li>
                 <li>Aerobraking conditions remove the entire &Delta;V cost for the relevant branch.</li>
             </ol>
+            </div>
         </aside>
 
         <button type="button" class="description-toggle" id="description-toggle" aria-label="Hide description panel" aria-expanded="true" aria-controls="description-panel" title="Hide description panel">
@@ -170,7 +184,7 @@
             <div class="map-container" id="map-container">
                 <footer class="site-footer">
                     <!-- Release.Major.Minor.Patch -->
-                    <span id="version-info">Version 2.3.0.1</span>
+                    <span id="version-info">Version 2.4.0.0.dev</span>
                 </footer>
                 <button type="button" class="theme-toggle theme-toggle--mobile" id="theme-toggle-mobile" aria-pressed="false">Light Mode</button>
                 <div class="endpoint-selector" id="endpoint-selector" aria-label="Route endpoint selector">
@@ -336,6 +350,7 @@
     <script src="src/dropdown.js"></script>
     <script src="src/debug-view.js"></script>
     <script src="src/analytics.js"></script>
+    <script src="src/journey.js"></script>
     <script src="src/ui.js"></script>
 
 </body>
