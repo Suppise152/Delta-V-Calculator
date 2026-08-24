@@ -66,6 +66,13 @@
         window.addEventListener('keydown', _handleJourneyModifierState);
         window.addEventListener('keyup', _handleJourneyModifierState);
         window.addEventListener('blur', _clearJourneyModifierState);
+
+        // Keep the active leg's widget aerobrake indicator in sync as the checkboxes change.
+        AEROBRAKE_TOGGLE_IDS.forEach((id) => {
+            document.getElementById(id)?.addEventListener('change', () => {
+                if (_advancedModeActive) renderJourneyPanel();
+            });
+        });
     }
 
     /**
@@ -175,7 +182,7 @@
             _resetJourney();
         } else {
             _setAerobrakeCheckboxesEnabled(true);
-            _syncMapControlsLockUI();
+            _syncJourneyLockUI();
 
             if (_isMapReady()) {
                 if (typeof resetSelection === 'function') resetSelection();
@@ -223,7 +230,7 @@
         _activeStopIndex = 1;
 
         _setAerobrakeCheckboxesEnabled(true);
-        _syncMapControlsLockUI();
+        _syncJourneyLockUI();
         selectJourneyStop(_activeStopIndex);
     }
 
@@ -281,7 +288,7 @@
             _activeStopIndex = targetIndex;
         }
 
-        _syncMapControlsLockUI();
+        _syncJourneyLockUI();
         selectJourneyStop(_activeStopIndex);
     }
 
@@ -298,7 +305,7 @@
         }
 
         const nextActiveIndex = Math.min(index, _journeyStops.length - 1);
-        _syncMapControlsLockUI();
+        _syncJourneyLockUI();
         selectJourneyStop(nextActiveIndex);
     }
 
@@ -366,14 +373,20 @@
 
     /**
      * Inputs: none.
-     * Outputs: locks/unlocks the map version and pack checkboxes to match journey state.
+     * Outputs: locks/unlocks the map version/pack checkboxes and the description-panel
+     * hamburger toggle to match journey state.
+     * Purpose: once a journey has a real stop beyond the origin, both switching packs
+     * and dismissing the left panel would strand the in-progress journey — lock both.
      */
-    function _syncMapControlsLockUI() {
+    function _syncJourneyLockUI() {
         const locked = isJourneyPackLocked();
         MAP_CONTROL_INPUT_IDS.forEach((id) => {
             const input = document.getElementById(id);
             if (input) input.disabled = locked;
         });
+
+        const descriptionToggle = document.getElementById('description-toggle');
+        if (descriptionToggle) descriptionToggle.disabled = locked;
     }
 
     /**
@@ -477,10 +490,10 @@
         label.className = 'journey-stop-label';
         if (isPlaceholder) {
             label.classList.add('is-placeholder');
-            label.textContent = isOrigin ? 'Select origin' : 'Select next stop';
         } else {
             label.textContent = _formatStopLabel(body, stop.node);
         }
+        label.addEventListener('click', () => selectJourneyStop(index));
         row.appendChild(label);
 
         if (!isOrigin && !isPlaceholder) {
@@ -512,7 +525,7 @@
 
         const legLabel = document.createElement('span');
         legLabel.className = 'journey-connector-label';
-        legLabel.textContent = `L${index + 1}`;
+        legLabel.textContent = `Leg ${index + 1}`;
         connector.appendChild(legLabel);
 
         const line = document.createElement('span');
@@ -522,16 +535,52 @@
         if (isComplete) {
             const widget = document.createElement('div');
             widget.className = 'journey-leg-widget';
+            // Clicking the widget selects the leg's arrival stop, same as clicking that stop's node/label.
+            widget.addEventListener('click', () => selectJourneyStop(index + 1));
             widget.innerHTML = `
-                <span class="journey-leg-widget-dv">&Delta;V: —</span>
-                <span class="journey-leg-widget-transfer">Transfer: —&deg;</span>
+                <span class="journey-leg-widget-values">
+                    <span class="journey-leg-widget-dv">&Delta;V: — m/s</span>
+                    <span class="journey-leg-widget-transfer">Transfer: —&deg;</span>
+                </span>
             `;
+            const visuals = document.createElement('span');
+            visuals.className = 'journey-leg-widget-visuals';
             const diagram = _buildMiniTransferDiagram();
-            if (diagram) widget.appendChild(diagram);
+            if (diagram) visuals.appendChild(diagram);
+            // The active leg is the one ending at the currently selected stop; only it
+            // reflects the live aerobrake checkboxes (per-leg values aren't persisted yet).
+            const isActiveLeg = index === _activeStopIndex - 1;
+            visuals.appendChild(_buildAerobrakeIndicator(isActiveLeg));
+            widget.appendChild(visuals);
             connector.appendChild(widget);
         }
 
         return connector;
+    }
+
+    /**
+     * Inputs: whether this leg is the currently active/selected one.
+     * Outputs: small stacked aerobrake-indicator SVG (two down-pointing arrows, the
+     * lower one with a tangential line at its tip).
+     * Purpose: mirrors the main map's white aerobrake arrows (src/map/render.js) —
+     * greyed out by default, lit up per the destination aerobrake checkboxes:
+     * "from intercept" lights both arrows, "from low orbit" lights only the bottom one.
+     */
+    function _buildAerobrakeIndicator(isActiveLeg) {
+        const intercept = isActiveLeg && (document.getElementById('aeroInterceptDest')?.checked ?? false);
+        const lowOrbit = isActiveLeg && (document.getElementById('aeroLowOrbitDest')?.checked ?? false);
+        const bottomActive = intercept || lowOrbit;
+
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 24 54');
+        svg.setAttribute('class', 'journey-leg-widget-aero');
+        svg.setAttribute('aria-hidden', 'true');
+        svg.innerHTML = `
+            <polygon points="12,17.86 4,4 20,4" class="journey-aero-arrow${intercept ? ' is-active' : ''}"></polygon>
+            <polygon points="12,47.86 4,34 20,34" class="journey-aero-arrow${bottomActive ? ' is-active' : ''}"></polygon>
+            <line x1="2" y1="47.86" x2="22" y2="47.86" class="journey-aero-tangent"></line>
+        `;
+        return svg;
     }
 
     /**

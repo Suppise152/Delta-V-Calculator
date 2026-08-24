@@ -100,6 +100,8 @@ function initDescriptionPanelToggle() {
     _setDescriptionPanelCollapsed(storedState === 'collapsed', content, button);
 
     button.addEventListener('click', () => {
+        if (typeof isJourneyPackLocked === 'function' && isJourneyPackLocked()) return;
+
         const isCollapsed = !content.classList.contains('is-description-collapsed');
         _setDescriptionPanelCollapsed(isCollapsed, content, button);
         window.localStorage.setItem(DESCRIPTION_PANEL_STORAGE_KEY, isCollapsed ? 'collapsed' : 'expanded');

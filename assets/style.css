@@ -216,6 +216,12 @@ body {
     outline-offset: 2px;
 }
 
+.description-toggle:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .description-toggle span {
     display: block;
     width: 100%;
@@ -488,27 +494,69 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     gap: 12px;
+    min-width: 340px;
+    width: max-content;
+    max-width: 100%;
     background-color: var(--cardBg);
     border: 1px solid var(--cardBorder);
     border-radius: 8px;
     box-shadow: 0 6px 14px var(--cardShadow);
-    padding: 8px 15px;
+    padding: 3px 15px;
     font-family: var(--font-ui);
     font-size: clamp(1.17rem, 1.35vw, 1.425rem);
     color: var(--cardTxt);
     white-space: nowrap;
+    cursor: pointer;
+}
+
+.journey-leg-widget-values {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
 }
 
 .journey-leg-widget-dv,
 .journey-leg-widget-transfer {
     flex: 0 0 auto;
+    text-align: left;
+}
+
+.journey-leg-widget-visuals {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+    margin-left: auto;
 }
 
 .journey-leg-widget-diagram {
     flex: 0 0 auto;
-    width: 58px;
-    height: 58px;
+    width: 69.6px;
+    height: 69.6px;
+}
+
+.journey-leg-widget-aero {
+    flex: 0 0 auto;
+    width: 20.4px;
+    height: 45.9px;
+}
+
+.journey-aero-arrow {
+    fill: var(--mutedTxt);
+    transition: fill 0.15s ease, filter 0.15s ease;
+}
+
+.journey-aero-tangent {
+    stroke: var(--mutedTxt);
+    stroke-width: 2;
+}
+
+.journey-aero-arrow.is-active {
+    fill: var(--aeroIndicator);
+    filter: drop-shadow(0 0 3px var(--aeroIndicatorGlow));
 }
 
 .journey-footer {
