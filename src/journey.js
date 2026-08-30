@@ -67,10 +67,20 @@
         window.addEventListener('keyup', _handleJourneyModifierState);
         window.addEventListener('blur', _clearJourneyModifierState);
 
-        // Keep the active leg's widget aerobrake indicator in sync as the checkboxes change.
+        // Persist the active leg's aerobrake choice and keep the widgets in sync as the checkboxes change.
         AEROBRAKE_TOGGLE_IDS.forEach((id) => {
             document.getElementById(id)?.addEventListener('change', () => {
-                if (_advancedModeActive) renderJourneyPanel();
+                if (!_advancedModeActive) return;
+
+                const activeStop = _activeStopIndex > 0 ? _journeyStops[_activeStopIndex] : null;
+                if (activeStop) {
+                    activeStop.aero = {
+                        interceptDest: document.getElementById('aeroInterceptDest')?.checked ?? false,
+                        lowOrbitDest: document.getElementById('aeroLowOrbitDest')?.checked ?? false,
+                    };
+                }
+
+                renderJourneyPanel();
             });
         });
     }
@@ -214,11 +224,19 @@
 
     /**
      * Inputs: none.
+     * Outputs: fresh per-leg aerobrake state, both destination toggles unset.
+     */
+    function _getDefaultAeroState() {
+        return { interceptDest: false, lowOrbitDest: false };
+    }
+
+    /**
+     * Inputs: none.
      * Outputs: default origin stop for p0, matching the app's normal default origin.
      */
     function _getDefaultOriginStop() {
         const originBodyId = typeof _getCurrentOriginBodyId === 'function' ? _getCurrentOriginBodyId() : null;
-        return { body: originBodyId || null, node: originBodyId ? 'land' : null };
+        return { body: originBodyId || null, node: originBodyId ? 'land' : null, aero: _getDefaultAeroState() };
     }
 
     /**
@@ -226,10 +244,9 @@
      * Outputs: resets the journey to its empty state [origin, placeholder] and re-renders.
      */
     function _resetJourney() {
-        _journeyStops = [_getDefaultOriginStop(), { body: null, node: null }];
+        _journeyStops = [_getDefaultOriginStop(), { body: null, node: null, aero: _getDefaultAeroState() }];
         _activeStopIndex = 1;
 
-        _setAerobrakeCheckboxesEnabled(true);
         _syncJourneyLockUI();
         selectJourneyStop(_activeStopIndex);
     }
@@ -242,7 +259,7 @@
         if (index < 0 || index >= _journeyStops.length) return;
         _activeStopIndex = index;
 
-        _setAerobrakeCheckboxesEnabled(index > 0);
+        _setAerobrakeCheckboxesEnabled(index > 0, index > 0 ? _journeyStops[index]?.aero : null);
 
         if (_isMapReady()) {
             if (index === 0) {
@@ -276,12 +293,12 @@
 
         const useNextStop = Boolean(options.useNextStop);
         const targetIndex = _getPreviewStopIndex(useNextStop);
-        _journeyStops[targetIndex] = { body: bodyId, node: nodeKey };
+        _journeyStops[targetIndex] = { body: bodyId, node: nodeKey, aero: _getDefaultAeroState() };
 
         // p0 (the origin) never grows the list — only assigning a trailing stop does.
         const isLastStop = targetIndex === _journeyStops.length - 1;
         if (targetIndex > 0 && isLastStop && _journeyStops.length < MAX_JOURNEY_STOPS) {
-            _journeyStops.push({ body: null, node: null });
+            _journeyStops.push({ body: null, node: null, aero: _getDefaultAeroState() });
         }
 
         if (useNextStop) {
@@ -301,7 +318,7 @@
 
         _journeyStops.splice(index, 1);
         if (!_journeyStops.length || _journeyStops[_journeyStops.length - 1].body) {
-            _journeyStops.push({ body: null, node: null });
+            _journeyStops.push({ body: null, node: null, aero: _getDefaultAeroState() });
         }
 
         const nextActiveIndex = Math.min(index, _journeyStops.length - 1);
@@ -347,16 +364,22 @@
     }
 
     /**
-     * Inputs: enabled flag.
-     * Outputs: enables/disables the four aerobrake checkboxes, always resetting them unchecked.
+     * Inputs: enabled flag and the leg's persisted aero state (null when disabling).
+     * Outputs: enables/disables the two destination aerobrake checkboxes, restoring the
+     * given leg's persisted checked state when enabling, or unchecking when disabling.
      */
-    function _setAerobrakeCheckboxesEnabled(enabled) {
-        AEROBRAKE_TOGGLE_IDS.forEach((id) => {
-            const input = document.getElementById(id);
-            if (!input) return;
-            input.checked = false;
-            input.disabled = !enabled;
-        });
+    function _setAerobrakeCheckboxesEnabled(enabled, aero) {
+        const interceptInput = document.getElementById('aeroInterceptDest');
+        const lowOrbitInput = document.getElementById('aeroLowOrbitDest');
+
+        if (interceptInput) {
+            interceptInput.disabled = !enabled;
+            interceptInput.checked = enabled ? Boolean(aero?.interceptDest) : false;
+        }
+        if (lowOrbitInput) {
+            lowOrbitInput.disabled = !enabled;
+            lowOrbitInput.checked = enabled ? Boolean(aero?.lowOrbitDest) : false;
+        }
 
         const dropdown = document.getElementById('dv-dropdown');
         if (dropdown) dropdown.classList.remove('is-open');
@@ -418,17 +441,24 @@
         if (!list) return;
 
         list.innerHTML = '';
+        let totalDV = 0;
+        let hasCompleteLeg = false;
 
         _journeyStops.forEach((stop, index) => {
             list.appendChild(_buildStopRow(stop, index));
 
             if (index < _journeyStops.length - 1) {
                 const nextStop = _journeyStops[index + 1];
-                list.appendChild(_buildConnector(index, stop, nextStop));
+                const { element, legResult } = _buildConnector(index, stop, nextStop);
+                list.appendChild(element);
+                if (legResult) {
+                    hasCompleteLeg = true;
+                    totalDV += legResult.totalDV;
+                }
             }
         });
 
-        _renderFooter();
+        _renderFooter(hasCompleteLeg ? totalDV : null);
     }
 
     /**
@@ -514,7 +544,8 @@
 
     /**
      * Inputs: leg index (0-based, connecting stop[index] to stop[index+1]) and both endpoint stops.
-     * Outputs: DOM connector element between two stop rows.
+     * Outputs: `{ element, legResult }` — the connector DOM element, and that leg's
+     * calculation result (null when the leg isn't complete).
      */
     function _buildConnector(index, fromStop, toStop) {
         const isComplete = Boolean(fromStop.body && toStop.body);
@@ -532,43 +563,52 @@
         line.className = 'journey-connector-line';
         connector.appendChild(line);
 
+        let legResult = null;
+
         if (isComplete) {
+            legResult = _calculateLegResult(fromStop, toStop, toStop.aero);
+
             const widget = document.createElement('div');
             widget.className = 'journey-leg-widget';
             // Clicking the widget selects the leg's arrival stop, same as clicking that stop's node/label.
             widget.addEventListener('click', () => selectJourneyStop(index + 1));
+
+            const dvText = legResult ? `${Math.round(legResult.totalDV).toLocaleString()} m/s` : '— m/s';
+            const angle = legResult?.transferAngles?.arrive;
+            const transferText = Number.isFinite(angle) && typeof formatTransferPhaseAngle === 'function'
+                ? `${formatTransferPhaseAngle(angle)}°`
+                : '—°';
+
             widget.innerHTML = `
                 <span class="journey-leg-widget-values">
-                    <span class="journey-leg-widget-dv">&Delta;V: — m/s</span>
-                    <span class="journey-leg-widget-transfer">Transfer: —&deg;</span>
+                    <span class="journey-leg-widget-dv">&Delta;V: ${dvText}</span>
+                    <span class="journey-leg-widget-transfer">Transfer: ${transferText}</span>
                 </span>
             `;
             const visuals = document.createElement('span');
             visuals.className = 'journey-leg-widget-visuals';
-            const diagram = _buildMiniTransferDiagram();
+            const diagram = _buildLegDiagram(legResult);
             if (diagram) visuals.appendChild(diagram);
-            // The active leg is the one ending at the currently selected stop; only it
-            // reflects the live aerobrake checkboxes (per-leg values aren't persisted yet).
-            const isActiveLeg = index === _activeStopIndex - 1;
-            visuals.appendChild(_buildAerobrakeIndicator(isActiveLeg));
+            visuals.appendChild(_buildAerobrakeIndicator(toStop.aero));
             widget.appendChild(visuals);
             connector.appendChild(widget);
         }
 
-        return connector;
+        return { element: connector, legResult };
     }
 
     /**
-     * Inputs: whether this leg is the currently active/selected one.
+     * Inputs: that leg's persisted aero state ({ interceptDest, lowOrbitDest }).
      * Outputs: small stacked aerobrake-indicator SVG (two down-pointing arrows, the
      * lower one with a tangential line at its tip).
      * Purpose: mirrors the main map's white aerobrake arrows (src/map/render.js) —
-     * greyed out by default, lit up per the destination aerobrake checkboxes:
-     * "from intercept" lights both arrows, "from low orbit" lights only the bottom one.
+     * greyed out by default, lit up per the leg's own aerobrake settings (not just
+     * whichever leg happens to be focused): "from intercept" lights both arrows,
+     * "from low orbit" lights only the bottom one.
      */
-    function _buildAerobrakeIndicator(isActiveLeg) {
-        const intercept = isActiveLeg && (document.getElementById('aeroInterceptDest')?.checked ?? false);
-        const lowOrbit = isActiveLeg && (document.getElementById('aeroLowOrbitDest')?.checked ?? false);
+    function _buildAerobrakeIndicator(aero) {
+        const intercept = Boolean(aero?.interceptDest);
+        const lowOrbit = Boolean(aero?.lowOrbitDest);
         const bottomActive = intercept || lowOrbit;
 
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -584,34 +624,78 @@
     }
 
     /**
-     * Inputs: none.
-     * Outputs: small transfer-diagram SVG sized to fit the leg widget, or null.
-     * Purpose: reuses the exact same diagram renderer as the main transfer display
-     * (buildTransferDiagramSvg in src/transfer.js) with a static placeholder model,
-     * so it already matches the real diagram's look once per-leg data is wired in.
+     * Inputs: origin/destination stops and that leg's persisted aero state.
+     * Outputs: full calculation result for a one-way leg (src/calc/index.js via
+     * jscalculate), or null when the map data or endpoints aren't ready.
      */
-    function _buildMiniTransferDiagram() {
-        if (typeof buildTransferDiagramSvg !== 'function') return null;
+    function _calculateLegResult(fromStop, toStop, aero) {
+        const bodies = typeof getBodies === 'function' ? getBodies() : null;
+        const meta = typeof getSystemMeta === 'function' ? getSystemMeta() : null;
+        if (!bodies || !meta || !fromStop?.body || !toStop?.body || typeof jscalculate !== 'function') {
+            return null;
+        }
 
-        const placeholderModel = {
-            centerLabel: 'Transfer',
-            centerBodyId: null,
-            fromBodyId: null,
-            toBodyId: null,
-            fromOrbitRadius: 1,
-            toOrbitRadius: 1.6,
+        const options = {
+            roundTrip: false,
+            returnOnly: false,
+            aeroInterceptDest: Boolean(aero?.interceptDest),
+            aeroLowOrbitDest: Boolean(aero?.lowOrbitDest),
+            aeroInterceptOrigin: false,
+            aeroLowOrbitOrigin: false,
+            redundancyMultiplier: typeof _getRedundancyMultiplier === 'function' ? _getRedundancyMultiplier() : 1,
+            ipsBranchDV: 1000,
         };
-        const svg = buildTransferDiagramSvg(placeholderModel, 'depart', {}, 90);
+
+        return jscalculate(
+            { body: fromStop.body, node: fromStop.node },
+            { body: toStop.body, node: toStop.node },
+            options,
+            bodies,
+            meta,
+        );
+    }
+
+    /**
+     * Inputs: a leg's calculation result (or null).
+     * Outputs: transfer-diagram SVG sized to fit the leg widget, or null.
+     * Purpose: reuses the exact same diagram renderers as the main transfer display
+     * (src/transfer.js) — a real transfer diagram when the leg has a finite phase
+     * angle, otherwise the default (host + orbit rings only) diagram.
+     */
+    function _buildLegDiagram(legResult) {
+        const bodies = typeof getBodies === 'function' ? getBodies() : null;
+        const meta = typeof getSystemMeta === 'function' ? getSystemMeta() : null;
+        if (!bodies) return null;
+
+        const model = legResult?.transferAngles?.model;
+        const angle = legResult?.transferAngles?.arrive;
+
+        let svg = null;
+        if (model && Number.isFinite(angle) && typeof buildTransferDiagramSvg === 'function') {
+            svg = buildTransferDiagramSvg(model, 'depart', bodies, angle);
+        } else {
+            const centerBodyId = model?.centerBodyId || meta?.centralBody || null;
+            if (centerBodyId && typeof buildDefaultTransferDiagramSvg === 'function') {
+                svg = buildDefaultTransferDiagramSvg(centerBodyId, bodies);
+            }
+        }
+
+        if (!svg) return null;
         svg.classList.add('journey-leg-widget-diagram');
         svg.setAttribute('aria-hidden', 'true');
         return svg;
     }
 
     /**
-     * Inputs: none.
-     * Outputs: updates the pinned footer total-dv placeholder and wires the clear-all button once.
+     * Inputs: summed ΔV across all complete legs, or null when there are none.
+     * Outputs: updates the pinned footer total-dv text and wires the clear-all button once.
      */
-    function _renderFooter() {
+    function _renderFooter(totalDV) {
+        const totalEl = document.getElementById('journey-total-dv');
+        if (totalEl) {
+            totalEl.textContent = Number.isFinite(totalDV) ? `${Math.round(totalDV).toLocaleString()} m/s` : '— m/s';
+        }
+
         const clearButton = document.getElementById('journey-clear-all');
         if (clearButton && !clearButton.dataset.wired) {
             clearButton.dataset.wired = 'true';

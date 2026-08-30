@@ -41,8 +41,8 @@ function refreshTransferDisplay() {
     const returnOnly = document.getElementById('returnOnlyToggle')?.checked ?? false;
 
     if (!bodies || !selection?.pointA?.body || !selection?.pointB?.body || !meta?.centralBody) {
-        _clearTransferBlock(arriveAngle, arriveDiagram);
-        _clearTransferBlock(departAngle, departDiagram);
+        _clearTransferBlock(arriveAngle, arriveDiagram, meta?.centralBody, bodies);
+        _clearTransferBlock(departAngle, departDiagram, meta?.centralBody, bodies);
         _syncTransferDiagramSizes();
         return;
     }
@@ -51,8 +51,8 @@ function refreshTransferDisplay() {
         || _buildTransferModel(selection.pointA.body, selection.pointB.body, bodies, meta.centralBody);
 
     if (!transferModel) {
-        _clearTransferBlock(arriveAngle, arriveDiagram);
-        _clearTransferBlock(departAngle, departDiagram);
+        _clearTransferBlock(arriveAngle, arriveDiagram, meta.centralBody, bodies);
+        _clearTransferBlock(departAngle, departDiagram, meta.centralBody, bodies);
         _syncTransferDiagramSizes();
         return;
     }
@@ -71,7 +71,7 @@ function refreshTransferDisplay() {
  */
 function _renderTransferBlock(blockEl, angleEl, diagramEl, transferModel, mode, isVisible, bodies, phaseAngle) {
     if (!isVisible || !Number.isFinite(phaseAngle)) {
-        _clearTransferBlock(angleEl, diagramEl);
+        _clearTransferBlock(angleEl, diagramEl, transferModel?.centerBodyId, bodies);
         return;
     }
 
@@ -84,14 +84,59 @@ function _renderTransferBlock(blockEl, angleEl, diagramEl, transferModel, mode, 
 }
 
 /**
- * Inputs: angle input element and diagram container.
- * Outputs: resets one transfer block to placeholder state.
+ * Inputs: angle input element, diagram container, resolvable center body id, and body lookup.
+ * Outputs: resets one transfer block's angle to placeholder, showing a default (host + orbit
+ * rings, no target/trajectory/intercept) diagram instead of hiding it whenever a center body
+ * can be resolved; falls back to hiding only when nothing is resolvable at all.
  */
-function _clearTransferBlock(angleEl, diagramEl) {
+function _clearTransferBlock(angleEl, diagramEl, centerBodyId, bodies) {
     angleEl.value = TRANSFER_PLACEHOLDER;
     syncResultDisplayWidth(angleEl);
-    diagramEl.classList.add('is-empty');
     diagramEl.innerHTML = '';
+
+    if (centerBodyId && bodies) {
+        diagramEl.classList.remove('is-empty');
+        diagramEl.appendChild(_buildDefaultDiagramSvg(centerBodyId, bodies));
+    } else {
+        diagramEl.classList.add('is-empty');
+    }
+}
+
+/**
+ * Inputs: center body id and body lookup.
+ * Outputs: SVG element for the default (no transfer selected) phase diagram \u2014
+ * the host body and its two orbit rings, with no target body, trajectory, or intercept mark.
+ */
+function _buildDefaultDiagramSvg(centerBodyId, bodies) {
+    const svg = document.createElementNS(TRANSFER_SVG_NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 220 220');
+    svg.setAttribute('class', 'transfer-diagram-svg');
+    svg.setAttribute('aria-label', `${bodies[centerBodyId]?.label || 'System'} default diagram`);
+
+    const center = { x: 110, y: 110 };
+    const radii = _resolveOrbitRadii();
+
+    svg.appendChild(_svgNode('circle', {
+        cx: center.x,
+        cy: center.y,
+        r: radii.inner,
+        class: 'transfer-orbit-ring',
+    }));
+    svg.appendChild(_svgNode('circle', {
+        cx: center.x,
+        cy: center.y,
+        r: radii.outer,
+        class: 'transfer-orbit-ring',
+    }));
+    svg.appendChild(_svgNode('circle', {
+        cx: center.x,
+        cy: center.y,
+        r: centerBodyId === 'kerbol' ? TRANSFER_KERBOL_CENTER_BODY_RADIUS : TRANSFER_CENTER_BODY_RADIUS,
+        fill: bodies[centerBodyId]?.mapColour || TRANSFER_BODY_A_COLOUR,
+        class: 'transfer-center-body transfer-body',
+    }));
+
+    return svg;
 }
 
 /**
@@ -386,3 +431,5 @@ function syncResultDisplayWidth(inputEl) {
 
 window.syncResultDisplayWidth = syncResultDisplayWidth;
 window.buildTransferDiagramSvg = _buildTransferDiagramSvg;
+window.buildDefaultTransferDiagramSvg = _buildDefaultDiagramSvg;
+window.formatTransferPhaseAngle = _formatPhaseAngle;

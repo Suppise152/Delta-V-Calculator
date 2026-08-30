@@ -933,9 +933,8 @@ function _refreshCalculationUi() {
     const bodies = typeof getBodies === 'function' ? getBodies() : null;
     const selection = typeof getSelectedPoints === 'function' ? getSelectedPoints() : null;
     const meta = typeof getSystemMeta === 'function' ? getSystemMeta() : null;
-    const isAdvancedMode = typeof isAdvancedModeActive === 'function' && isAdvancedModeActive();
 
-    if (isAdvancedMode || !dVDisplay || !bodies || !selection?.pointA?.body || !selection?.pointB?.body || !meta) {
+    if (!dVDisplay || !bodies || !selection?.pointA?.body || !selection?.pointB?.body || !meta) {
         if (typeof clearCalculationState === 'function') {
             clearCalculationState();
         }
