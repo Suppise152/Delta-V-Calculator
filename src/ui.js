@@ -808,6 +808,17 @@ function _getCurrentOriginBodyId() {
 }
 
 /**
+ * Inputs: none.
+ * Outputs: the currently loaded pack's own default origin body id (e.g. Kerbin under
+ * Stock, Earth under RSS) — independent of whatever body the map's live pointA
+ * selection happens to hold. Used by Advanced Mode to (re)seed p0, since pointA
+ * drifts as legs are focused and would otherwise leak a stale body into a reset.
+ */
+function _getPackDefaultOriginBodyId() {
+    return _loadedSystemData?.meta?.originBody || _originBodyId || null;
+}
+
+/**
  * Inputs: body id and preferred node key.
  * Outputs: valid node key for the active origin toggle.
  */

@@ -9,7 +9,7 @@
  */
 (function attachDeltaVJourney(global) {
     // Hard cap on total stops (p0..pN). Bump this to raise the limit.
-    const MAX_JOURNEY_STOPS = 15;
+    const MAX_JOURNEY_STOPS = 25;
 
     const ADVANCED_MODE_STORAGE_KEY = 'deltaVAdvancedMode';
     const JOURNEY_EMPTY_COLOUR = '#6f7580';
@@ -150,14 +150,19 @@
 
     /**
      * Inputs: none.
-     * Outputs: re-derives p0's default origin once map data finishes loading.
-     * Purpose: called from loadPack() (src/ui.js) so a page reload with advanced mode
-     * already persisted active still gets a real default origin for p0.
+     * Outputs: re-derives p0's default origin whenever the journey isn't locked to a
+     * pack yet (no real stop beyond p0 has been assigned).
+     * Purpose: called from loadPack() (src/ui.js) both on the initial reload-with-
+     * advanced-mode-persisted case and on every subsequent map-pack/version switch —
+     * pack switching is only reachable at all while the journey is unlocked, so p0's
+     * previous-pack body (e.g. "earth" under RSS) would otherwise dangle as a stale,
+     * now-invalid reference under the newly loaded pack instead of resolving to that
+     * pack's own default origin (e.g. Kerbin under Stock).
      */
     function syncJourneyMapReady() {
         if (!_advancedModeActive) return;
-        const isPristine = _journeyStops.length <= 2 && !_journeyStops[0]?.body && !_journeyStops[1]?.body;
-        if (isPristine) _resetJourney();
+        if (isJourneyPackLocked()) return;
+        _resetJourney();
     }
 
     /**
@@ -260,7 +265,7 @@
      * Outputs: default origin stop for p0, matching the app's normal default origin.
      */
     function _getDefaultOriginStop() {
-        const originBodyId = typeof _getCurrentOriginBodyId === 'function' ? _getCurrentOriginBodyId() : null;
+        const originBodyId = typeof _getPackDefaultOriginBodyId === 'function' ? _getPackDefaultOriginBodyId() : null;
         return { body: originBodyId || null, node: originBodyId ? 'land' : null, ..._createEmptyLegState() };
     }
 

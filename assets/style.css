@@ -347,8 +347,14 @@ body {
     flex-direction: column;
     min-height: 0;
     flex: 1 1 auto;
-    /* No direction override here: inheriting rtl from .panel-left keeps the
+    /* Cancel .panel-left's 20px left/right padding so this panel's border-box
+       reaches the panel's true edges. The stop-list below puts that 20px back
+       as its own padding, so its scrollbar (inheriting rtl) renders flush
+       against the physical edge instead of inset into the parent's padding
+       gutter, while the widgets/rows keep the same visual inset as before.
+       No direction override here: inheriting rtl from .panel-left keeps the
        stop-list's scrollbar on the left, matching the non-advanced-mode panel. */
+    margin: 0 -20px;
 }
 
 .journey-panel:not([hidden]) {
@@ -359,7 +365,13 @@ body {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
-    padding: 10px 0;
+    /* Restores the 20px horizontal inset that .journey-panel's negative
+       margin cancelled, and reserves the scrollbar's space permanently
+       (rather than carving it out of this padding only when a scrollbar is
+       actually needed) so rows/widgets never shift horizontally when the
+       list's content crosses the scrolling threshold. */
+    padding: 10px 20px;
+    scrollbar-gutter: stable;
 }
 
 .journey-stop-list::-webkit-scrollbar {
@@ -602,7 +614,8 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding: 10px 4px;
+    /* 4px original inset + the 20px .journey-panel's negative margin cancelled. */
+    padding: 10px 24px;
     border-top: 2px solid var(--panelBorder);
 }
 
