@@ -347,7 +347,8 @@ body {
     flex-direction: column;
     min-height: 0;
     flex: 1 1 auto;
-    direction: ltr;
+    /* No direction override here: inheriting rtl from .panel-left keeps the
+       stop-list's scrollbar on the left, matching the non-advanced-mode panel. */
 }
 
 .journey-panel:not([hidden]) {
@@ -359,6 +360,33 @@ body {
     min-height: 0;
     overflow-y: auto;
     padding: 10px 0;
+}
+
+.journey-stop-list::-webkit-scrollbar {
+    width: 12px;
+}
+
+.journey-stop-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.journey-stop-list::-webkit-scrollbar-thumb {
+    background: var(--scrollThumb);
+    border-radius: 6px;
+}
+
+.journey-stop-list::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollThumbHover);
+}
+
+.journey-stop-list {
+    scrollbar-color: var(--scrollThumb) transparent;
+}
+
+.journey-stop-row,
+.journey-connector,
+.journey-footer {
+    direction: ltr;
 }
 
 .journey-stop-row {
@@ -512,16 +540,25 @@ body {
 }
 
 .journey-leg-widget-values {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
+    display: grid;
+    grid-template-columns: max-content max-content;
+    column-gap: 10px;
+    row-gap: 2px;
+    align-items: baseline;
 }
 
-.journey-leg-widget-dv,
-.journey-leg-widget-transfer {
-    flex: 0 0 auto;
+.journey-leg-widget-label {
+    color: var(--mutedTxt);
     text-align: left;
+}
+
+.journey-leg-widget-value {
+    text-align: left;
+}
+
+.journey-leg-widget-redundancy {
+    font-size: 0.75em;
+    color: var(--mutedTxt);
 }
 
 .journey-leg-widget-visuals {
@@ -570,8 +607,18 @@ body {
 }
 
 .journey-footer-dv {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
     font-family: var(--font-ui);
-    font-size: clamp(1rem, 1.2vw, 1.3rem);
+    font-size: clamp(1.1rem, 1.3vw, 1.45rem);
+}
+
+.journey-footer-label {
+    color: var(--mutedTxt);
+}
+
+.journey-footer-value {
     color: var(--titleTxt);
 }
 

@@ -83,6 +83,20 @@
                 renderJourneyPanel();
             });
         });
+
+        // Persist the active leg's redundancy choice and keep the widgets in sync live,
+        // the same pattern as the aerobrake checkboxes above.
+        document.getElementById('slider')?.addEventListener('input', () => {
+            if (!_advancedModeActive) return;
+
+            const slider = document.getElementById('slider');
+            const activeStop = _activeStopIndex > 0 ? _journeyStops[_activeStopIndex] : null;
+            if (activeStop && slider) {
+                activeStop.redundancyStep = Number.parseInt(slider.value, 10) || 0;
+            }
+
+            renderJourneyPanel();
+        });
     }
 
     /**
@@ -192,6 +206,7 @@
             _resetJourney();
         } else {
             _setAerobrakeCheckboxesEnabled(true);
+            _setRedundancySliderEnabled(true, 0);
             _syncJourneyLockUI();
 
             if (_isMapReady()) {
@@ -232,11 +247,21 @@
 
     /**
      * Inputs: none.
+     * Outputs: fresh per-leg settings shared by every stop — aerobrake state and
+     * redundancy step (0-10, matching the slider) — so each leg carries its own
+     * independent values, the same way aerobrake already does.
+     */
+    function _createEmptyLegState() {
+        return { aero: _getDefaultAeroState(), redundancyStep: 0 };
+    }
+
+    /**
+     * Inputs: none.
      * Outputs: default origin stop for p0, matching the app's normal default origin.
      */
     function _getDefaultOriginStop() {
         const originBodyId = typeof _getCurrentOriginBodyId === 'function' ? _getCurrentOriginBodyId() : null;
-        return { body: originBodyId || null, node: originBodyId ? 'land' : null, aero: _getDefaultAeroState() };
+        return { body: originBodyId || null, node: originBodyId ? 'land' : null, ..._createEmptyLegState() };
     }
 
     /**
@@ -244,7 +269,7 @@
      * Outputs: resets the journey to its empty state [origin, placeholder] and re-renders.
      */
     function _resetJourney() {
-        _journeyStops = [_getDefaultOriginStop(), { body: null, node: null, aero: _getDefaultAeroState() }];
+        _journeyStops = [_getDefaultOriginStop(), { body: null, node: null, ..._createEmptyLegState() }];
         _activeStopIndex = 1;
 
         _syncJourneyLockUI();
@@ -260,6 +285,7 @@
         _activeStopIndex = index;
 
         _setAerobrakeCheckboxesEnabled(index > 0, index > 0 ? _journeyStops[index]?.aero : null);
+        _setRedundancySliderEnabled(index > 0, index > 0 ? _journeyStops[index]?.redundancyStep : null);
 
         if (_isMapReady()) {
             if (index === 0) {
@@ -293,12 +319,12 @@
 
         const useNextStop = Boolean(options.useNextStop);
         const targetIndex = _getPreviewStopIndex(useNextStop);
-        _journeyStops[targetIndex] = { body: bodyId, node: nodeKey, aero: _getDefaultAeroState() };
+        _journeyStops[targetIndex] = { body: bodyId, node: nodeKey, ..._createEmptyLegState() };
 
         // p0 (the origin) never grows the list — only assigning a trailing stop does.
         const isLastStop = targetIndex === _journeyStops.length - 1;
         if (targetIndex > 0 && isLastStop && _journeyStops.length < MAX_JOURNEY_STOPS) {
-            _journeyStops.push({ body: null, node: null, aero: _getDefaultAeroState() });
+            _journeyStops.push({ body: null, node: null, ..._createEmptyLegState() });
         }
 
         if (useNextStop) {
@@ -318,7 +344,7 @@
 
         _journeyStops.splice(index, 1);
         if (!_journeyStops.length || _journeyStops[_journeyStops.length - 1].body) {
-            _journeyStops.push({ body: null, node: null, aero: _getDefaultAeroState() });
+            _journeyStops.push({ body: null, node: null, ..._createEmptyLegState() });
         }
 
         const nextActiveIndex = Math.min(index, _journeyStops.length - 1);
@@ -383,6 +409,21 @@
 
         const dropdown = document.getElementById('dv-dropdown');
         if (dropdown) dropdown.classList.remove('is-open');
+    }
+
+    /**
+     * Inputs: enabled flag and the leg's persisted redundancy step (0-10), null when disabling.
+     * Outputs: enables/disables the redundancy slider, restoring the given leg's persisted
+     * value when enabling, or resetting to 0 when disabling — same restore-on-focus pattern
+     * as the aerobrake checkboxes, since redundancy is now per-leg rather than global.
+     */
+    function _setRedundancySliderEnabled(enabled, step) {
+        const slider = document.getElementById('slider');
+        if (!slider) return;
+
+        slider.disabled = !enabled;
+        slider.value = enabled && Number.isFinite(step) ? step : 0;
+        if (typeof handleSliderChange === 'function') handleSliderChange(slider);
     }
 
     /**
@@ -566,7 +607,7 @@
         let legResult = null;
 
         if (isComplete) {
-            legResult = _calculateLegResult(fromStop, toStop, toStop.aero);
+            legResult = _calculateLegResult(fromStop, toStop, toStop.aero, toStop.redundancyStep);
 
             const widget = document.createElement('div');
             widget.className = 'journey-leg-widget';
@@ -574,6 +615,7 @@
             widget.addEventListener('click', () => selectJourneyStop(index + 1));
 
             const dvText = legResult ? `${Math.round(legResult.totalDV).toLocaleString()} m/s` : '— m/s';
+            const redundancySuffix = legResult ? _formatRedundancySuffix(toStop.redundancyStep) : '';
             const angle = legResult?.transferAngles?.arrive;
             const transferText = Number.isFinite(angle) && typeof formatTransferPhaseAngle === 'function'
                 ? `${formatTransferPhaseAngle(angle)}°`
@@ -581,8 +623,10 @@
 
             widget.innerHTML = `
                 <span class="journey-leg-widget-values">
-                    <span class="journey-leg-widget-dv">&Delta;V: ${dvText}</span>
-                    <span class="journey-leg-widget-transfer">Transfer: ${transferText}</span>
+                    <span class="journey-leg-widget-label">&Delta;V:</span>
+                    <span class="journey-leg-widget-value">${dvText}${redundancySuffix}</span>
+                    <span class="journey-leg-widget-label">Transfer:</span>
+                    <span class="journey-leg-widget-value">${transferText}</span>
                 </span>
             `;
             const visuals = document.createElement('span');
@@ -624,11 +668,31 @@
     }
 
     /**
-     * Inputs: origin/destination stops and that leg's persisted aero state.
+     * Inputs: a leg's persisted redundancy step (0-10).
+     * Outputs: multiplier matching the main slider's own step formula (5% per step).
+     */
+    function _getStepRedundancyMultiplier(step) {
+        return 1 + ((Number.isFinite(step) ? step : 0) * 0.05);
+    }
+
+    /**
+     * Inputs: a leg's persisted redundancy step (0-10).
+     * Outputs: small "(+X%)" suffix markup for that leg's own redundancy value,
+     * or an empty string when it's at 0%.
+     */
+    function _formatRedundancySuffix(step) {
+        const percent = Math.round((Number.isFinite(step) ? step : 0) * 5);
+        if (percent <= 0) return '';
+        return ` <span class="journey-leg-widget-redundancy">(+${percent}%)</span>`;
+    }
+
+    /**
+     * Inputs: origin/destination stops, that leg's persisted aero state, and its
+     * persisted redundancy step (0-10).
      * Outputs: full calculation result for a one-way leg (src/calc/index.js via
      * jscalculate), or null when the map data or endpoints aren't ready.
      */
-    function _calculateLegResult(fromStop, toStop, aero) {
+    function _calculateLegResult(fromStop, toStop, aero, redundancyStep) {
         const bodies = typeof getBodies === 'function' ? getBodies() : null;
         const meta = typeof getSystemMeta === 'function' ? getSystemMeta() : null;
         if (!bodies || !meta || !fromStop?.body || !toStop?.body || typeof jscalculate !== 'function') {
@@ -642,7 +706,7 @@
             aeroLowOrbitDest: Boolean(aero?.lowOrbitDest),
             aeroInterceptOrigin: false,
             aeroLowOrbitOrigin: false,
-            redundancyMultiplier: typeof _getRedundancyMultiplier === 'function' ? _getRedundancyMultiplier() : 1,
+            redundancyMultiplier: _getStepRedundancyMultiplier(redundancyStep),
             ipsBranchDV: 1000,
         };
 
