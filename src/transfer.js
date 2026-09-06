@@ -150,106 +150,121 @@ function _syncTransferDiagramSizes() {
 
     transferSizingFrame = window.requestAnimationFrame(() => {
         transferSizingFrame = null;
-        const resultsLayoutEl = document.querySelector(TRANSFER_RESULTS_LAYOUT_SELECTOR);
-        const transferRowEl = resultsLayoutEl?.querySelector(TRANSFER_ROW_SELECTOR);
-        const dvGroupEl = resultsLayoutEl?.querySelector(TRANSFER_DV_GROUP_SELECTOR);
-        const transferBlocks = [];
+        _syncTransferDiagramSizesImmediate();
+        // Advanced Mode's leg widgets scale their own mini diagram/text off this same
+        // diagram's rendered size (see journey.js's syncJourneyWidgetSizing), so keep
+        // them refreshed on every resize/recompute this function runs for.
+        if (typeof syncJourneyWidgetSizing === 'function') syncJourneyWidgetSizing();
+    });
+}
 
-        if (!resultsLayoutEl || !transferRowEl || !dvGroupEl) return;
+/**
+ * Inputs: current DOM dimensions.
+ * Outputs: updates CSS sizing variables and layout mode for transfer diagrams.
+ * Purpose: the actual per-frame work for _syncTransferDiagramSizes, split out so that
+ * function can unconditionally run the journey-widget-sizing hook after this regardless
+ * of which of this function's early-return paths was taken.
+ */
+function _syncTransferDiagramSizesImmediate() {
+    const resultsLayoutEl = document.querySelector(TRANSFER_RESULTS_LAYOUT_SELECTOR);
+    const transferRowEl = resultsLayoutEl?.querySelector(TRANSFER_ROW_SELECTOR);
+    const dvGroupEl = resultsLayoutEl?.querySelector(TRANSFER_DV_GROUP_SELECTOR);
+    const transferBlocks = [];
 
-        const resultsWidth = resultsLayoutEl.clientWidth;
-        const resultsHeight = resultsLayoutEl.clientHeight;
-        if (!resultsWidth || !resultsHeight) return;
+    if (!resultsLayoutEl || !transferRowEl || !dvGroupEl) return;
 
-        TRANSFER_BLOCK_IDS.forEach((blockId) => {
-            const blockEl = document.getElementById(blockId);
-            const diagramEl = blockEl?.querySelector(TRANSFER_DIAGRAM_SELECTOR);
-            const angleEl = blockEl?.querySelector('.result-display--angle');
-            const labelEl = blockEl?.querySelector(TRANSFER_LABEL_SELECTOR);
-            if (!blockEl || !diagramEl) return;
-            if (!angleEl) return;
+    const resultsWidth = resultsLayoutEl.clientWidth;
+    const resultsHeight = resultsLayoutEl.clientHeight;
+    if (!resultsWidth || !resultsHeight) return;
 
-            const angleRect = angleEl.getBoundingClientRect();
-            const blockRect = blockEl.getBoundingClientRect();
-            const angleWidth = Math.ceil(angleRect.width);
-            const labelWidth = Math.ceil(labelEl?.scrollWidth ?? 0);
-            const angleBottomOffset = Math.ceil(angleRect.bottom - blockRect.top);
-            const blockStyles = window.getComputedStyle(blockEl);
-            const blockGap = Number.parseFloat(blockStyles.rowGap || blockStyles.gap || '0') || 0;
+    TRANSFER_BLOCK_IDS.forEach((blockId) => {
+        const blockEl = document.getElementById(blockId);
+        const diagramEl = blockEl?.querySelector(TRANSFER_DIAGRAM_SELECTOR);
+        const angleEl = blockEl?.querySelector('.result-display--angle');
+        const labelEl = blockEl?.querySelector(TRANSFER_LABEL_SELECTOR);
+        if (!blockEl || !diagramEl) return;
+        if (!angleEl) return;
 
-            transferBlocks.push({
-                angleBottomOffset,
-                angleWidth,
-                blockGap,
-                blockEl,
-                diagramEl,
-                labelWidth,
-            });
+        const angleRect = angleEl.getBoundingClientRect();
+        const blockRect = blockEl.getBoundingClientRect();
+        const angleWidth = Math.ceil(angleRect.width);
+        const labelWidth = Math.ceil(labelEl?.scrollWidth ?? 0);
+        const angleBottomOffset = Math.ceil(angleRect.bottom - blockRect.top);
+        const blockStyles = window.getComputedStyle(blockEl);
+        const blockGap = Number.parseFloat(blockStyles.rowGap || blockStyles.gap || '0') || 0;
+
+        transferBlocks.push({
+            angleBottomOffset,
+            angleWidth,
+            blockGap,
+            blockEl,
+            diagramEl,
+            labelWidth,
         });
+    });
 
-        if (transferBlocks.length !== TRANSFER_BLOCK_IDS.length) return;
+    if (transferBlocks.length !== TRANSFER_BLOCK_IDS.length) return;
 
-        if (_isMobilePortraitLayout()) {
-            resultsLayoutEl.dataset.layout = 'pair';
-            transferBlocks.forEach((block) => {
-                block.diagramEl.style.removeProperty('--phase-diagram-size');
-                block.blockEl.style.setProperty('--transfer-block-min-width', '0px');
-            });
-            return;
-        }
-
-        const layoutStyles = window.getComputedStyle(resultsLayoutEl);
-        const transferRowStyles = window.getComputedStyle(transferRowEl);
-        const layoutGap = Number.parseFloat(layoutStyles.rowGap || layoutStyles.gap || '0') || 0;
-        const transferGap = Number.parseFloat(transferRowStyles.columnGap || transferRowStyles.gap || '0') || 0;
-        const stackedGap = Number.parseFloat(transferRowStyles.rowGap || transferRowStyles.gap || '0') || 0;
-        const dvWidth = Math.ceil(dvGroupEl.getBoundingClientRect().width);
-        const dvHeight = Math.ceil(dvGroupEl.getBoundingClientRect().height);
-        const stackedBlockHeight = Math.max(
-            0,
-            Math.floor((resultsHeight - dvHeight - layoutGap - (stackedGap * (transferBlocks.length - 1))) / transferBlocks.length),
-        );
-
-        const wideWidths = transferBlocks.map((block) => {
-            const size = Math.max(0, Math.floor(resultsHeight - block.angleBottomOffset - block.blockGap));
-            return {
-                minWidth: Math.max(block.labelWidth, block.angleWidth, size),
-                size,
-            };
+    if (_isMobilePortraitLayout()) {
+        resultsLayoutEl.dataset.layout = 'pair';
+        transferBlocks.forEach((block) => {
+            block.diagramEl.style.removeProperty('--phase-diagram-size');
+            block.blockEl.style.setProperty('--transfer-block-min-width', '0px');
         });
+        return;
+    }
 
-        const pairWidths = transferBlocks.map((block) => {
-            const size = Math.max(0, Math.floor(resultsHeight - dvHeight - layoutGap - block.angleBottomOffset - block.blockGap));
-            return {
-                minWidth: Math.max(block.labelWidth, block.angleWidth, size),
-                size,
-            };
-        });
+    const layoutStyles = window.getComputedStyle(resultsLayoutEl);
+    const transferRowStyles = window.getComputedStyle(transferRowEl);
+    const layoutGap = Number.parseFloat(layoutStyles.rowGap || layoutStyles.gap || '0') || 0;
+    const transferGap = Number.parseFloat(transferRowStyles.columnGap || transferRowStyles.gap || '0') || 0;
+    const stackedGap = Number.parseFloat(transferRowStyles.rowGap || transferRowStyles.gap || '0') || 0;
+    const dvWidth = Math.ceil(dvGroupEl.getBoundingClientRect().width);
+    const dvHeight = Math.ceil(dvGroupEl.getBoundingClientRect().height);
+    const stackedBlockHeight = Math.max(
+        0,
+        Math.floor((resultsHeight - dvHeight - layoutGap - (stackedGap * (transferBlocks.length - 1))) / transferBlocks.length),
+    );
 
-        const stackedSizes = transferBlocks.map((block) => Math.max(
-            0,
-            stackedBlockHeight - block.angleBottomOffset - block.blockGap,
-        ));
+    const wideWidths = transferBlocks.map((block) => {
+        const size = Math.max(0, Math.floor(resultsHeight - block.angleBottomOffset - block.blockGap));
+        return {
+            minWidth: Math.max(block.labelWidth, block.angleWidth, size),
+            size,
+        };
+    });
 
-        const wideWidth = wideWidths.reduce((sum, block) => sum + block.minWidth, 0) + (transferGap * (wideWidths.length - 1));
-        const pairWidth = pairWidths.reduce((sum, block) => sum + block.minWidth, 0) + (transferGap * (pairWidths.length - 1));
+    const pairWidths = transferBlocks.map((block) => {
+        const size = Math.max(0, Math.floor(resultsHeight - dvHeight - layoutGap - block.angleBottomOffset - block.blockGap));
+        return {
+            minWidth: Math.max(block.labelWidth, block.angleWidth, size),
+            size,
+        };
+    });
 
-        const nextLayout = resultsWidth >= dvWidth + layoutGap + wideWidth
-            ? 'wide'
-            : resultsWidth >= pairWidth
-                ? 'pair'
-                : 'stacked';
+    const stackedSizes = transferBlocks.map((block) => Math.max(
+        0,
+        stackedBlockHeight - block.angleBottomOffset - block.blockGap,
+    ));
 
-        resultsLayoutEl.dataset.layout = nextLayout;
+    const wideWidth = wideWidths.reduce((sum, block) => sum + block.minWidth, 0) + (transferGap * (wideWidths.length - 1));
+    const pairWidth = pairWidths.reduce((sum, block) => sum + block.minWidth, 0) + (transferGap * (pairWidths.length - 1));
 
-        transferBlocks.forEach((block, index) => {
-            const horizontalMetrics = nextLayout === 'wide' ? wideWidths[index] : pairWidths[index];
-            const size = nextLayout === 'stacked' ? stackedSizes[index] : horizontalMetrics.size;
-            const minWidth = nextLayout === 'stacked' ? 0 : horizontalMetrics.minWidth;
+    const nextLayout = resultsWidth >= dvWidth + layoutGap + wideWidth
+        ? 'wide'
+        : resultsWidth >= pairWidth
+            ? 'pair'
+            : 'stacked';
 
-            block.diagramEl.style.setProperty('--phase-diagram-size', `${size}px`);
-            block.blockEl.style.setProperty('--transfer-block-min-width', `${minWidth}px`);
-        });
+    resultsLayoutEl.dataset.layout = nextLayout;
+
+    transferBlocks.forEach((block, index) => {
+        const horizontalMetrics = nextLayout === 'wide' ? wideWidths[index] : pairWidths[index];
+        const size = nextLayout === 'stacked' ? stackedSizes[index] : horizontalMetrics.size;
+        const minWidth = nextLayout === 'stacked' ? 0 : horizontalMetrics.minWidth;
+
+        block.diagramEl.style.setProperty('--phase-diagram-size', `${size}px`);
+        block.blockEl.style.setProperty('--transfer-block-min-width', `${minWidth}px`);
     });
 }
 

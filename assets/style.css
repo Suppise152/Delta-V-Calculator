@@ -445,9 +445,9 @@ body {
 .journey-node {
     --journey-colour: #6f7580;
     --journey-glow: #4a90ff;
-    flex: 0 0 28px;
-    width: 28px;
-    height: 28px;
+    flex: 0 0 var(--journey-node-size, 28px);
+    width: var(--journey-node-size, 28px);
+    height: var(--journey-node-size, 28px);
     padding: 0;
     border: 1.5px solid color-mix(in srgb, var(--journey-colour) 80%, white);
     border-radius: 999px;
@@ -475,7 +475,8 @@ body {
     flex: 1 1 auto;
     min-width: 0;
     font-family: var(--font-ui);
-    font-size: clamp(0.85rem, 1vw, 1.05rem);
+    /* Scales with the node circle it sits next to (see .journey-node). */
+    font-size: calc(var(--journey-node-size, 28px) * 0.5);
     color: var(--txt);
     white-space: nowrap;
     overflow: hidden;
@@ -490,12 +491,13 @@ body {
 .journey-remove-btn {
     flex: 0 0 auto;
     font-family: var(--font-ui);
-    font-size: clamp(0.72rem, 0.8vw, 0.85rem);
+    /* Scales with the row's node circle (see .journey-node), same as the stop label. */
+    font-size: calc(var(--journey-node-size, 28px) * 0.29);
     color: var(--endTxt);
     background: var(--endBg);
     border: 1px solid var(--endTxt);
     border-radius: 4px;
-    padding: 3px 8px;
+    padding: calc(var(--journey-node-size, 28px) * 0.107) calc(var(--journey-node-size, 28px) * 0.286);
     cursor: pointer;
 }
 
@@ -519,36 +521,69 @@ body {
 }
 
 .journey-connector-line {
+    /* Unassigned leg: the original plain dashed connector, same height as a leg
+       widget so the gap between stops always matches the widget scale. */
     flex: 0 0 auto;
-    width: 3px;
-    height: 33px;
-    border-left: 3px dashed var(--panelBorder);
+    width: 2px;
+    height: var(--journey-widget-h, 60px);
+    border-left: 2px dashed var(--panelBorder);
 }
 
-.journey-connector.is-complete .journey-connector-line {
-    border-left-style: solid;
-    border-left-color: var(--accent);
+.journey-connector-arrow {
+    /* Assigned leg only: a thin shaft with a small equilateral-triangle head at
+       its tip (same shape family as .journey-aero-arrow), solid accent-coloured.
+       Shaft and head are sized independently (see below) rather than one scaled
+       SVG, so the head can grow much more slowly than the shaft. */
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: var(--journey-widget-h, 60px);
+}
+
+.journey-connector-arrow-shaft {
+    flex: 1 1 auto;
+    width: 2px;
+    background: var(--accent);
+}
+
+.journey-connector-arrow-head-svg {
+    flex: 0 0 auto;
+    display: block;
+    /* Grows at a fraction of the shaft's rate and caps out, so the head stays a
+       small tip instead of ballooning to match the shaft on larger screens. */
+    width: clamp(10.5px, calc(var(--journey-widget-h, 60px) * 0.18), 19.5px);
+    aspect-ratio: 13 / 11.26;
+}
+
+.journey-connector-arrow-head {
+    fill: var(--accent);
 }
 
 .journey-leg-widget {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    min-width: 340px;
-    width: max-content;
-    max-width: 100%;
+    gap: 4px 12px;
+    /* Always fills the rest of the connector row instead of shrinking to its
+       content, so it uses the full horizontal space available at any panel width. */
+    flex: 1 1 auto;
+    min-width: 0;
     background-color: var(--cardBg);
     border: 1px solid var(--cardBorder);
-    border-radius: 8px;
     box-shadow: 0 6px 14px var(--cardShadow);
     padding: 3px 15px;
     font-family: var(--font-ui);
-    font-size: clamp(1.17rem, 1.35vw, 1.425rem);
     color: var(--cardTxt);
     white-space: nowrap;
     cursor: pointer;
+    min-height: var(--journey-widget-h, 60px);
+    --journey-icon-size: calc(var(--journey-widget-h, 60px) - 6px);
+    font-size: calc(var(--journey-widget-h, 60px) * 0.22);
+    /* Scales with the widget itself, a bit more rounded than the old fixed 8px. */
+    border-radius: calc(var(--journey-widget-h, 60px) * 0.14);
 }
 
 .journey-leg-widget-values {
@@ -583,14 +618,16 @@ body {
 
 .journey-leg-widget-diagram {
     flex: 0 0 auto;
-    width: 69.6px;
-    height: 69.6px;
+    width: var(--journey-icon-size);
+    height: var(--journey-icon-size);
 }
 
 .journey-leg-widget-aero {
     flex: 0 0 auto;
-    width: 20.4px;
-    height: 45.9px;
+    /* Same proportions as the original fixed 20.4x45.9px icon (width:height ratio
+       ~0.444, height ~0.659 of the mini diagram), now scaled off --journey-icon-size. */
+    width: calc(var(--journey-icon-size) * 0.293);
+    height: calc(var(--journey-icon-size) * 0.659);
 }
 
 .journey-aero-arrow {
@@ -624,15 +661,18 @@ body {
     align-items: baseline;
     gap: 10px;
     font-family: var(--font-ui);
-    font-size: clamp(1.1rem, 1.3vw, 1.45rem);
 }
 
 .journey-footer-label {
     color: var(--mutedTxt);
+    /* Matches .result-label, the equivalent caption next to the control panel's own ΔV value. */
+    font-size: clamp(0.8rem, 1vw, 1rem);
 }
 
 .journey-footer-value {
     color: var(--titleTxt);
+    /* Matches .result-display, the control panel's ΔV value, so the journey total reads at the same size. */
+    font-size: clamp(1.4rem, 2vw, 2.4rem);
 }
 
 .journey-footer-clear {
@@ -1372,7 +1412,9 @@ body {
     color: var(--cardValTxt);
 }
 
-@media (hover: none), (pointer: coarse) {
+@media (hover: none),
+(pointer: coarse) {
+
     .planet-info-card,
     .planet-info-card.is-open {
         display: none;

@@ -39,6 +39,11 @@
         escape: 'Escape',
     };
 
+    // Floor for a leg widget's height (and everything scaled off it — its mini
+    // diagram, aerobrake icon, and text) before the control panel's own transfer
+    // diagram has a real measured size to derive from (e.g. before map data loads).
+    const LEG_WIDGET_MIN_HEIGHT_PX = 56;
+
     let _advancedModeActive = false;
     let _journeyStops = [];
     let _activeStopIndex = 1;
@@ -163,6 +168,44 @@
         if (!_advancedModeActive) return;
         if (isJourneyPackLocked()) return;
         _resetJourney();
+    }
+
+    /**
+     * Inputs: none.
+     * Outputs: the control section's own "Transfer Window to Target" diagram's
+     * current rendered height in px, or null before it has a real measured size.
+     */
+    function _getReferenceDiagramHeight() {
+        const height = document.getElementById('phase-arrive')?.getBoundingClientRect().height;
+        return Number.isFinite(height) && height > 0 ? height : null;
+    }
+
+    /**
+     * Inputs: none.
+     * Outputs: a rendered map node's current on-screen diameter in px, or null
+     * before the map has any nodes drawn yet.
+     * Purpose: lets the journey stop nodes (and their label/remove-button, which
+     * scale off them) match the map's own node size exactly, at any viewport,
+     * instead of a fixed guess. Reads a regular body node rather than the (much
+     * larger) interplanetary hub node.
+     */
+    function _getReferenceNodeSize() {
+        const size = document.querySelector('.map-node:not(.map-node--hub) circle')?.getBoundingClientRect().width;
+        return Number.isFinite(size) && size > 0 ? size : null;
+    }
+
+    function syncJourneyWidgetSizing() {
+        if (!_advancedModeActive) return;
+        const stopList = document.getElementById('journey-stop-list');
+        if (!stopList) return;
+
+        const diagramHeight = _getReferenceDiagramHeight();
+        const widgetHeight = diagramHeight
+            ? Math.max(LEG_WIDGET_MIN_HEIGHT_PX, diagramHeight * 0.4)
+            : LEG_WIDGET_MIN_HEIGHT_PX;
+        stopList.style.setProperty('--journey-widget-h', `${widgetHeight}px`);
+
+        if (nodeSize) stopList.style.setProperty('--journey-node-size', `${nodeSize}px`);
     }
 
     /**
@@ -589,6 +632,34 @@
     }
 
     /**
+     * Inputs: none.
+     * Outputs: a small downward-pointing arrow (thin shaft + equilateral-triangle
+     * head) connecting one stop to the next, used only once that leg is assigned.
+     * Purpose: same triangle-head shape family as the aerobrake indicators built by
+     * _buildAerobrakeIndicator below, so the journey builder's two arrow styles read
+     * as one visual language. The shaft and head are separate elements (see
+     * assets/style.css) so the head can be capped to a small size instead of
+     * growing in lockstep with the shaft on taller widgets.
+     */
+    function _buildConnectorArrow() {
+        const arrow = document.createElement('span');
+        arrow.className = 'journey-connector-arrow';
+
+        const shaft = document.createElement('span');
+        shaft.className = 'journey-connector-arrow-shaft';
+        arrow.appendChild(shaft);
+
+        const headSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        headSvg.setAttribute('viewBox', '0 0 13 11.26');
+        headSvg.setAttribute('class', 'journey-connector-arrow-head-svg');
+        headSvg.setAttribute('aria-hidden', 'true');
+        headSvg.innerHTML = '<polygon points="6.5,11.26 0,0 13,0" class="journey-connector-arrow-head"></polygon>';
+        arrow.appendChild(headSvg);
+
+        return arrow;
+    }
+
+    /**
      * Inputs: leg index (0-based, connecting stop[index] to stop[index+1]) and both endpoint stops.
      * Outputs: `{ element, legResult }` — the connector DOM element, and that leg's
      * calculation result (null when the leg isn't complete).
@@ -605,9 +676,13 @@
         legLabel.textContent = `Leg ${index + 1}`;
         connector.appendChild(legLabel);
 
-        const line = document.createElement('span');
-        line.className = 'journey-connector-line';
-        connector.appendChild(line);
+        if (isComplete) {
+            connector.appendChild(_buildConnectorArrow());
+        } else {
+            const line = document.createElement('span');
+            line.className = 'journey-connector-line';
+            connector.appendChild(line);
+        }
 
         let legResult = null;
 
@@ -774,6 +849,7 @@
 
     global.initAdvancedModeToggle = initAdvancedModeToggle;
     global.syncJourneyMapReady = syncJourneyMapReady;
+    global.syncJourneyWidgetSizing = syncJourneyWidgetSizing;
     global.isAdvancedModeActive = isAdvancedModeActive;
     global.isJourneyPackLocked = isJourneyPackLocked;
     global.selectJourneyStop = selectJourneyStop;
