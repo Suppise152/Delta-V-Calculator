@@ -455,7 +455,7 @@
         });
 
         const descriptionToggle = document.getElementById('description-toggle');
-        if (descriptionToggle) descriptionToggle.disabled = locked;
+        if (descriptionToggle) descriptionToggle.disabled = _advancedModeActive;
     }
 
     /**

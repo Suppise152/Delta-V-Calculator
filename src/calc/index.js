@@ -398,6 +398,7 @@
             interceptToggle
             && (
                 branchResult.branchType === 'flyby_to_capture'
+                || branchResult.branchType === 'moon_host_capture'
                 || branchResult.branchType === 'direct_orbital_transfer'
                 || branchResult.branchType === 'direct_moon_transfer'
                 || (branchResult.branchType === 'body_chain' && segment.nodeKey === 'orbit')

@@ -505,7 +505,7 @@
      * Inputs: endpoint-side node ids, trip mode flags, route segments, and origin point.
      * Outputs: marks the applicable aerobrake indicators active.
      */
-    function activateAerobrakeIndicators(aNodes, bNodes, roundTrip, returnOnly, routeSegments = [], pointA = null) {
+    function activateAerobrakeIndicators(aNodes, bNodes, roundTrip, returnOnly, routeSegments = [], pointA = null, pointB = null) {
         const aerobrakeArrivalOrbit = document.getElementById('aeroLowOrbitDest')?.checked ?? false;
         const aerobrakeArrivalIntercept = document.getElementById('aeroInterceptDest')?.checked ?? false;
         const aerobrakeReturnOrbit = document.getElementById('aeroLowOrbitOrigin')?.checked ?? false;
@@ -514,13 +514,23 @@
 
         if (!returnOnly) {
             if (aerobrakeArrivalIntercept) {
+                const moonHostAerobrakeIndicatorIds = _getMoonHostAerobrakeIndicatorIds(routeSegments, pointB);
+                const suppressDestinationOrbitIndicator = moonHostAerobrakeIndicatorIds.length > 0;
                 bNodes.forEach(nodeId => {
                     const parts = nodeId.split('_');
                     const nodeKey = parts[2];
                     if (['orbit', 'land'].includes(nodeKey)) {
+                        if (
+                            suppressDestinationOrbitIndicator
+                            && parts[1] === pointB?.body
+                            && nodeKey === 'orbit'
+                        ) {
+                            return;
+                        }
                         activeIndicators.push(`indicator_${parts[1]}_${nodeKey}`);
                     }
                 });
+                activeIndicators.push(...moonHostAerobrakeIndicatorIds);
             } else if (aerobrakeArrivalOrbit) {
                 bNodes.forEach(nodeId => {
                     const parts = nodeId.split('_');
@@ -533,8 +543,8 @@
 
         if (roundTrip || returnOnly) {
             if (aerobrakeReturnIntercept) {
-                const returnHostAerobrakeIndicatorIds = _getReturnHostAerobrakeIndicatorIds(routeSegments, pointA);
-                const suppressOriginOrbitIndicator = returnHostAerobrakeIndicatorIds.length > 0;
+                const moonHostAerobrakeIndicatorIds = _getMoonHostAerobrakeIndicatorIds(routeSegments, pointA);
+                const suppressOriginOrbitIndicator = moonHostAerobrakeIndicatorIds.length > 0;
                 aNodes.forEach(nodeId => {
                     const parts = nodeId.split('_');
                     const nodeKey = parts[2];
@@ -549,7 +559,7 @@
                         activeIndicators.push(`indicator_${parts[1]}_${nodeKey}`);
                     }
                 });
-                activeIndicators.push(...returnHostAerobrakeIndicatorIds);
+                activeIndicators.push(...moonHostAerobrakeIndicatorIds);
             } else if (aerobrakeReturnOrbit) {
                 aNodes.forEach(nodeId => {
                     const parts = nodeId.split('_');
@@ -570,8 +580,8 @@
      * Inputs: visible route segments and origin point.
      * Outputs: special return-host aerobrake indicator ids.
      */
-    function _getReturnHostAerobrakeIndicatorIds(routeSegments, pointA) {
-        if (!pointA?.body || !['land', 'orbit'].includes(pointA?.node)) return [];
+    function _getMoonHostAerobrakeIndicatorIds(routeSegments, endpointPoint) {
+        if (!endpointPoint?.body || !['land', 'orbit'].includes(endpointPoint?.node)) return [];
 
         const indicatorIds = [];
         routeSegments.forEach(segment => {
@@ -579,7 +589,7 @@
                 .querySelectorAll('.aerobrake-indicator[data-return-aerobrake-trunk]')
                 .forEach(indicator => {
                     if (indicator.getAttribute('data-return-aerobrake-trunk') !== segment.id) return;
-                    if (indicator.getAttribute('data-return-aerobrake-parent') !== pointA.body) return;
+                    if (indicator.getAttribute('data-return-aerobrake-parent') !== endpointPoint.body) return;
                     if (indicator.id) indicatorIds.push(indicator.id);
                 });
         });
@@ -850,7 +860,7 @@
             });
         }
 
-        renderApi.activateAerobrakeIndicators(routeData.aNodes, routeData.bNodes, roundTrip, returnOnly, routeData.segmentIds, _pointA);
+        renderApi.activateAerobrakeIndicators(routeData.aNodes, routeData.bNodes, roundTrip, returnOnly, routeData.segmentIds, _pointA, _pointB);
     }
 
     /**
