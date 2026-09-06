@@ -205,6 +205,7 @@
             : LEG_WIDGET_MIN_HEIGHT_PX;
         stopList.style.setProperty('--journey-widget-h', `${widgetHeight}px`);
 
+        const nodeSize = _getReferenceNodeSize();
         if (nodeSize) stopList.style.setProperty('--journey-node-size', `${nodeSize}px`);
     }
 
