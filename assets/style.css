@@ -5,7 +5,7 @@
 
 /* ─── TOKENS ─────────────────────────────────────────────────── */
 :root {
-    --font-ui: 'Share Tech Mono', monospace;
+    --font-ui: 'Saira', sans-serif;
     --font-title: 'Oswald', sans-serif;
 
     --banner-h: 17%;
@@ -216,6 +216,12 @@ body {
     outline-offset: 2px;
 }
 
+.description-toggle:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .description-toggle span {
     display: block;
     width: 100%;
@@ -286,6 +292,423 @@ body {
 /* Firefox scrollbar */
 .panel-left {
     scrollbar-color: var(--scrollThumb) transparent;
+}
+
+/* ─── ADVANCED MODE — JOURNEY BUILDER ─────────────────────────── */
+.panel-left-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0 4px 0;
+    direction: ltr;
+}
+
+.panel-left-toolbar .theme-toggle {
+    margin: 0;
+}
+
+.advanced-mode-toggle {
+    display: block;
+    width: max-content;
+    margin: 0;
+    padding: 7px 10px;
+    font-family: var(--font-ui);
+    font-size: clamp(0.78rem, 0.85vw, 0.95rem);
+    color: var(--txt);
+    background: var(--toggleBg);
+    border: 1px solid var(--toggleBorder);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.advanced-mode-toggle:hover {
+    border-color: var(--toggleHoverBorder);
+}
+
+.advanced-mode-toggle:focus-visible {
+    outline: 2px solid var(--toggleLine);
+    outline-offset: 2px;
+}
+
+.advanced-mode-toggle.is-active {
+    color: var(--btnTxt);
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.content.is-advanced-mode .panel-left {
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+}
+
+.journey-panel {
+    flex-direction: column;
+    min-height: 0;
+    flex: 1 1 auto;
+    /* Cancel .panel-left's 20px left/right padding so this panel's border-box
+       reaches the panel's true edges. The stop-list below puts that 20px back
+       as its own padding, so its scrollbar (inheriting rtl) renders flush
+       against the physical edge instead of inset into the parent's padding
+       gutter, while the widgets/rows keep the same visual inset as before.
+       No direction override here: inheriting rtl from .panel-left keeps the
+       stop-list's scrollbar on the left, matching the non-advanced-mode panel. */
+    margin: 0 -20px;
+}
+
+.journey-panel:not([hidden]) {
+    display: flex;
+}
+
+.journey-stop-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    /* Restores the 20px horizontal inset that .journey-panel's negative
+       margin cancelled, and reserves the scrollbar's space permanently
+       (rather than carving it out of this padding only when a scrollbar is
+       actually needed) so rows/widgets never shift horizontally when the
+       list's content crosses the scrolling threshold. */
+    padding: 10px 20px;
+    scrollbar-gutter: stable;
+}
+
+.journey-stop-list::-webkit-scrollbar {
+    width: 12px;
+}
+
+.journey-stop-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.journey-stop-list::-webkit-scrollbar-thumb {
+    background: var(--scrollThumb);
+    border-radius: 6px;
+}
+
+.journey-stop-list::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollThumbHover);
+}
+
+.journey-stop-list {
+    scrollbar-color: var(--scrollThumb) transparent;
+}
+
+.journey-stop-row,
+.journey-connector,
+.journey-footer {
+    direction: ltr;
+}
+
+.journey-stop-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 4px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.journey-stop-row.is-active {
+    background: var(--debugBg);
+}
+
+.journey-drag-handle {
+    flex: 0 0 auto;
+    width: 12px;
+    height: 18px;
+    display: grid;
+    grid-template-columns: repeat(2, 3px);
+    grid-template-rows: repeat(3, 3px);
+    gap: 2px;
+    align-content: center;
+    justify-content: center;
+    cursor: grab;
+}
+
+.journey-drag-handle span {
+    width: 3px;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--mutedTxt);
+}
+
+.journey-drag-handle--spacer {
+    cursor: default;
+}
+
+.journey-drag-handle--spacer span {
+    display: none;
+}
+
+.journey-node {
+    --journey-colour: #6f7580;
+    --journey-glow: #4a90ff;
+    flex: 0 0 var(--journey-node-size, 28px);
+    width: var(--journey-node-size, 28px);
+    height: var(--journey-node-size, 28px);
+    padding: 0;
+    border: 1.5px solid color-mix(in srgb, var(--journey-colour) 80%, white);
+    border-radius: 999px;
+    background: var(--journey-colour);
+    cursor: pointer;
+    transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.journey-node:hover {
+    filter: brightness(1.12);
+}
+
+.journey-node.is-placeholder {
+    border-style: dashed;
+}
+
+.journey-stop-row.is-active .journey-node {
+    box-shadow:
+        0 0 5px var(--journey-glow),
+        0 0 11px color-mix(in srgb, var(--journey-glow) 72%, transparent),
+        0 0 18px color-mix(in srgb, var(--journey-glow) 42%, transparent);
+}
+
+.journey-stop-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: var(--font-ui);
+    /* Scales with the node circle it sits next to (see .journey-node). */
+    font-size: calc(var(--journey-node-size, 28px) * 0.5);
+    color: var(--txt);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.journey-stop-label.is-placeholder {
+    color: var(--mutedTxt);
+    font-style: italic;
+}
+
+.journey-remove-btn {
+    flex: 0 0 auto;
+    font-family: var(--font-ui);
+    /* Scales with the row's node circle (see .journey-node), same as the stop label. */
+    font-size: calc(var(--journey-node-size, 28px) * 0.29);
+    color: var(--endTxt);
+    background: var(--endBg);
+    border: 1px solid var(--endTxt);
+    border-radius: 4px;
+    padding: calc(var(--journey-node-size, 28px) * 0.107) calc(var(--journey-node-size, 28px) * 0.286);
+    cursor: pointer;
+}
+
+.journey-remove-btn:hover {
+    filter: brightness(1.15);
+}
+
+.journey-connector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 4px 2px 15px;
+    min-height: 34px;
+}
+
+.journey-connector-label {
+    flex: 0 0 auto;
+    font-family: var(--font-ui);
+    font-size: clamp(0.72rem, 0.8vw, 0.85rem);
+    color: var(--mutedTxt);
+}
+
+.journey-connector-line {
+    /* Unassigned leg: the original plain dashed connector, same height as a leg
+       widget so the gap between stops always matches the widget scale. */
+    flex: 0 0 auto;
+    width: 2px;
+    height: var(--journey-widget-h, 60px);
+    border-left: 2px dashed var(--panelBorder);
+}
+
+.journey-connector-arrow {
+    /* Assigned leg only: a thin shaft with a small equilateral-triangle head at
+       its tip (same shape family as .journey-aero-arrow), solid accent-coloured.
+       Shaft and head are sized independently (see below) rather than one scaled
+       SVG, so the head can grow much more slowly than the shaft. */
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: var(--journey-widget-h, 60px);
+}
+
+.journey-connector-arrow-shaft {
+    flex: 1 1 auto;
+    width: 2px;
+    background: var(--accent);
+}
+
+.journey-connector-arrow-head-svg {
+    flex: 0 0 auto;
+    display: block;
+    /* Grows at a fraction of the shaft's rate and caps out, so the head stays a
+       small tip instead of ballooning to match the shaft on larger screens. */
+    width: clamp(10.5px, calc(var(--journey-widget-h, 60px) * 0.18), 19.5px);
+    aspect-ratio: 13 / 11.26;
+}
+
+.journey-connector-arrow-head {
+    fill: var(--accent);
+}
+
+.journey-leg-widget {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 12px;
+    /* Always fills the rest of the connector row instead of shrinking to its
+       content, so it uses the full horizontal space available at any panel width. */
+    flex: 1 1 auto;
+    min-width: 0;
+    background-color: var(--cardBg);
+    border: 1px solid var(--cardBorder);
+    box-shadow: 0 6px 14px var(--cardShadow);
+    padding: 3px 15px;
+    font-family: var(--font-ui);
+    color: var(--cardTxt);
+    white-space: nowrap;
+    cursor: pointer;
+    min-height: var(--journey-widget-h, 60px);
+    --journey-icon-size: calc(var(--journey-widget-h, 60px) - 6px);
+    font-size: calc(var(--journey-widget-h, 60px) * 0.22);
+    /* Scales with the widget itself, a bit more rounded than the old fixed 8px. */
+    border-radius: calc(var(--journey-widget-h, 60px) * 0.14);
+}
+
+.journey-leg-widget-values {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    column-gap: 10px;
+    row-gap: 2px;
+    align-items: baseline;
+}
+
+.journey-leg-widget-label {
+    color: var(--mutedTxt);
+    text-align: left;
+}
+
+.journey-leg-widget-value {
+    text-align: left;
+}
+
+.journey-leg-widget-redundancy {
+    font-size: 0.75em;
+    color: var(--mutedTxt);
+}
+
+.journey-leg-widget-visuals {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+.journey-leg-widget-diagram {
+    flex: 0 0 auto;
+    width: var(--journey-icon-size);
+    height: var(--journey-icon-size);
+}
+
+.journey-leg-widget-aero {
+    flex: 0 0 auto;
+    /* Same proportions as the original fixed 20.4x45.9px icon (width:height ratio
+       ~0.444, height ~0.659 of the mini diagram), now scaled off --journey-icon-size. */
+    width: calc(var(--journey-icon-size) * 0.293);
+    height: calc(var(--journey-icon-size) * 0.659);
+}
+
+.journey-aero-arrow {
+    fill: var(--mutedTxt);
+    transition: fill 0.15s ease, filter 0.15s ease;
+}
+
+.journey-aero-tangent {
+    stroke: var(--mutedTxt);
+    stroke-width: 2;
+}
+
+.journey-aero-arrow.is-active {
+    fill: var(--aeroIndicator);
+    filter: drop-shadow(0 0 3px var(--aeroIndicatorGlow));
+}
+
+.journey-footer {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    /* 4px original inset + the 20px .journey-panel's negative margin cancelled. */
+    padding: 10px 24px;
+    border-top: 2px solid var(--panelBorder);
+}
+
+.journey-footer-dv {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--font-ui);
+}
+
+.journey-footer-label {
+    color: var(--mutedTxt);
+    /* Matches .result-label, the equivalent caption next to the control panel's own ΔV value. */
+    font-size: clamp(0.8rem, 1vw, 1rem);
+}
+
+.journey-footer-value {
+    color: var(--titleTxt);
+    /* Matches .result-display, the control panel's ΔV value, so the journey total reads at the same size. */
+    font-size: clamp(1.4rem, 2vw, 2.4rem);
+}
+
+.journey-footer-clear {
+    font-family: var(--font-ui);
+    font-size: clamp(0.85rem, 1vw, 1rem);
+    font-weight: 700;
+    color: var(--btnTxt);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 7px 12px;
+    cursor: pointer;
+}
+
+.journey-footer-clear:hover {
+    filter: brightness(1.1);
+}
+
+#endpoint-selector.is-hidden {
+    display: none;
+}
+
+/* Generic disabled affordances used by advanced mode's locked controls */
+.toggle-label:has(input:disabled) {
+    color: var(--mutedTxt);
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.toggle-label input:disabled {
+    cursor: not-allowed;
+}
+
+.result-action:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
 /* ─── RIGHT PANEL ─────────────────────────────────────────────── */
@@ -989,7 +1412,9 @@ body {
     color: var(--cardValTxt);
 }
 
-@media (hover: none), (pointer: coarse) {
+@media (hover: none),
+(pointer: coarse) {
+
     .planet-info-card,
     .planet-info-card.is-open {
         display: none;

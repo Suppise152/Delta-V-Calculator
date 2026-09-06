@@ -81,12 +81,12 @@
 
 body.is-light-mode {
     --pageBg: rgb(241, 249, 255);
-    --descBg: rgb(191, 218, 238);
+    --descBg: rgb(216, 227, 237);
     --mainBg: rgb(241, 249, 255);
     --mapBg: rgb(241, 249, 255);
-    --ctrlBg: rgb(224, 232, 239);
+    --ctrlBg: rgb(191, 213, 231);
 
-    --cardBg: #ffffff;
+    --cardBg: #e0e2e9;
     --inputBg: transparent;
 
     --txt: #1f2430;

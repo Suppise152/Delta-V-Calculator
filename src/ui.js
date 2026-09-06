@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDescriptionPanelToggle();
     initEndpointSelectorControls();
     initPlanetInfoCard();
+    initAdvancedModeToggle();
     _initMobileLayoutSync();
 });
 
@@ -99,6 +100,8 @@ function initDescriptionPanelToggle() {
     _setDescriptionPanelCollapsed(storedState === 'collapsed', content, button);
 
     button.addEventListener('click', () => {
+        if (typeof isAdvancedModeActive === 'function' && isAdvancedModeActive()) return;
+
         const isCollapsed = !content.classList.contains('is-description-collapsed');
         _setDescriptionPanelCollapsed(isCollapsed, content, button);
         window.localStorage.setItem(DESCRIPTION_PANEL_STORAGE_KEY, isCollapsed ? 'collapsed' : 'expanded');
@@ -532,6 +535,7 @@ async function loadPack(packId) {
             _syncEndpointSelectorScale();
             _refreshEndpointSelectorUi();
             _refreshOutputs();
+            if (typeof syncJourneyMapReady === 'function') syncJourneyMapReady();
             return;
         }
 
@@ -548,6 +552,7 @@ async function loadPack(packId) {
         _syncEndpointSelectorScale();
         _refreshEndpointSelectorUi();
         _refreshOutputs();
+        if (typeof syncJourneyMapReady === 'function') syncJourneyMapReady();
     } catch (e) {
         console.error('Failed to load pack:', nextPackId, e);
         const c = document.getElementById('map-container');
@@ -579,6 +584,13 @@ function _normalizeLoadedPackData(data) {
  * Outputs: updates active endpoint selection, analytics, map, and calculation outputs.
  */
 function onNodeClick(bodyId, nodeKey, options = {}) {
+    if (typeof isAdvancedModeActive === 'function' && isAdvancedModeActive()) {
+        if (typeof assignActiveJourneyStopNode === 'function') {
+            assignActiveJourneyStopNode(bodyId, nodeKey, { useNextStop: options.invertEndpoint });
+        }
+        return;
+    }
+
     const endpointRole = _getEndpointRole(options.invertEndpoint);
 
     if (endpointRole === 'origin') {
@@ -655,6 +667,8 @@ function handleSliderChange(slider) {
  * Outputs: clears toggles, dropdown, calculation state, destination, and outputs.
  */
 function handleClearSelection() {
+    if (typeof isAdvancedModeActive === 'function' && isAdvancedModeActive()) return;
+
     [
         'roundTripToggle',
         'returnOnlyToggle',
@@ -794,6 +808,17 @@ function _getCurrentOriginBodyId() {
 }
 
 /**
+ * Inputs: none.
+ * Outputs: the currently loaded pack's own default origin body id (e.g. Kerbin under
+ * Stock, Earth under RSS) — independent of whatever body the map's live pointA
+ * selection happens to hold. Used by Advanced Mode to (re)seed p0, since pointA
+ * drifts as legs are focused and would otherwise leak a stale body into a reset.
+ */
+function _getPackDefaultOriginBodyId() {
+    return _loadedSystemData?.meta?.originBody || _originBodyId || null;
+}
+
+/**
  * Inputs: body id and preferred node key.
  * Outputs: valid node key for the active origin toggle.
  */
@@ -821,6 +846,8 @@ function _syncFromLowOrbitToggle(nodeKey) {
  * Outputs: updates pack checkboxes and loads the selected pack.
  */
 function handleMapPackChange(packId) {
+    if (typeof isJourneyPackLocked === 'function' && isJourneyPackLocked()) return;
+
     if (packId === _activePackId) {
         _setActivePackToggle(_activePackId);
         return;
@@ -834,6 +861,8 @@ function handleMapPackChange(packId) {
  * Outputs: updates game version checkboxes/pack visibility and loads the version's default pack.
  */
 function handleGameVersionChange(gameVersion) {
+    if (typeof isJourneyPackLocked === 'function' && isJourneyPackLocked()) return;
+
     const config = GAME_VERSION_CONFIG[gameVersion];
     if (!config) return;
 
